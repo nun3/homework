@@ -1,0 +1,1918 @@
+<!DOCTYPE html>
+
+<html lang="pt-BR"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Painel dos Pais — Cofrinho Mágico</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;500;600;700&amp;family=Montserrat:wght@600;700&amp;family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .chunky-button {
+            box-shadow: 0 4px 0 0 rgba(0, 0, 0, 0.1);
+            transition: all 0.15s ease;
+        }
+        .chunky-button:active {
+            transform: translateY(2px);
+            box-shadow: 0 2px 0 0 rgba(0, 0, 0, 0.1);
+        }
+        body {
+            font-family: 'Quicksand', sans-serif;
+            background-color: #fbf9f8;
+        }
+    </style>
+<script id="tailwind-config">
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        "on-primary-fixed-variant": "#0e5131",
+                        "tertiary-container": "#e8db8d",
+                        "secondary-fixed-dim": "#9bcdea",
+                        "on-secondary-fixed": "#001e2c",
+                        "inverse-surface": "#303030",
+                        "on-primary-container": "#2c6a48",
+                        "on-secondary-container": "#32657e",
+                        "on-secondary": "#ffffff",
+                        "surface-dim": "#dbd9d9",
+                        "on-secondary-fixed-variant": "#124c65",
+                        "surface-container-low": "#f5f3f3",
+                        "surface-container-highest": "#e4e2e2",
+                        "on-surface-variant": "#404942",
+                        "surface-tint": "#2c6a48",
+                        "on-tertiary-fixed-variant": "#504707",
+                        "surface-bright": "#fbf9f8",
+                        "surface": "#fbf9f8",
+                        "outline": "#707971",
+                        "on-error-container": "#93000a",
+                        "primary": "#2c6a48",
+                        "tertiary-fixed-dim": "#d4c87c",
+                        "surface-container-lowest": "#ffffff",
+                        "secondary": "#31647e",
+                        "inverse-primary": "#94d5ab",
+                        "error": "#ba1a1a",
+                        "on-error": "#ffffff",
+                        "on-primary-fixed": "#002110",
+                        "on-background": "#1b1c1c",
+                        "surface-container": "#efeded",
+                        "secondary-fixed": "#c3e8ff",
+                        "on-tertiary-fixed": "#201c00",
+                        "background": "#fbf9f8",
+                        "on-primary": "#ffffff",
+                        "error-container": "#ffdad6",
+                        "primary-fixed-dim": "#94d5ab",
+                        "outline-variant": "#c0c9c0",
+                        "surface-container-high": "#eae8e7",
+                        "tertiary-fixed": "#f1e495",
+                        "primary-container": "#a7e8bd",
+                        "inverse-on-surface": "#f2f0f0",
+                        "primary-fixed": "#b0f1c6",
+                        "secondary-container": "#afe1ff",
+                        "on-tertiary": "#ffffff",
+                        "on-surface": "#1b1c1c",
+                        "surface-variant": "#e4e2e2",
+                        "tertiary": "#685f1f",
+                        "on-tertiary-container": "#695f1f"
+                    },
+                    borderRadius: {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    spacing: {
+                        "section-gap": "32px",
+                        "card-padding": "20px",
+                        "container-margin": "24px",
+                        "gutter": "16px",
+                        "unit": "8px"
+                    },
+                    fontFamily: {
+                        "headline-lg-mobile": ["Quicksand"],
+                        "body-md": ["Quicksand"],
+                        "label-bold": ["Montserrat"],
+                        "headline-lg": ["Quicksand"],
+                        "display-lg": ["Quicksand"],
+                        "label-sm": ["Montserrat"],
+                        "body-lg": ["Quicksand"],
+                        "title-md": ["Quicksand"]
+                    },
+                    fontSize: {
+                        "headline-lg-mobile": ["22px", {"lineHeight": "30px", "fontWeight": "700"}],
+                        "body-md": ["14px", {"lineHeight": "22px", "fontWeight": "500"}],
+                        "label-bold": ["13px", {"lineHeight": "18px", "letterSpacing": "0.5px", "fontWeight": "700"}],
+                        "headline-lg": ["28px", {"lineHeight": "36px", "fontWeight": "700"}],
+                        "display-lg": ["36px", {"lineHeight": "44px", "fontWeight": "700"}],
+                        "label-sm": ["11px", {"lineHeight": "16px", "fontWeight": "600"}],
+                        "body-lg": ["16px", {"lineHeight": "24px", "fontWeight": "500"}],
+                        "title-md": ["18px", {"lineHeight": "26px", "fontWeight": "600"}]
+                    }
+                }
+            }
+        }
+    </script>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+    dialog#task-modal {
+      border: none;
+      border-radius: 16px;
+      padding: 0;
+      width: min(92vw, 560px);
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.28);
+      background: #ffffff;
+    }
+    dialog#task-modal::backdrop {
+      background: rgba(0, 0, 0, 0.45);
+    }
+  </style>
+  <script>
+    // Controle de Acesso Seguro e Amigável
+    if (localStorage.getItem('viewMode') !== 'parent') {
+      // Oculta imediatamente o HTML para garantir que o painel dos pais não pisque nem apareça por um milissegundo
+      document.documentElement.style.display = 'none';
+      
+      window.addEventListener('DOMContentLoaded', () => {
+        // Restaura a exibição e substitui o body por uma interface amigável e premium
+        document.documentElement.style.display = '';
+        document.body.className = 'bg-surface-bright text-on-background min-h-screen flex items-center justify-center p-6';
+        document.body.innerHTML = `
+          <div class="max-w-md w-full bg-white rounded-3xl shadow-xl border border-outline-variant/20 p-8 text-center animate-fade-in">
+            <div class="w-20 h-20 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-6 text-primary">
+              <span class="material-symbols-outlined text-4xl">sentiment_satisfied</span>
+            </div>
+            <h2 class="text-2xl font-bold text-primary mb-3 font-headline-lg">Acesso Restrito</h2>
+            <p class="text-on-surface-variant text-base mb-8 leading-relaxed font-body-lg">
+              Olá! Esta área mágica é reservada para os pais e mães organizarem as tarefas e recompensas.
+            </p>
+            <div class="flex justify-center">
+              <button onclick="window.location.href='index.html'" class="bg-primary hover:opacity-90 text-white font-label-bold px-8 py-3.5 rounded-full transition-all shadow hover:shadow-md flex items-center gap-2">
+                <span class="material-symbols-outlined text-lg">arrow_back</span>
+                Voltar ao Início
+              </button>
+            </div>
+          </div>
+        `;
+        // Redireciona suavemente após 4.5 segundos caso o usuário não clique
+        setTimeout(() => {
+          window.location.href = 'index.html';
+        }, 4500);
+      });
+    }
+  </script>
+  </head>
+<body class="bg-background text-on-background min-h-screen pb-32 uppercase tracking-[0.02em]">
+<!-- TopAppBar -->
+<header class="bg-surface border-b border-outline-variant shadow-sm docked full-width top-0 z-50 flex justify-between items-center w-full px-container-margin py-unit h-16 sticky">
+<div class="flex items-center gap-3">
+<a href="tela1.html" class="material-symbols-outlined text-primary text-2xl no-underline hover:opacity-80" title="Board das crianças">arrow_back</a>
+<span class="material-symbols-outlined text-primary text-2xl">admin_panel_settings</span>
+<h1 class="font-headline-lg-mobile text-headline-lg-mobile font-bold text-primary">Painel dos Pais</h1>
+</div>
+<div class="flex items-center gap-4">
+<button type="button" onclick="localStorage.removeItem('viewMode'); window.supabaseClient && window.supabaseClient.auth.signOut().then(() => window.location.href='index.html')" class="font-label-bold text-label-bold text-error flex items-center gap-1 hover:opacity-80">
+  <span class="material-symbols-outlined text-xl">logout</span> Sair
+</button>
+<div class="relative group w-10 h-10 rounded-full bg-secondary-container flex items-center justify-center overflow-hidden cursor-pointer" title="Mudar foto do perfil dos pais" onclick="document.getElementById('parent-photo-upload').click()">
+<img id="parent-profile-img" alt="Foto do perfil dos pais" class="w-full h-full object-cover transition-transform group-hover:scale-110" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBi-etLSDqgmIFK873epQzLs53EDWrhTB09XQplVTAlCTM6F1_Vf4GamMQYUcX9J5QaMLUGV_iaOfqKb7ym8HrAuHguEhl5PE2RW0xZI6e0Grkw76f6itG5CEXVOEaux947x0wpTXVzC1Ky7MTYgAiS42EPlWH-mExCAl9SggUw4F5GOOIwOfIS_NDeQ8ILBvzTDbOwQRZ3Y3NxWxudyEtVMQ8h9KK4Q9FYfOA0LZAf42_gsPi_kXdzfw1JPyL5YKmpFSHcPl8BEd0l"/>
+<div class="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 flex items-center justify-center transition-opacity">
+  <span class="material-symbols-outlined text-white text-xs">photo_camera</span>
+</div>
+<input type="file" id="parent-photo-upload" accept="image/*" class="hidden" onchange="handleParentPhoto(event)"/>
+</div>
+</div>
+</header>
+<main class="max-w-5xl mx-auto px-container-margin py-8 space-y-section-gap">
+<!-- Children Goals Section -->
+<section class="grid grid-cols-1 md:grid-cols-3 gap-gutter">
+<div class="md:col-span-2 bg-surface-container-lowest p-card-padding rounded-xl shadow-sm border-l-4 border-primary">
+<div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-4">
+<h2 class="font-title-md text-title-md text-primary flex items-center gap-2">
+<span class="material-symbols-outlined">child_care</span>
+                    Crianças cadastradas
+                </h2>
+<div class="flex flex-wrap gap-3 items-center">
+<button type="button" id="btn-nova-crianca" class="chunky-button bg-primary text-on-primary font-label-bold text-label-bold px-4 py-2.5 rounded-xl flex items-center gap-2 self-start sm:self-auto">
+<span class="material-symbols-outlined text-[20px]">add</span>
+                    Nova criança
+                </button>
+<button type="button" id="btn-reset-board" class="chunky-button bg-error text-on-error font-label-bold text-label-bold px-4 py-2.5 rounded-xl flex items-center gap-2 self-start sm:self-auto">
+<span class="material-symbols-outlined text-[20px]">restart_alt</span>
+                    Reiniciar tudo
+                </button>
+</div>
+</div>
+<div id="parent-children-grid" class="grid grid-cols-1 sm:grid-cols-2 gap-gutter"></div>
+</div>
+<div class="bg-tertiary-container text-on-tertiary-container p-card-padding rounded-xl shadow-sm flex flex-col justify-between">
+<div>
+<h3 class="font-label-bold text-label-bold uppercase tracking-wider mb-1">Status do Cofrinho</h3>
+<p class="font-display-lg text-display-lg"><span id="parent-month-saved">R$ 0,00</span></p>
+</div>
+<div class="mt-4 bg-white/30 rounded-full h-3 overflow-hidden">
+<div id="parent-month-bar" class="bg-tertiary h-full rounded-full transition-all" style="width: 0%"></div>
+</div>
+<p id="parent-month-caption" class="font-label-sm text-label-sm mt-2 opacity-80 text-right">Soma dos cofrinhos individuais</p>
+</div>
+</section>
+<!-- Task Statistics -->
+<section class="space-y-4">
+<div class="flex items-center justify-between">
+<h2 class="font-headline-lg text-headline-lg text-primary flex items-center gap-2">
+<span class="material-symbols-outlined">pie_chart</span>
+                    Estatísticas das Tarefas
+                </h2>
+</div>
+<div id="parent-charts-grid" class="grid grid-cols-1 md:grid-cols-2 gap-gutter"></div>
+</section>
+<!-- Pending Approval Bento Grid -->
+<section class="space-y-4">
+<div class="flex items-center justify-between">
+<h2 class="font-headline-lg text-headline-lg text-primary flex items-center gap-2">
+<span class="material-symbols-outlined">pending_actions</span>
+                    Aprovação Pendente
+                </h2>
+<span id="parent-pending-count" class="bg-error-container text-on-error-container font-label-bold text-label-bold px-3 py-1 rounded-full">0 aguardando</span>
+</div>
+<div id="parent-pending-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-gutter"></div>
+</section>
+<section class="space-y-4">
+<div class="flex items-center justify-between">
+<h2 class="font-headline-lg text-headline-lg text-primary flex items-center gap-2">
+<span class="material-symbols-outlined">redeem</span>
+                    Resgate do Cofrinho
+                </h2>
+<button type="button" id="btn-novo-resgate" class="flex items-center gap-2 text-primary font-label-bold text-label-bold hover:underline">
+<span class="material-symbols-outlined">add_circle</span>
+                    Novo resgate
+                </button>
+</div>
+<div class="bg-surface-container-lowest rounded-2xl shadow-lg p-card-padding border border-outline-variant">
+  <div class="flex justify-between items-center mb-3">
+    <h3 class="font-title-md text-on-surface">Últimos resgates</h3>
+    <div class="flex items-center gap-2">
+      <select id="redemption-filter-sister" class="bg-surface-container border-none rounded-lg p-2 font-body-md text-on-surface focus:ring-2 focus:ring-primary text-sm">
+        <option value="all">Todas as crianças</option>
+      </select>
+      <button type="button" id="btn-export-csv" class="material-symbols-outlined text-outline hover:text-primary transition-colors" title="Exportar histórico (CSV)">download</button>
+    </div>
+  </div>
+  <div id="parent-redemptions-list" class="space-y-2"></div>
+</div>
+</section>
+<!-- Task Values Management -->
+<section class="space-y-4">
+<div class="flex items-center justify-between">
+<h2 class="font-headline-lg text-headline-lg text-primary flex items-center gap-2">
+<span class="material-symbols-outlined">payments</span>
+                    Configuração de Valores
+                </h2>
+<div class="flex flex-col sm:flex-row gap-4 items-start sm:items-center">
+  <form id="quick-surprise-form" class="flex gap-2 items-center bg-surface-container-high p-1 rounded-full pl-3 pr-1 shadow-sm">
+    <span class="material-symbols-outlined text-secondary text-base">stars</span>
+    <input type="text" id="quick-surprise-title" placeholder="Tarefa surpresa rápida..." required class="bg-transparent border-none outline-none text-sm w-32 sm:w-48 text-on-surface placeholder:text-on-surface-variant/70" />
+    <select id="quick-surprise-sister" class="bg-surface border-none rounded-full text-sm py-1.5 px-3 text-on-surface outline-none cursor-pointer">
+      <!-- Options injected via JS -->
+    </select>
+    <button type="submit" class="bg-primary text-on-primary rounded-full w-8 h-8 flex items-center justify-center hover:opacity-90 transition-opacity" title="Criar Surpresa">
+      <span class="material-symbols-outlined text-[20px]">add</span>
+    </button>
+  </form>
+  <button type="button" id="btn-nova-tarefa" class="flex items-center gap-2 text-primary font-label-bold text-label-bold hover:underline whitespace-nowrap">
+    <span class="material-symbols-outlined">add_circle</span>
+    Nova tarefa
+  </button>
+</div>
+</div>
+<div class="bg-surface-container-lowest rounded-2xl shadow-lg overflow-x-auto border border-outline-variant">
+<table class="w-full border-collapse min-w-[650px]">
+<thead class="bg-surface-container-high border-b border-outline-variant">
+<tr>
+<th class="text-left p-4 font-label-bold text-label-bold text-on-surface-variant">Tarefa</th>
+<th class="text-center p-4 font-label-bold text-label-bold text-on-surface-variant">Frequência</th>
+<th class="text-center p-4 font-label-bold text-label-bold text-on-surface-variant">Status</th>
+<th class="text-center p-4 font-label-bold text-label-bold text-on-surface-variant">Tipo</th>
+<th class="text-right p-4 font-label-bold text-label-bold text-on-surface-variant">Valor (R$)</th>
+<th class="p-4"></th>
+</tr>
+</thead>
+<tbody id="parent-catalog-tbody" class="divide-y divide-outline-variant/30"></tbody>
+</table>
+</div>
+</section>
+</main>
+<!-- NavigationDrawer (Visual context for the admin dashboard) -->
+<nav class="fixed left-0 top-16 h-[calc(100vh-64px)] w-64 bg-surface-container-lowest border-r border-outline-variant hidden lg:flex flex-col py-6 gap-2">
+<div class="px-6 mb-8">
+<div class="flex items-center gap-3">
+<div class="w-12 h-12 rounded-full bg-secondary-fixed flex items-center justify-center">
+<span class="material-symbols-outlined text-on-secondary-fixed">family_history</span>
+</div>
+<div>
+<p class="font-label-bold text-label-bold text-primary">Família</p>
+<p class="font-label-sm text-label-sm text-on-surface-variant">Gestão Premium</p>
+</div>
+</div>
+</div>
+<a class="bg-secondary-container text-on-secondary-container font-bold rounded-full mx-2 flex items-center gap-4 px-6 py-3 transition-all" href="#">
+<span class="material-symbols-outlined">admin_panel_settings</span>
+<span class="font-label-bold text-label-bold">Painel dos Pais</span>
+</a>
+<a class="text-on-surface-variant hover:bg-surface-container-high rounded-full mx-2 flex items-center gap-4 px-6 py-3 transition-colors" href="tela1.html">
+<span class="material-symbols-outlined">dashboard</span>
+<span class="font-label-bold text-label-bold">Board das crianças</span>
+</a>
+<a class="text-on-surface-variant hover:bg-surface-container-high rounded-full mx-2 flex items-center gap-4 px-6 py-3 transition-colors" href="#">
+<span class="material-symbols-outlined">redeem</span>
+<span class="font-label-bold text-label-bold">Loja de Recompensas</span>
+</a>
+<div class="mt-auto pt-6 border-t border-outline-variant mx-4">
+<a class="text-error hover:bg-error-container/20 rounded-full flex items-center gap-4 px-6 py-3 transition-colors cursor-pointer" onclick="localStorage.removeItem('viewMode'); window.supabaseClient && window.supabaseClient.auth.signOut().then(() => window.location.href='index.html')">
+<span class="material-symbols-outlined">logout</span>
+<span class="font-label-bold text-label-bold">Sair</span>
+</a>
+</div>
+</nav>
+<!-- BottomNavBar (Mobile Only) -->
+<nav class="fixed bottom-0 left-0 w-full z-50 flex justify-around items-center px-4 py-3 pb-safe md:hidden bg-surface rounded-t-xl shadow-lg">
+<a href="tela1.html" class="flex flex-col items-center justify-center text-on-surface-variant px-5 py-2 no-underline">
+<span class="material-symbols-outlined">home</span>
+<span class="font-label-bold text-label-bold">Board</span>
+</a>
+<div class="flex flex-col items-center justify-center text-on-surface-variant px-5 py-2">
+<span class="material-symbols-outlined">assignment_turned_in</span>
+<span class="font-label-bold text-label-bold">Tarefas</span>
+</div>
+<div class="flex flex-col items-center justify-center bg-primary-container text-on-primary-container rounded-full px-5 py-2">
+<span class="material-symbols-outlined">admin_panel_settings</span>
+<span class="font-label-bold text-label-bold">Ajustes</span>
+</div>
+<div class="flex flex-col items-center justify-center text-on-surface-variant px-5 py-2">
+<span class="material-symbols-outlined">child_care</span>
+<span class="font-label-bold text-label-bold">Crianças</span>
+</div>
+</nav>
+<dialog id="child-modal" class="rounded-3xl shadow-2xl bg-surface border-none max-w-md w-full p-0 backdrop:bg-black/50 backdrop:backdrop-blur-sm transition-all">
+  <form id="child-form" class="p-6 space-y-4">
+    <div class="flex items-start justify-between gap-3">
+      <div>
+        <h3 id="child-modal-title" class="font-title-md text-title-md text-primary">Nova criança</h3>
+        <p class="text-label-sm text-on-surface-variant">Cadastre os dados e metas individuais.</p>
+      </div>
+      <button type="button" id="child-cancel-top" class="material-symbols-outlined text-on-surface-variant hover:text-primary">close</button>
+    </div>
+    <input type="hidden" id="child-id"/>
+    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+      <div class="sm:col-span-2">
+        <label class="font-label-bold text-label-bold text-on-surface-variant block mb-2" for="child-name">Nome</label>
+        <input id="child-name" class="w-full bg-surface-container border-none rounded-lg p-3 font-body-md text-on-surface focus:ring-2 focus:ring-primary" type="text" required placeholder="Ex: Ana"/>
+      </div>
+      <div>
+        <label class="font-label-bold text-label-bold text-on-surface-variant block mb-2" for="child-age">Idade</label>
+        <input id="child-age" class="w-full bg-surface-container border-none rounded-lg p-3 font-body-md text-on-surface focus:ring-2 focus:ring-primary" type="number" min="0" step="1" value="0"/>
+      </div>
+      <div>
+        <label class="font-label-bold text-label-bold text-on-surface-variant block mb-2" for="child-color">Cor</label>
+        <input id="child-color" class="w-full h-[50px] bg-surface-container border-none rounded-lg p-2 focus:ring-2 focus:ring-primary" type="color" value="#94d5ab"/>
+      </div>
+      <div class="sm:col-span-2">
+        <label class="font-label-bold text-label-bold text-on-surface-variant block mb-2" for="child-weekly-label">Bônus semanal individual</label>
+        <input id="child-weekly-label" class="w-full bg-surface-container border-none rounded-lg p-3 font-body-md text-on-surface focus:ring-2 focus:ring-primary" type="text" placeholder="Ex: Escolher o filme de sábado"/>
+      </div>
+      <div>
+        <label class="font-label-bold text-label-bold text-on-surface-variant block mb-2" for="child-weekly-coins">Meta semanal</label>
+        <input id="child-weekly-coins" class="w-full bg-surface-container border-none rounded-lg p-3 font-body-md text-on-surface focus:ring-2 focus:ring-primary" type="number" min="0" step="1" value="0"/>
+      </div>
+      <div>
+        <label class="font-label-bold text-label-bold text-on-surface-variant block mb-2" for="child-balance">Saldo inicial (R$)</label>
+        <input id="child-balance" class="w-full bg-surface-container border-none rounded-lg p-3 font-body-md text-on-surface focus:ring-2 focus:ring-primary" type="number" min="0" step="0.01" value="0"/>
+      </div>
+      <div>
+        <label class="font-label-bold text-label-bold text-on-surface-variant block mb-2" for="child-goal-label">Meta do cofrinho</label>
+        <input id="child-goal-label" class="w-full bg-surface-container border-none rounded-lg p-3 font-body-md text-on-surface focus:ring-2 focus:ring-primary" type="text" placeholder="Ex: Bicicleta"/>
+      </div>
+      <div>
+        <label class="font-label-bold text-label-bold text-on-surface-variant block mb-2" for="child-goal-amount">Valor da meta (R$)</label>
+        <input id="child-goal-amount" class="w-full bg-surface-container border-none rounded-lg p-3 font-body-md text-on-surface focus:ring-2 focus:ring-primary" type="number" min="1" step="0.01" value="100"/>
+      </div>
+      <div class="sm:col-span-2">
+        <label class="font-label-bold text-label-bold text-on-surface-variant block mb-2">Avatar da criança</label>
+        <input type="hidden" id="child-avatar-url"/>
+        <input type="file" id="child-photo-upload" accept="image/*" class="hidden"/>
+        <div id="child-avatar-grid" class="flex flex-wrap gap-2 p-3 bg-surface-container rounded-xl">
+          <!-- Populado via JS -->
+        </div>
+      </div>
+    </div>
+    <p id="child-error" class="text-sm text-error hidden"></p>
+    <div class="flex items-center justify-between gap-2 pt-2">
+      <button type="button" id="child-delete" class="hidden px-4 py-2 rounded-lg bg-error-container text-on-error-container font-label-bold">Remover</button>
+      <div class="flex items-center justify-end gap-2 ml-auto">
+        <button type="button" id="child-cancel-bottom" class="px-4 py-2 rounded-lg bg-surface-container-high text-on-surface-variant font-label-bold">Cancelar</button>
+        <button type="submit" class="chunky-button bg-primary text-on-primary font-label-bold px-5 py-2.5 rounded-lg">Guardar</button>
+      </div>
+    </div>
+  </form>
+</dialog>
+<dialog id="task-modal" class="rounded-3xl shadow-2xl bg-surface border-none max-w-md w-full p-0 backdrop:bg-black/50 backdrop:backdrop-blur-sm transition-all">
+  <form id="task-form" class="p-6 space-y-4">
+    <div class="flex items-start justify-between gap-3">
+      <div>
+        <h3 class="font-title-md text-title-md text-primary">Nova tarefa</h3>
+        <p class="text-label-sm text-on-surface-variant">Escolha os dados da tarefa de forma simples.</p>
+      </div>
+      <button type="button" id="task-cancel-top" class="material-symbols-outlined text-on-surface-variant hover:text-primary">close</button>
+    </div>
+
+    <div>
+      <label class="font-label-bold text-label-bold text-on-surface-variant block mb-2" for="task-sister">Para qual criança?</label>
+      <select id="task-sister" class="w-full bg-surface-container border-none rounded-lg p-3 font-body-md text-on-surface focus:ring-2 focus:ring-primary"></select>
+    </div>
+
+    <div>
+      <label class="font-label-bold text-label-bold text-on-surface-variant block mb-2" for="task-title">Nome da tarefa</label>
+      <input id="task-title" class="w-full bg-surface-container border-none rounded-lg p-3 font-body-md text-on-surface focus:ring-2 focus:ring-primary" placeholder="Ex: Guardar brinquedos" required type="text"/>
+    </div>
+
+    <div>
+      <label class="font-label-bold text-label-bold text-on-surface-variant block mb-2" for="task-subtitle">Nota curta (opcional)</label>
+      <input id="task-subtitle" class="w-full bg-surface-container border-none rounded-lg p-3 font-body-md text-on-surface focus:ring-2 focus:ring-primary" placeholder="Ex: Quarto e sala" type="text"/>
+    </div>
+
+    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+      <div>
+        <label class="font-label-bold text-label-bold text-on-surface-variant block mb-2" for="task-status">Status da tarefa</label>
+        <select id="task-status" class="w-full bg-surface-container border-none rounded-lg p-3 font-body-md text-on-surface focus:ring-2 focus:ring-primary">
+          <option value="diario">Diário (sem recompensa)</option>
+          <option value="extra">Extra (com recompensa)</option>
+        </select>
+      </div>
+      <div>
+        <label class="font-label-bold text-label-bold text-on-surface-variant block mb-2" for="task-frequency">Recorrência</label>
+        <select id="task-frequency" class="w-full bg-surface-container border-none rounded-lg p-3 font-body-md text-on-surface focus:ring-2 focus:ring-primary">
+          <option value="diario">Diária</option>
+          <option value="semanal">Semanal</option>
+          <option value="unica">Surpresa (Única)</option>
+        </select>
+      </div>
+    </div>
+
+    <div id="task-value-wrap" class="hidden">
+      <label class="font-label-bold text-label-bold text-on-surface-variant block mb-2" for="task-value">Valor da recompensa (R$)</label>
+      <input id="task-value" class="w-full bg-surface-container border-none rounded-lg p-3 font-body-md text-on-surface focus:ring-2 focus:ring-primary" min="0" step="0.01" type="number" value="1"/>
+    </div>
+
+    <div>
+      <label class="font-label-bold text-label-bold text-on-surface-variant block mb-2" for="task-icon">Ícone da tarefa</label>
+      <select id="task-icon" class="w-full bg-surface-container border-none rounded-lg p-3 font-body-md text-on-surface focus:ring-2 focus:ring-primary">
+        <option value="task">Tarefa geral</option>
+        <optgroup label="Casa e organização">
+          <option value="bed">Arrumar a cama</option>
+          <option value="cleaning_services">Limpeza</option>
+          <option value="mop">Passar pano</option>
+          <option value="toys">Guardar brinquedos</option>
+          <option value="inventory_2">Organizar objetos</option>
+          <option value="delete">Lixo</option>
+          <option value="laundry">Roupa / lavanderia</option>
+        </optgroup>
+        <optgroup label="Cozinha e alimentação">
+          <option value="restaurant">Lavar louça / refeição</option>
+          <option value="nutrition">Comer saudável</option>
+          <option value="local_dining">Mesa posta</option>
+          <option value="local_cafe">Lanche</option>
+        </optgroup>
+        <optgroup label="Rotina e estudos">
+          <option value="school">Estudar</option>
+          <option value="menu_book">Leitura</option>
+          <option value="edit_note">Lição de casa</option>
+          <option value="schedule">Horário / rotina</option>
+          <option value="checklist">Checklist</option>
+        </optgroup>
+        <optgroup label="Cuidado pessoal">
+          <option value="shower">Banho</option>
+          <option value="dentistry">Escovar os dentes</option>
+          <option value="styler">Arrumar roupa</option>
+          <option value="health_and_safety">Saúde e cuidado</option>
+        </optgroup>
+        <optgroup label="Família, diversão e recompensa">
+          <option value="family_restroom">Ajudar a família</option>
+          <option value="pets">Cuidar do pet</option>
+          <option value="stars">Tarefa surpresa</option>
+          <option value="emoji_events">Conquista</option>
+          <option value="payments">Moedas / recompensa</option>
+          <option value="savings">Cofrinho</option>
+        </optgroup>
+      </select>
+    </div>
+
+    <div class="p-3 bg-surface-container-lowest border border-outline-variant rounded-xl">
+      <label class="flex items-center gap-2 cursor-pointer mb-3">
+        <input type="checkbox" id="task-is-scheduled" class="w-5 h-5 rounded text-primary focus:ring-primary border-outline"/>
+        <span class="font-label-bold text-label-bold text-on-surface">Agendar publicação automática</span>
+      </label>
+      <div id="task-schedule-fields" class="hidden space-y-3 pl-7">
+        <div>
+          <label class="text-label-sm text-on-surface-variant block mb-1">Dias da semana</label>
+          <div class="flex flex-wrap gap-2" id="task-schedule-days">
+            <label class="cursor-pointer"><input type="checkbox" value="0" class="hidden peer"/><span class="px-2 py-1 rounded-md text-label-sm border border-outline peer-checked:bg-primary peer-checked:text-on-primary peer-checked:border-primary">Dom</span></label>
+            <label class="cursor-pointer"><input type="checkbox" value="1" class="hidden peer"/><span class="px-2 py-1 rounded-md text-label-sm border border-outline peer-checked:bg-primary peer-checked:text-on-primary peer-checked:border-primary">Seg</span></label>
+            <label class="cursor-pointer"><input type="checkbox" value="2" class="hidden peer"/><span class="px-2 py-1 rounded-md text-label-sm border border-outline peer-checked:bg-primary peer-checked:text-on-primary peer-checked:border-primary">Ter</span></label>
+            <label class="cursor-pointer"><input type="checkbox" value="3" class="hidden peer"/><span class="px-2 py-1 rounded-md text-label-sm border border-outline peer-checked:bg-primary peer-checked:text-on-primary peer-checked:border-primary">Qua</span></label>
+            <label class="cursor-pointer"><input type="checkbox" value="4" class="hidden peer"/><span class="px-2 py-1 rounded-md text-label-sm border border-outline peer-checked:bg-primary peer-checked:text-on-primary peer-checked:border-primary">Qui</span></label>
+            <label class="cursor-pointer"><input type="checkbox" value="5" class="hidden peer"/><span class="px-2 py-1 rounded-md text-label-sm border border-outline peer-checked:bg-primary peer-checked:text-on-primary peer-checked:border-primary">Sex</span></label>
+            <label class="cursor-pointer"><input type="checkbox" value="6" class="hidden peer"/><span class="px-2 py-1 rounded-md text-label-sm border border-outline peer-checked:bg-primary peer-checked:text-on-primary peer-checked:border-primary">Sáb</span></label>
+          </div>
+        </div>
+        <div>
+          <label class="text-label-sm text-on-surface-variant block mb-1">A partir das</label>
+          <input type="time" id="task-schedule-time" class="w-[120px] bg-surface border border-outline-variant rounded-lg p-2 font-body-md text-on-surface"/>
+        </div>
+      </div>
+    </div>
+
+    <p id="task-error" class="text-sm text-error hidden"></p>
+
+    <div class="flex items-center justify-end gap-2 pt-2">
+      <button type="button" id="task-cancel-bottom" class="px-4 py-2 rounded-lg bg-surface-container-high text-on-surface-variant font-label-bold">Cancelar</button>
+      <button type="submit" class="chunky-button bg-primary text-on-primary font-label-bold px-5 py-2.5 rounded-lg">Criar tarefa</button>
+    </div>
+  </form>
+</dialog>
+<dialog id="task-edit-modal" class="rounded-3xl shadow-2xl bg-surface border-none max-w-md w-full p-0 backdrop:bg-black/50 backdrop:backdrop-blur-sm transition-all">
+  <form id="task-edit-form" class="p-6 space-y-4">
+    <div class="flex items-start justify-between gap-3">
+      <div>
+        <h3 class="font-title-md text-title-md text-primary">Editar tarefa</h3>
+        <p class="text-label-sm text-on-surface-variant">Atualize os campos e guarde as alterações.</p>
+      </div>
+      <button type="button" id="task-edit-cancel-top" class="material-symbols-outlined text-on-surface-variant hover:text-primary">close</button>
+    </div>
+    <input type="hidden" id="task-edit-id"/>
+
+    <div>
+      <label class="font-label-bold text-label-bold text-on-surface-variant block mb-2" for="task-edit-sister">Para qual criança?</label>
+      <select id="task-edit-sister" class="w-full bg-surface-container border-none rounded-lg p-3 font-body-md text-on-surface focus:ring-2 focus:ring-primary"></select>
+    </div>
+
+    <div>
+      <label class="font-label-bold text-label-bold text-on-surface-variant block mb-2" for="task-edit-title">Nome da tarefa</label>
+      <input id="task-edit-title" class="w-full bg-surface-container border-none rounded-lg p-3 font-body-md text-on-surface focus:ring-2 focus:ring-primary" required type="text"/>
+    </div>
+
+    <div>
+      <label class="font-label-bold text-label-bold text-on-surface-variant block mb-2" for="task-edit-subtitle">Nota curta (opcional)</label>
+      <input id="task-edit-subtitle" class="w-full bg-surface-container border-none rounded-lg p-3 font-body-md text-on-surface focus:ring-2 focus:ring-primary" type="text"/>
+    </div>
+
+    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+      <div>
+        <label class="font-label-bold text-label-bold text-on-surface-variant block mb-2" for="task-edit-status">Status da tarefa</label>
+        <select id="task-edit-status" class="w-full bg-surface-container border-none rounded-lg p-3 font-body-md text-on-surface focus:ring-2 focus:ring-primary">
+          <option value="diario">Diário (sem recompensa)</option>
+          <option value="extra">Extra (com recompensa)</option>
+        </select>
+      </div>
+      <div>
+        <label class="font-label-bold text-label-bold text-on-surface-variant block mb-2" for="task-edit-frequency">Recorrência</label>
+        <select id="task-edit-frequency" class="w-full bg-surface-container border-none rounded-lg p-3 font-body-md text-on-surface focus:ring-2 focus:ring-primary">
+          <option value="diario">Diária</option>
+          <option value="semanal">Semanal</option>
+          <option value="unica">Surpresa (Única)</option>
+        </select>
+      </div>
+    </div>
+
+    <div id="task-edit-value-wrap" class="hidden">
+      <label class="font-label-bold text-label-bold text-on-surface-variant block mb-2" for="task-edit-value">Valor da recompensa (R$)</label>
+      <input id="task-edit-value" class="w-full bg-surface-container border-none rounded-lg p-3 font-body-md text-on-surface focus:ring-2 focus:ring-primary" min="0" step="0.01" type="number" value="1"/>
+    </div>
+
+    <div class="p-3 bg-surface-container-lowest border border-outline-variant rounded-xl">
+      <label class="flex items-center gap-2 cursor-pointer mb-3">
+        <input type="checkbox" id="task-edit-is-scheduled" class="w-5 h-5 rounded text-primary focus:ring-primary border-outline"/>
+        <span class="font-label-bold text-label-bold text-on-surface">Agendar publicação automática</span>
+      </label>
+      <div id="task-edit-schedule-fields" class="hidden space-y-3 pl-7">
+        <div>
+          <label class="text-label-sm text-on-surface-variant block mb-1">Dias da semana</label>
+          <div class="flex flex-wrap gap-2" id="task-edit-schedule-days">
+            <label class="cursor-pointer"><input type="checkbox" value="0" class="hidden peer"/><span class="px-2 py-1 rounded-md text-label-sm border border-outline peer-checked:bg-primary peer-checked:text-on-primary peer-checked:border-primary">Dom</span></label>
+            <label class="cursor-pointer"><input type="checkbox" value="1" class="hidden peer"/><span class="px-2 py-1 rounded-md text-label-sm border border-outline peer-checked:bg-primary peer-checked:text-on-primary peer-checked:border-primary">Seg</span></label>
+            <label class="cursor-pointer"><input type="checkbox" value="2" class="hidden peer"/><span class="px-2 py-1 rounded-md text-label-sm border border-outline peer-checked:bg-primary peer-checked:text-on-primary peer-checked:border-primary">Ter</span></label>
+            <label class="cursor-pointer"><input type="checkbox" value="3" class="hidden peer"/><span class="px-2 py-1 rounded-md text-label-sm border border-outline peer-checked:bg-primary peer-checked:text-on-primary peer-checked:border-primary">Qua</span></label>
+            <label class="cursor-pointer"><input type="checkbox" value="4" class="hidden peer"/><span class="px-2 py-1 rounded-md text-label-sm border border-outline peer-checked:bg-primary peer-checked:text-on-primary peer-checked:border-primary">Qui</span></label>
+            <label class="cursor-pointer"><input type="checkbox" value="5" class="hidden peer"/><span class="px-2 py-1 rounded-md text-label-sm border border-outline peer-checked:bg-primary peer-checked:text-on-primary peer-checked:border-primary">Sex</span></label>
+            <label class="cursor-pointer"><input type="checkbox" value="6" class="hidden peer"/><span class="px-2 py-1 rounded-md text-label-sm border border-outline peer-checked:bg-primary peer-checked:text-on-primary peer-checked:border-primary">Sáb</span></label>
+          </div>
+        </div>
+        <div>
+          <label class="text-label-sm text-on-surface-variant block mb-1">A partir das</label>
+          <input type="time" id="task-edit-schedule-time" class="w-[120px] bg-surface border border-outline-variant rounded-lg p-2 font-body-md text-on-surface"/>
+        </div>
+      </div>
+    </div>
+
+    <div>
+      <label class="font-label-bold text-label-bold text-on-surface-variant block mb-2" for="task-edit-icon">Ícone da tarefa</label>
+      <select id="task-edit-icon" class="w-full bg-surface-container border-none rounded-lg p-3 font-body-md text-on-surface focus:ring-2 focus:ring-primary">
+        <option value="task">Tarefa geral</option>
+        <optgroup label="Casa e organização">
+          <option value="bed">Arrumar a cama</option>
+          <option value="cleaning_services">Limpeza</option>
+          <option value="mop">Passar pano</option>
+          <option value="toys">Guardar brinquedos</option>
+          <option value="inventory_2">Organizar objetos</option>
+          <option value="delete">Lixo</option>
+          <option value="laundry">Roupa / lavanderia</option>
+        </optgroup>
+        <optgroup label="Cozinha e alimentação">
+          <option value="restaurant">Lavar louça / refeição</option>
+          <option value="nutrition">Comer saudável</option>
+          <option value="local_dining">Mesa posta</option>
+          <option value="local_cafe">Lanche</option>
+        </optgroup>
+        <optgroup label="Rotina e estudos">
+          <option value="school">Estudar</option>
+          <option value="menu_book">Leitura</option>
+          <option value="edit_note">Lição de casa</option>
+          <option value="schedule">Horário / rotina</option>
+          <option value="checklist">Checklist</option>
+        </optgroup>
+        <optgroup label="Cuidado pessoal">
+          <option value="shower">Banho</option>
+          <option value="dentistry">Escovar os dentes</option>
+          <option value="styler">Arrumar roupa</option>
+          <option value="health_and_safety">Saúde e cuidado</option>
+        </optgroup>
+        <optgroup label="Família, diversão e recompensa">
+          <option value="family_restroom">Ajudar a família</option>
+          <option value="pets">Cuidar do pet</option>
+          <option value="stars">Tarefa surpresa</option>
+          <option value="emoji_events">Conquista</option>
+          <option value="payments">Moedas / recompensa</option>
+          <option value="savings">Cofrinho</option>
+        </optgroup>
+      </select>
+    </div>
+
+    <p id="task-edit-error" class="text-sm text-error hidden"></p>
+
+    <div class="flex items-center justify-end gap-2 pt-2">
+      <button type="button" id="task-edit-cancel-bottom" class="px-4 py-2 rounded-lg bg-surface-container-high text-on-surface-variant font-label-bold">Cancelar</button>
+      <button type="submit" class="chunky-button bg-primary text-on-primary font-label-bold px-5 py-2.5 rounded-lg">Guardar alterações</button>
+    </div>
+  </form>
+</dialog>
+<dialog id="task-delete-modal" class="rounded-3xl shadow-2xl bg-surface border-none max-w-md w-full p-0 backdrop:bg-black/50 backdrop:backdrop-blur-sm transition-all">
+  <form id="task-delete-form" class="p-6 space-y-4">
+    <div class="flex items-start justify-between gap-3">
+      <div>
+        <h3 class="font-title-md text-title-md text-error">Excluir tarefa</h3>
+        <p class="text-label-sm text-on-surface-variant">Esta ação não pode ser desfeita.</p>
+      </div>
+      <button type="button" id="task-delete-cancel-top" class="material-symbols-outlined text-on-surface-variant hover:text-primary">close</button>
+    </div>
+    <input type="hidden" id="task-delete-id"/>
+    <p class="font-body-md">Tem certeza que deseja excluir a tarefa <strong id="task-delete-title"></strong>?</p>
+    <div class="flex items-center justify-end gap-2 pt-2">
+      <button type="button" id="task-delete-cancel-bottom" class="px-4 py-2 rounded-lg bg-surface-container-high text-on-surface-variant font-label-bold">Cancelar</button>
+      <button type="submit" class="chunky-button bg-error text-on-error font-label-bold px-5 py-2.5 rounded-lg">Excluir tarefa</button>
+    </div>
+  </form>
+</dialog>
+<dialog id="redeem-modal" class="rounded-3xl shadow-2xl bg-surface border-none max-w-md w-full p-0 backdrop:bg-black/50 backdrop:backdrop-blur-sm transition-all">
+  <form id="redeem-form" class="p-6 space-y-4">
+    <div class="flex items-start justify-between gap-3">
+      <div>
+        <h3 class="font-title-md text-title-md text-primary">Novo resgate</h3>
+        <p class="text-label-sm text-on-surface-variant">Desconte um valor do cofrinho ao entregar a recompensa.</p>
+      </div>
+      <button type="button" id="redeem-cancel-top" class="material-symbols-outlined text-on-surface-variant hover:text-primary">close</button>
+    </div>
+
+    <div>
+      <label class="font-label-bold text-label-bold text-on-surface-variant block mb-2" for="redeem-sister">Criança</label>
+      <select id="redeem-sister" class="w-full bg-surface-container border-none rounded-lg p-3 font-body-md text-on-surface focus:ring-2 focus:ring-primary"></select>
+    </div>
+    <div>
+      <label class="font-label-bold text-label-bold text-on-surface-variant block mb-2" for="redeem-value">Valor do resgate (R$)</label>
+      <input id="redeem-value" class="w-full bg-surface-container border-none rounded-lg p-3 font-body-md text-on-surface focus:ring-2 focus:ring-primary" type="number" min="0.01" step="0.01" required/>
+    </div>
+    <div>
+      <label class="font-label-bold text-label-bold text-on-surface-variant block mb-2" for="redeem-description">Descrição</label>
+      <input id="redeem-description" class="w-full bg-surface-container border-none rounded-lg p-3 font-body-md text-on-surface focus:ring-2 focus:ring-primary" placeholder="Ex: Compra de brinquedo" type="text"/>
+    </div>
+    <p id="redeem-error" class="text-sm text-error hidden"></p>
+    <div class="flex items-center justify-end gap-2 pt-2">
+      <button type="button" id="redeem-cancel-bottom" class="px-4 py-2 rounded-lg bg-surface-container-high text-on-surface-variant font-label-bold">Cancelar</button>
+      <button type="submit" class="chunky-button bg-primary text-on-primary font-label-bold px-5 py-2.5 rounded-lg">Confirmar resgate</button>
+    </div>
+  </form>
+</dialog>
+<dialog id="reject-modal" class="rounded-3xl shadow-2xl bg-surface border-none max-w-md w-full p-0 backdrop:bg-black/50 backdrop:backdrop-blur-sm transition-all">
+  <form id="reject-form" class="p-6 space-y-4">
+    <div class="flex items-start justify-between gap-3">
+      <div>
+        <h3 class="font-title-md text-title-md text-error">Rejeitar tarefa</h3>
+        <p class="text-label-sm text-on-surface-variant">O que a criança precisa fazer para a tarefa ser aprovada?</p>
+      </div>
+      <button type="button" id="reject-cancel-top" class="material-symbols-outlined text-on-surface-variant hover:text-error">close</button>
+    </div>
+    <input type="hidden" id="reject-instance-id"/>
+    <div>
+      <label class="font-label-bold text-label-bold text-on-surface-variant block mb-2" for="reject-feedback">Mensagem para a criança</label>
+      <input id="reject-feedback" class="w-full bg-surface-container border-none rounded-lg p-3 font-body-md text-on-surface focus:ring-2 focus:ring-error" placeholder="Ex: Faltou guardar os ursinhos na caixa" required type="text"/>
+    </div>
+    <div class="flex items-center justify-end gap-2 pt-2">
+      <button type="button" id="reject-cancel-bottom" class="px-4 py-2 rounded-lg bg-surface-container-high text-on-surface-variant font-label-bold">Cancelar</button>
+      <button type="submit" class="chunky-button bg-error text-on-error font-label-bold px-5 py-2.5 rounded-lg">Confirmar rejeição</button>
+    </div>
+  </form>
+</dialog>
+<div id="app-toast" class="fixed top-5 right-5 z-[80] hidden px-4 py-3 rounded-xl shadow-lg font-label-bold text-label-bold"></div>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="supabase-client.js?v=2"></script>
+<script src="cofrinho-data.js?v=10"></script>
+<script>
+(function () {
+  // Getter dinâmico: garante que CM é sempre buscado no momento da chamada,
+  // evitando o bug de capturar `undefined` caso cofrinho-data.js ainda não
+  // tivesse terminado de executar quando o IIFE foi criado.
+  function getCM() {
+    return window.CofrinhoMagico;
+  }
+  var CM = window.CofrinhoMagico; // mantido por compatibilidade
+
+  window.handleParentPhoto = function(e) {
+    var file = e.target.files && e.target.files[0];
+    if (!file) return;
+    if (file.size > 2 * 1024 * 1024) {
+      alert("Foto muito grande. Escolha uma imagem menor que 2 MB.");
+      return;
+    }
+    var reader = new FileReader();
+    reader.onload = function(ev) {
+      var dataUrl = ev.target.result;
+      var cm = getCM();
+      if (cm && typeof cm.updateFamilyFields === "function") {
+        cm.updateFamilyFields({ parentAvatarUrl: dataUrl });
+      }
+      var img = document.getElementById("parent-profile-img");
+      if (img) img.src = dataUrl;
+    };
+    reader.readAsDataURL(file);
+    e.target.value = "";
+  };
+
+  var taskModal = document.getElementById("task-modal");
+  var taskForm = document.getElementById("task-form");
+  var taskError = document.getElementById("task-error");
+  var taskValueWrap = document.getElementById("task-value-wrap");
+  var taskEditModal = document.getElementById("task-edit-modal");
+  var taskEditForm = document.getElementById("task-edit-form");
+  var taskEditError = document.getElementById("task-edit-error");
+  var taskEditValueWrap = document.getElementById("task-edit-value-wrap");
+  var taskDeleteModal = document.getElementById("task-delete-modal");
+  var taskDeleteForm = document.getElementById("task-delete-form");
+  var redeemModal = document.getElementById("redeem-modal");
+  var redeemForm = document.getElementById("redeem-form");
+  var redeemError = document.getElementById("redeem-error");
+  var rejectModal = document.getElementById("reject-modal");
+  var rejectForm = document.getElementById("reject-form");
+  var childModal = document.getElementById("child-modal");
+  var childForm = document.getElementById("child-form");
+  var childError = document.getElementById("child-error");
+  var appToast = document.getElementById("app-toast");
+  var toastTimer = null;
+  var chartInstances = {};
+
+  function sister(state, id) {
+    for (var i = 0; i < state.sisters.length; i++) {
+      if (state.sisters[i].id === id) return state.sisters[i];
+    }
+    return null;
+  }
+
+  function cat(state, id) {
+    for (var i = 0; i < state.catalog.length; i++) {
+      if (state.catalog[i].id === id) return state.catalog[i];
+    }
+    return null;
+  }
+
+  function esc(s) {
+    if (s == null) return "";
+    return String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/"/g, "&quot;");
+  }
+
+  function freqLabel(f) {
+    return f === "semanal" ? "Semanal" : "Diário";
+  }
+
+  function rewardTypeLabel(c) {
+    return c.rewardType === "diario" ? "Diário" : "Extra";
+  }
+
+  function rewardValueLabel(c) {
+    return c.rewardType === "diario" ? "Sem recompensa" : CM.fmtBRL(c.valueBRL);
+  }
+
+  function recurrenceStatus(catalogId) {
+    if (CM.isTaskCompletedInPeriod && CM.isTaskCompletedInPeriod(catalogId)) {
+      return "Concluída neste período";
+    }
+    if (CM.isTaskBlockedByRecurrence(catalogId)) {
+      return "Aguardando horário / dia";
+    }
+    return "Disponível";
+  }
+
+  function renderMonthStatus() {
+    var s = CM.getState();
+    var total = CM.totalFamilySaved(s);
+    var target = s.sisters.reduce(function(sum, sis) {
+      return sum + (Number(sis.goalAmountBRL) || 0);
+    }, 0) || 1;
+    var pct = Math.min(100, Math.round((total / target) * 100));
+    document.getElementById("parent-month-saved").textContent = CM.fmtBRL(total);
+    document.getElementById("parent-month-bar").style.width = pct + "%";
+    document.getElementById("parent-month-caption").textContent = pct + "% das metas individuais (alvo " + CM.fmtBRL(target) + ")";
+  }
+
+  function renderChildren() {
+    var s = CM.getState();
+    console.log('[Tela2] renderChildren: ' + (s.sisters ? s.sisters.length : 0) + ' filhas para renderizar');
+    var grid = document.getElementById("parent-children-grid");
+    grid.innerHTML = "";
+    if (s.sisters.length === 0) {
+      grid.innerHTML = '<p class="text-on-surface-variant font-body-md col-span-full text-center py-8">Nenhuma criança cadastrada. Clique em \'Nova criança\' para começar.</p>';
+      return;
+    }
+    s.sisters.forEach(function(sis) {
+      console.log('[Tela2] Renderizando filha:', sis.name);
+      var pct = Math.min(100, Math.round(((Number(sis.balanceBRL) || 0) / ((Number(sis.goalAmountBRL) || 1))) * 100));
+      var card = document.createElement("div");
+      card.className = "bg-surface-container rounded-xl border border-outline-variant/40 p-4 flex flex-col gap-3";
+      var avatarHtml = sis.avatarUrl
+        ? '<img src="' + esc(sis.avatarUrl) + '" alt="' + esc(sis.name) + '" class="w-11 h-11 rounded-full object-cover shrink-0 border-2 border-white shadow-sm" />'
+        : '<div class="w-11 h-11 rounded-full flex items-center justify-center text-white font-label-bold shrink-0 text-lg" style="background:' + esc(sis.borderColor || '#2c6a48') + '">' + esc((sis.name || '?').slice(0,1).toUpperCase()) + '</div>';
+      card.innerHTML =
+        "<div class=\"flex items-start justify-between gap-3\">" +
+        "<div class=\"flex items-center gap-3 min-w-0\">" +
+        avatarHtml +
+        "<div class=\"min-w-0\">" +
+        "<h3 class=\"font-title-md text-on-surface truncate\">" + esc(sis.name) + "</h3>" +
+        "<p class=\"text-label-sm text-on-surface-variant\">" + esc(String(sis.age || 0)) + " anos</p>" +
+        "</div></div>" +
+        "<button type=\"button\" class=\"child-edit material-symbols-outlined text-outline hover:text-primary\">edit</button>" +
+        "</div>" +
+        "<div class=\"bg-surface-container-lowest rounded-lg p-3\">" +
+        "<p class=\"font-label-bold text-label-bold text-on-surface-variant\">Bônus semanal</p>" +
+        "<p class=\"font-body-md text-on-surface\">" + esc(sis.weeklyBonusLabel || "Bônus semanal") + "</p>" +
+        "<p class=\"font-label-bold text-primary mt-1\">" + esc(String(sis.weeklyBonusCoins || 0)) + " moedas</p>" +
+        "</div>" +
+        "<div>" +
+        "<div class=\"flex justify-between text-label-sm text-on-surface-variant mb-1\">" +
+        "<span>" + esc(sis.goalLabel || "Meta do cofrinho") + "</span>" +
+        "<span>" + pct + "%</span>" +
+        "</div>" +
+        "<div class=\"h-2.5 bg-surface-container-lowest rounded-full overflow-hidden\">" +
+        "<div class=\"h-full rounded-full\" style=\"width:" + pct + "%;background:" + esc(sis.borderColor || "#2c6a48") + "\"></div>" +
+        "</div>" +
+        "<p class=\"text-label-sm text-on-surface-variant mt-1\">" + esc(CM.fmtBRL(sis.balanceBRL || 0)) + " de " + esc(CM.fmtBRL(sis.goalAmountBRL || 0)) + "</p>" +
+        "</div>";
+      card.querySelector(".child-edit").addEventListener("click", function() {
+        openChildModal(sis);
+      });
+      grid.appendChild(card);
+    });
+  }
+
+  function renderPending() {
+    var s = CM.getState();
+    var el = document.getElementById("parent-pending-grid");
+    var n = s.pending.length;
+    document.getElementById("parent-pending-count").textContent = n === 1 ? "1 aguardando" : n + " aguardando";
+    el.innerHTML = "";
+    if (n === 0) {
+      el.innerHTML = "<p class=\"text-on-surface-variant font-body-md col-span-full text-center py-8\">Nenhuma tarefa à espera de aprovação.</p>";
+      return;
+    }
+    s.pending.forEach(function (inst) {
+      var c = cat(s, inst.catalogId);
+      if (!c) return;
+      var sis = sister(s, c.sisterId);
+      var name = sis ? sis.name : "?";
+      var submittedText = inst.submittedAt ? formatDateTime(inst.submittedAt) : "Agora";
+      var rewardClass = c.rewardType === "diario" ? "bg-blue-50 text-blue-700 border-blue-200" : "bg-green-50 text-green-700 border-green-200";
+      var approveLabel = c.rewardType === "diario" ? "Aprovar" : "Pagar recompensa";
+      var card = document.createElement("div");
+      card.className = "bg-surface-container-lowest rounded-xl shadow-sm border border-outline-variant overflow-hidden flex flex-col";
+      card.style.borderTop = "4px solid " + (sis && sis.borderColor ? sis.borderColor : "#31647e");
+      card.innerHTML =
+        "<div class=\"p-card-padding pb-3\">" +
+        "<div class=\"flex justify-between items-start gap-3\">" +
+        "<div class=\"min-w-0\">" +
+        "<div class=\"flex items-center gap-2 flex-wrap mb-3\">" +
+        "<span class=\"font-label-bold text-label-sm px-2.5 py-1 rounded-full bg-secondary-container text-on-secondary-container\">" + esc(name) + "</span>" +
+        "<span class=\"font-label-bold text-label-sm px-2.5 py-1 rounded-full border " + rewardClass + "\">" + esc(rewardTypeLabel(c)) + "</span>" +
+        "</div>" +
+        "<h3 class=\"font-title-md text-title-md text-on-surface leading-snug\">" + esc(c.title) + "</h3>" +
+        (c.subtitle ? "<p class=\"text-label-sm text-on-surface-variant mt-1\">" + esc(c.subtitle) + "</p>" : "") +
+        "</div>" +
+        "<div class=\"w-11 h-11 rounded-xl bg-secondary-container text-secondary flex items-center justify-center shrink-0\">" +
+        "<span class=\"material-symbols-outlined text-3xl\">" + esc(c.icon || "task") + "</span>" +
+        "</div>" +
+        "</div>" +
+        "<div class=\"grid grid-cols-2 gap-2 mt-4\">" +
+        "<div class=\"bg-surface-container rounded-lg p-3\">" +
+        "<p class=\"font-label-bold text-label-sm text-on-surface-variant\">Enviada</p>" +
+        "<p class=\"font-body-md text-on-surface normal-case\">" + esc(submittedText) + "</p>" +
+        "</div>" +
+        "<div class=\"bg-surface-container rounded-lg p-3\">" +
+        "<p class=\"font-label-bold text-label-sm text-on-surface-variant\">Recompensa</p>" +
+        "<p class=\"font-body-md font-bold text-primary\">" + esc(rewardValueLabel(c)) + "</p>" +
+        "</div>" +
+        "</div>" +
+        "</div>" +
+        "<div class=\"grid grid-cols-[1fr_1.25fr] gap-2 bg-surface-container-low p-3 mt-auto\">" +
+        "<button type=\"button\" class=\"parent-rej chunky-button bg-surface-container-lowest text-on-surface-variant font-label-bold text-label-bold py-2.5 rounded-lg flex items-center justify-center gap-1\"><span class=\"material-symbols-outlined text-[18px]\">close</span>Rejeitar</button>" +
+        "<button type=\"button\" class=\"parent-app chunky-button bg-primary text-on-primary font-label-bold text-label-bold py-2.5 rounded-lg flex items-center justify-center gap-1\"><span class=\"material-symbols-outlined text-[18px]\">check</span>" + approveLabel + "</button>" +
+        "</div>";
+      card.querySelector(".parent-rej").addEventListener("click", function () {
+        openRejectModal(inst.id);
+      });
+      card.querySelector(".parent-app").addEventListener("click", function () {
+        CM.approve(inst.id);
+      });
+      el.appendChild(card);
+    });
+  }
+
+  function renderCatalog() {
+    var s = CM.getState();
+    var tb = document.getElementById("parent-catalog-tbody");
+    tb.innerHTML = "";
+    s.catalog.forEach(function (c) {
+      var sis = sister(s, c.sisterId);
+      var sisName = sis ? sis.name : c.sisterId;
+      var isUnpublished = c.frequency === "unica" && 
+                          !CM.isTaskBlockedByRecurrence(c.id) &&
+                          !s.available.some(function(x){ return x.catalogId === c.id; }) &&
+                          !s.doing.some(function(x){ return x.catalogId === c.id; }) &&
+                          !s.pending.some(function(x){ return x.catalogId === c.id; });
+
+      var tr = document.createElement("tr");
+      tr.className = "hover:bg-surface-container-low transition-colors group";
+      tr.innerHTML =
+        "<td class=\"p-4\">" +
+        "<div class=\"flex items-center gap-3\">" +
+        "<div class=\"w-10 h-10 rounded-xl bg-primary-container flex items-center justify-center text-primary\">" +
+        "<span class=\"material-symbols-outlined\">" + esc(c.icon || "task") + "</span>" +
+        "</div>" +
+        "<div>" +
+        "<p class=\"font-title-md text-on-surface leading-tight\">" + esc(c.title) + "</p>" +
+        "<p class=\"font-label-sm text-on-surface-variant\">" + esc(sisName) + (c.subtitle ? " · " + esc(c.subtitle) : "") + "</p>" +
+        "</div></div></td>" +
+        "<td class=\"p-4 text-center\"><span class=\"bg-surface-variant text-on-surface-variant px-3 py-1 rounded-full font-label-sm cat-freq\">" +
+        esc(freqLabel(c.frequency)) +
+        "</span></td>" +
+        "<td class=\"p-4 text-center\"><span class=\"px-3 py-1 rounded-full font-label-sm " +
+        (CM.isTaskBlockedByRecurrence(c.id) ? "bg-primary-container text-on-primary-container" : "bg-secondary-container text-on-secondary-container") +
+        "\">" + esc(recurrenceStatus(c.id)) + "</span></td>" +
+        "<td class=\"p-4 text-center\"><span class=\"px-3 py-1 rounded-full font-label-sm " +
+        (c.rewardType === "diario" ? "bg-secondary-container text-on-secondary-container" : "bg-primary-container text-on-primary-container") +
+        "\">" + esc(rewardTypeLabel(c)) + "</span></td>" +
+        "<td class=\"p-4 text-right\"><div class=\"flex items-center justify-end gap-2\">" +
+        (isUnpublished ? "<button type=\"button\" class=\"chunky-button bg-primary text-on-primary text-xs px-3 py-1.5 rounded-lg cat-pub\">Publicar</button>" : "") +
+        "<span class=\"font-body-lg font-bold text-primary cat-val\">" +
+        esc(rewardValueLabel(c)) +
+        "</span>" +
+        "<button type=\"button\" class=\"material-symbols-outlined text-outline hover:text-primary transition-colors text-lg cat-edit\">edit</button>" +
+        "</div></td>" +
+        "<td class=\"p-4 text-right\">" +
+        "<button type=\"button\" class=\"material-symbols-outlined text-outline-variant hover:text-error transition-colors cat-del\">delete</button>" +
+        "</td>";
+      
+      if (isUnpublished) {
+        tr.querySelector(".cat-pub").addEventListener("click", function () {
+          CM.publishTask(c.id);
+          showToast("Tarefa surpresa enviada para o board da criança!", "success");
+        });
+      }
+      
+      tr.querySelector(".cat-edit").addEventListener("click", function () {
+        openEditTaskModal(c);
+      });
+      tr.querySelector(".cat-del").addEventListener("click", function () {
+        openDeleteTaskModal(c);
+      });
+      tb.appendChild(tr);
+    });
+  }
+
+  function formatDateTime(ts) {
+    return new Date(ts).toLocaleString("pt-BR", {
+      day: "2-digit",
+      month: "2-digit",
+      hour: "2-digit",
+      minute: "2-digit",
+    });
+  }
+
+  function renderRedemptions() {
+    var s = CM.getState();
+    var el = document.getElementById("parent-redemptions-list");
+    var filterSisterId = document.getElementById("redemption-filter-sister").value;
+    el.innerHTML = "";
+    var filtered = s.redemptions || [];
+    if (filterSisterId && filterSisterId !== "all") {
+      filtered = filtered.filter(function(r) { return r.sisterId === filterSisterId; });
+    }
+    if (filtered.length === 0) {
+      el.innerHTML = "<p class=\"text-on-surface-variant font-body-md\">Nenhum resgate registrado ainda.</p>";
+      return;
+    }
+    filtered.slice(0, 8).forEach(function (r) {
+      var sis = sister(s, r.sisterId);
+      var name = sis ? sis.name : "Criança";
+      var row = document.createElement("div");
+      row.className = "flex items-center justify-between rounded-lg bg-surface-container p-3";
+      row.innerHTML =
+        "<div>" +
+        "<p class=\"font-label-bold text-on-surface\">" + esc(name) + " · " + esc(r.description || "Resgate") + "</p>" +
+        "<p class=\"text-label-sm text-on-surface-variant\">" + esc(formatDateTime(r.createdAt)) + "</p>" +
+        "</div>" +
+        "<p class=\"font-label-bold text-error\">-" + esc(CM.fmtBRL(r.amountBRL)) + "</p>";
+      el.appendChild(row);
+    });
+  }
+
+  function renderCharts() {
+    var state = CM.getState();
+    var grid = document.getElementById("parent-charts-grid");
+    
+    var stats = {};
+    state.sisters.forEach(function(sis) {
+      stats[sis.id] = { name: sis.name, border: sis.borderColor || "#2c6a48", available: 0, doing: 0, pending: 0, completed: 0 };
+    });
+
+    state.available.forEach(function(inst) {
+      var c = cat(state, inst.catalogId);
+      if (!c || !stats[c.sisterId]) return;
+      if (CM.isTaskCompletedInPeriod && CM.isTaskCompletedInPeriod(c.id)) {
+        stats[c.sisterId].completed++;
+      } else {
+        stats[c.sisterId].available++;
+      }
+    });
+
+    state.doing.forEach(function(inst) {
+      var c = cat(state, inst.catalogId);
+      if (c && stats[c.sisterId]) stats[c.sisterId].doing++;
+    });
+
+    state.pending.forEach(function(inst) {
+      var c = cat(state, inst.catalogId);
+      if (c && stats[c.sisterId]) stats[c.sisterId].pending++;
+    });
+
+    grid.innerHTML = "";
+
+    state.sisters.forEach(function(sis) {
+      var st = stats[sis.id];
+      var total = st.available + st.doing + st.pending + st.completed;
+      var donePct = total > 0 ? Math.round((st.completed / total) * 100) : 0;
+
+      var col = document.createElement("div");
+      col.className = "bg-surface-container-lowest p-card-padding rounded-xl shadow-sm border border-outline-variant";
+      col.style.borderTop = "4px solid " + (sis.borderColor || "#2c6a48");
+
+      if (total === 0) {
+        col.innerHTML =
+          "<div class=\"flex items-center justify-between gap-3 mb-4\">" +
+          "<div>" +
+          "<h3 class=\"font-title-md text-title-md text-on-surface\">" + esc(sis.name) + "</h3>" +
+          "<p class=\"text-label-sm text-on-surface-variant\">Sem tarefas cadastradas</p>" +
+          "</div>" +
+          "<span class=\"material-symbols-outlined text-outline text-3xl\">assignment</span>" +
+          "</div>" +
+          "<div class=\"bg-surface-container rounded-lg p-4 text-center text-on-surface-variant font-body-md\">Cadastre uma tarefa para acompanhar o progresso desta criança.</div>";
+        grid.appendChild(col);
+        return;
+      }
+
+      col.innerHTML =
+        "<div class=\"flex items-start justify-between gap-3 mb-4\">" +
+        "<div>" +
+        "<h3 class=\"font-title-md text-title-md text-on-surface\">" + esc(sis.name) + "</h3>" +
+        "<p class=\"text-label-sm text-on-surface-variant\">" + st.completed + " de " + total + " tarefas concluídas</p>" +
+        "</div>" +
+        "<div class=\"text-right\">" +
+        "<p class=\"font-display-lg text-[28px] leading-none text-primary\">" + donePct + "%</p>" +
+        "<p class=\"text-label-sm text-on-surface-variant\">progresso</p>" +
+        "</div>" +
+        "</div>" +
+        "<div class=\"grid grid-cols-[132px_1fr] gap-5 items-center\">" +
+        "<div class=\"relative w-[132px] h-[132px] mx-auto\">" +
+        "<canvas id=\"chart-" + esc(sis.id) + "\"></canvas>" +
+        "<div class=\"absolute inset-0 flex flex-col items-center justify-center pointer-events-none\">" +
+        "<span class=\"font-title-md text-title-md text-primary\">" + total + "</span>" +
+        "<span class=\"text-label-sm text-on-surface-variant\">tarefas</span>" +
+        "</div>" +
+        "</div>" +
+        "<div class=\"grid grid-cols-2 gap-2\">" +
+        "<div class=\"rounded-lg bg-green-50 border border-green-200 p-2\"><div class=\"flex items-center gap-1 text-label-sm text-green-700\"><span class=\"w-2 h-2 rounded-full bg-green-600\"></span>Concluídas</div><p class=\"font-title-md text-green-700\">" + st.completed + "</p></div>" +
+        "<div class=\"rounded-lg bg-amber-50 border border-amber-200 p-2\"><div class=\"flex items-center gap-1 text-label-sm text-amber-700\"><span class=\"w-2 h-2 rounded-full bg-amber-500\"></span>Pendentes</div><p class=\"font-title-md text-amber-700\">" + st.pending + "</p></div>" +
+        "<div class=\"rounded-lg bg-blue-50 border border-blue-200 p-2\"><div class=\"flex items-center gap-1 text-label-sm text-blue-700\"><span class=\"w-2 h-2 rounded-full bg-blue-600\"></span>Fazendo</div><p class=\"font-title-md text-blue-700\">" + st.doing + "</p></div>" +
+        "<div class=\"rounded-lg bg-slate-50 border border-slate-200 p-2\"><div class=\"flex items-center gap-1 text-label-sm text-slate-700\"><span class=\"w-2 h-2 rounded-full bg-slate-500\"></span>Disponíveis</div><p class=\"font-title-md text-slate-700\">" + st.available + "</p></div>" +
+        "</div>" +
+        "</div>";
+      
+      grid.appendChild(col);
+
+      if (chartInstances[sis.id]) {
+        chartInstances[sis.id].destroy();
+      }
+
+      var ctx = document.getElementById("chart-" + sis.id).getContext("2d");
+      chartInstances[sis.id] = new Chart(ctx, {
+        type: 'doughnut',
+        data: {
+          labels: ['Concluídas', 'Pendentes', 'Fazendo', 'Disponíveis'],
+          datasets: [{
+            data: [st.completed, st.pending, st.doing, st.available],
+            backgroundColor: [
+              '#16a34a',
+              '#f59e0b',
+              '#2563eb',
+              '#64748b'
+            ],
+            borderColor: '#ffffff',
+            borderWidth: 3,
+            hoverOffset: 6
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: { display: false },
+            tooltip: {
+              callbacks: {
+                label: function(context) {
+                  return context.label + ": " + context.parsed + " tarefa(s)";
+                }
+              }
+            }
+          },
+          cutout: '68%'
+        }
+      });
+    });
+  }
+
+  function renderAll() {
+    console.log('[Tela2] renderAll chamado');
+    var s = CM.getState();
+    console.log('[Tela2] Estado atual:', s.sisters ? s.sisters.length + ' filhas' : 'sem filhas', s.catalog ? s.catalog.length + ' tarefas' : 'sem tarefas');
+    refreshChildSelectors();
+    renderChildren();
+    renderMonthStatus();
+    if (typeof Chart !== 'undefined') {
+      renderCharts();
+    }
+    renderPending();
+    renderRedemptions();
+    renderCatalog();
+    
+    var pImg = document.getElementById("parent-profile-img");
+    if (pImg && s.family && s.family.parentAvatarUrl) {
+      pImg.src = s.family.parentAvatarUrl;
+    }
+  }
+
+  function showToast(message, kind) {
+    if (toastTimer) {
+      clearTimeout(toastTimer);
+      toastTimer = null;
+    }
+    appToast.className = "fixed top-5 right-5 z-[80] px-4 py-3 rounded-xl shadow-lg font-label-bold text-label-bold";
+    if (kind === "error") {
+      appToast.classList.add("bg-error-container", "text-on-error-container");
+    } else {
+      appToast.classList.add("bg-primary-container", "text-on-primary-container");
+    }
+    appToast.textContent = message;
+    appToast.classList.remove("hidden");
+    toastTimer = setTimeout(function () {
+      appToast.classList.add("hidden");
+    }, 2800);
+  }
+
+  function toggleTaskValueInput() {
+    var status = document.getElementById("task-status").value;
+    taskValueWrap.classList.toggle("hidden", status !== "extra");
+  }
+
+  function toggleTaskEditValueInput() {
+    var status = document.getElementById("task-edit-status").value;
+    taskEditValueWrap.classList.toggle("hidden", status !== "extra");
+  }
+
+  function fillSisterSelect(selectEl, selectedId) {
+    var cm = getCM();
+    if (!cm || !selectEl) return;
+    var s = cm.getState();
+    selectEl.innerHTML = "";
+    s.sisters.forEach(function (sis) {
+      var option = document.createElement("option");
+      option.value = sis.id;
+      option.textContent = sis.name + " (" + sis.age + ")";
+      if (sis.id === selectedId) option.selected = true;
+      selectEl.appendChild(option);
+    });
+  }
+
+  function refreshChildSelectors() {
+    var s = CM.getState();
+    var filterSelect = document.getElementById("redemption-filter-sister");
+    var quickSelect = document.getElementById("quick-surprise-sister");
+    if (filterSelect) {
+      var current = filterSelect.value || "all";
+      filterSelect.innerHTML = "<option value=\"all\">Todas as crianças</option>";
+      s.sisters.forEach(function(sis) {
+        var opt = document.createElement("option");
+        opt.value = sis.id;
+        opt.textContent = sis.name;
+        if (sis.id === current) opt.selected = true;
+        filterSelect.appendChild(opt);
+      });
+    }
+    if (quickSelect) {
+      var selected = quickSelect.value;
+      quickSelect.innerHTML = "";
+      s.sisters.forEach(function(sis) {
+        var opt = document.createElement("option");
+        opt.value = sis.id;
+        opt.textContent = sis.name;
+        if (sis.id === selected) opt.selected = true;
+        quickSelect.appendChild(opt);
+      });
+    }
+  }
+
+  function setChildError(message) {
+    childError.textContent = message || "";
+    childError.classList.toggle("hidden", !message);
+  }
+
+  function safeAddEventListener(elementId, event, handler) {
+    var element = document.getElementById(elementId);
+    if (element) {
+      element.addEventListener(event, handler);
+    } else {
+      console.warn('[Tela2] Elemento não encontrado para listener:', elementId);
+    }
+  }
+
+
+  // Gera um SVG data URI com emoji de bichinho em fundo colorido
+  function makeAnimalAvatar(emoji, bg) {
+    var svg = [
+      '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">',
+      '<circle cx="50" cy="50" r="50" fill="' + bg + '"/>',
+      '<text x="50" y="67" font-size="54" text-anchor="middle" dominant-baseline="auto">',
+      emoji,
+      '</text>',
+      '</svg>'
+    ].join('');
+    return 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(svg);
+  }
+
+  // Avatares de bichinhos fofinhos
+  var CHILD_AVATARS = [
+    { url: makeAnimalAvatar('🐱', '#ffd1dc'), label: 'Gatinho' },
+    { url: makeAnimalAvatar('🐶', '#bae1ff'), label: 'Cachorrinho' },
+    { url: makeAnimalAvatar('🦊', '#ffd1a8'), label: 'Raposinha' },
+    { url: makeAnimalAvatar('🐰', '#e8d5f5'), label: 'Coelhinho' },
+    { url: makeAnimalAvatar('🐼', '#dfe6e9'), label: 'Panda' },
+    { url: makeAnimalAvatar('🐨', '#b5ead7'), label: 'Coala' },
+    { url: makeAnimalAvatar('🦁', '#ffeaa7'), label: 'Le\u00e3ozinho' },
+    { url: makeAnimalAvatar('🐸', '#c8e6c9'), label: 'Sapinho' },
+    { url: makeAnimalAvatar('🐻', '#f8d7da'), label: 'Ursinho' },
+    { url: makeAnimalAvatar('🐯', '#fff9c4'), label: 'Tigrezinho' },
+    { url: makeAnimalAvatar('🐮', '#bbdefb'), label: 'Vaquinha' },
+    { url: makeAnimalAvatar('🐧', '#fde2b5'), label: 'Pinguim' },
+  ];
+
+  function selectAvatar(url, grid, hiddenInput) {
+    hiddenInput.value = url;
+    grid.querySelectorAll("button[data-av]").forEach(function(b) {
+      b.setAttribute("data-selected", "false");
+      b.style.outline = "";
+      b.style.transform = "";
+      b.style.boxShadow = "";
+    });
+  }
+
+  function initAvatarGrid(selectedUrl) {
+    var grid = document.getElementById("child-avatar-grid");
+    var hiddenInput = document.getElementById("child-avatar-url");
+    var fileInput = document.getElementById("child-photo-upload");
+    if (!grid || !hiddenInput) return;
+    grid.innerHTML = "";
+
+    // ── Botão "Enviar foto" ──────────────────────────────────────
+    var uploadBtn = document.createElement("button");
+    uploadBtn.type = "button";
+    uploadBtn.setAttribute("data-av", "upload");
+    uploadBtn.title = "Enviar foto da galeria";
+    // Se selectedUrl é base64/blob (foto enviada), mostra preview
+    var isCustomPhoto = selectedUrl && selectedUrl.startsWith("data:");
+    uploadBtn.className = "w-12 h-12 rounded-full border-2 overflow-hidden transition-all hover:scale-110 focus:outline-none flex-shrink-0 relative " +
+      (isCustomPhoto ? "border-primary" : "border-dashed border-secondary");
+    if (isCustomPhoto) {
+      uploadBtn.innerHTML = '<img src="' + selectedUrl + '" class="w-full h-full object-cover" alt="Foto" />' +
+        '<div class="absolute inset-0 bg-black/0 hover:bg-black/20 flex items-end justify-center pb-1 transition-all">' +
+        '<span class="material-symbols-outlined text-white text-[14px] opacity-0 group-hover:opacity-100">edit</span></div>';
+    } else {
+      uploadBtn.style.background = "linear-gradient(135deg,#e0f2fe,#bae6fd)";
+      uploadBtn.innerHTML =
+        '<div class="w-full h-full flex flex-col items-center justify-center gap-0.5">' +
+        '<span class="material-symbols-outlined text-secondary text-[18px]">add_a_photo</span>' +
+        '<span style="font-size:7px;font-weight:700;color:#31647e;font-family:Montserrat,sans-serif;letter-spacing:0.02em">FOTO</span>' +
+        '</div>';
+    }
+    uploadBtn.addEventListener("click", function() {
+      if (fileInput) fileInput.click();
+    });
+    grid.appendChild(uploadBtn);
+
+    // Listener no input de arquivo
+    if (fileInput) {
+      // Remove listeners antigos clonando
+      var newFileInput = fileInput.cloneNode(true);
+      fileInput.parentNode.replaceChild(newFileInput, fileInput);
+      newFileInput.addEventListener("change", function(e) {
+        var file = e.target.files && e.target.files[0];
+        if (!file) return;
+        if (file.size > 2 * 1024 * 1024) {
+          alert("Foto muito grande. Escolha uma imagem menor que 2 MB.");
+          return;
+        }
+        var reader = new FileReader();
+        reader.onload = function(ev) {
+          var dataUrl = ev.target.result;
+          selectAvatar(dataUrl, grid, hiddenInput);
+          // Atualiza preview no botão de upload
+          uploadBtn.className = uploadBtn.className.replace("border-dashed border-secondary", "border-primary");
+          uploadBtn.style.background = "";
+          uploadBtn.innerHTML = '<img src="' + dataUrl + '" class="w-full h-full object-cover" alt="Foto" />' +
+            '<div style="position:absolute;inset:0;background:rgba(0,0,0,0);transition:background 0.2s" ' +
+            'onmouseover="this.style.background=\'rgba(0,0,0,0.2)\'" onmouseout="this.style.background=\'rgba(0,0,0,0)\'">' +
+            '<span class="material-symbols-outlined" style="color:white;font-size:14px;position:absolute;bottom:2px;right:3px">edit</span></div>';
+          // Desmarca outros avatares
+          grid.querySelectorAll("button[data-av]:not([data-av='upload'])").forEach(function(b) {
+            b.style.outline = "none";
+            b.style.transform = "";
+            b.style.boxShadow = "none";
+          });
+        };
+        reader.readAsDataURL(file);
+        // Limpa o input para permitir re-selecionar o mesmo arquivo
+        newFileInput.value = "";
+      });
+    }
+
+    // ── Avatares pré-definidos (DiceBear) ────────────────────────
+    CHILD_AVATARS.forEach(function(av) {
+      var isSelected = av.url === selectedUrl;
+      var btn = document.createElement("button");
+      btn.type = "button";
+      btn.setAttribute("data-av", av.url);
+      btn.title = av.label;
+      btn.className = "w-12 h-12 rounded-full border-2 overflow-hidden transition-all hover:scale-110 focus:outline-none flex-shrink-0";
+      btn.style.borderColor = isSelected ? "#2c6a48" : "#c0c9c0";
+      btn.style.transform = isSelected ? "scale(1.1)" : "";
+      btn.style.boxShadow = isSelected ? "0 2px 8px rgba(44,106,72,0.35)" : "";
+      btn.innerHTML = '<img src="' + av.url + '" alt="' + av.label + '" class="w-full h-full object-cover" />';
+      btn.addEventListener("click", function() {
+        selectAvatar(av.url, grid, hiddenInput);
+        btn.style.borderColor = "#2c6a48";
+        btn.style.transform = "scale(1.1)";
+        btn.style.boxShadow = "0 2px 8px rgba(44,106,72,0.35)";
+        // Reset upload btn
+        uploadBtn.style.background = "linear-gradient(135deg,#e0f2fe,#bae6fd)";
+        uploadBtn.className = uploadBtn.className.replace("border-primary", "border-dashed border-secondary");
+        uploadBtn.innerHTML =
+          '<div class="w-full h-full flex flex-col items-center justify-center gap-0.5">' +
+          '<span class="material-symbols-outlined text-secondary text-[18px]">add_a_photo</span>' +
+          '<span style="font-size:7px;font-weight:700;color:#31647e;font-family:Montserrat,sans-serif;letter-spacing:0.02em">FOTO</span>' +
+          '</div>';
+      });
+      grid.appendChild(btn);
+    });
+
+    // ── Botão sem avatar (usar iniciais) ──────────────────────────
+    var clearBtn = document.createElement("button");
+    clearBtn.type = "button";
+    clearBtn.setAttribute("data-av", "");
+    clearBtn.title = "Sem avatar (usar iniciais)";
+    clearBtn.className = "w-12 h-12 rounded-full border-2 border-dashed flex items-center justify-center text-on-surface-variant hover:border-primary transition-all flex-shrink-0";
+    clearBtn.style.borderColor = !selectedUrl ? "#2c6a48" : "#c0c9c0";
+    clearBtn.style.color = !selectedUrl ? "#2c6a48" : undefined;
+    clearBtn.innerHTML = '<span class="material-symbols-outlined text-xl">close</span>';
+    clearBtn.addEventListener("click", function() {
+      selectAvatar("", grid, hiddenInput);
+      clearBtn.style.borderColor = "#2c6a48";
+      clearBtn.style.color = "#2c6a48";
+      // Reset upload btn
+      uploadBtn.style.background = "linear-gradient(135deg,#e0f2fe,#bae6fd)";
+      uploadBtn.className = uploadBtn.className.replace("border-primary", "border-dashed border-secondary");
+      uploadBtn.innerHTML =
+        '<div class="w-full h-full flex flex-col items-center justify-center gap-0.5">' +
+        '<span class="material-symbols-outlined text-secondary text-[18px]">add_a_photo</span>' +
+        '<span style="font-size:7px;font-weight:700;color:#31647e;font-family:Montserrat,sans-serif;letter-spacing:0.02em">FOTO</span>' +
+        '</div>';
+      // Reset outros avatares
+      grid.querySelectorAll("button[data-av]:not([data-av=''])").forEach(function(b) {
+        b.style.borderColor = "#c0c9c0";
+        b.style.transform = "";
+        b.style.boxShadow = "";
+      });
+    });
+    grid.appendChild(clearBtn);
+  }
+
+  function openChildModal(child) {
+    childForm.reset();
+    setChildError("");
+    document.getElementById("child-id").value = child ? child.id : "";
+    document.getElementById("child-modal-title").textContent = child ? "Editar criança" : "Nova criança";
+    document.getElementById("child-name").value = child ? child.name || "" : "";
+    document.getElementById("child-age").value = child ? String(child.age || 0) : "0";
+    document.getElementById("child-color").value = child ? child.borderColor || "#94d5ab" : "#94d5ab";
+    document.getElementById("child-weekly-label").value = child ? child.weeklyBonusLabel || "" : "";
+    document.getElementById("child-weekly-coins").value = child ? String(child.weeklyBonusCoins || 0) : "0";
+    document.getElementById("child-balance").value = child ? String(child.balanceBRL || 0) : "0";
+    document.getElementById("child-goal-label").value = child ? child.goalLabel || "" : "";
+    document.getElementById("child-goal-amount").value = child ? String(child.goalAmountBRL || 100) : "100";
+    document.getElementById("child-avatar-url").value = child ? child.avatarUrl || "" : "";
+    initAvatarGrid(child ? child.avatarUrl || "" : "");
+    document.getElementById("child-delete").classList.toggle("hidden", !child);
+    childModal.showModal();
+  }
+
+  function openTaskModal() {
+    // Re-busca CM na hora da chamada para evitar o bug de captura antecipada
+    CM = getCM();
+    if (!CM) {
+      alert("Erro: Sistema de dados não carregou. Recarregue a página.");
+      console.error("CofrinhoMagico não está disponível em window.CofrinhoMagico");
+      return;
+    }
+    try {
+      var sisterSelect = document.getElementById("task-sister");
+      if (sisterSelect) fillSisterSelect(sisterSelect, null);
+      if (taskForm) taskForm.reset();
+      var st = document.getElementById("task-status");
+      if (st) st.value = "diario";
+      var fr = document.getElementById("task-frequency");
+      if (fr) fr.value = "diario";
+      var ic = document.getElementById("task-icon");
+      if (ic) ic.value = "task";
+      var val = document.getElementById("task-value");
+      if (val) val.value = "1";
+      if (taskError) {
+        taskError.classList.add("hidden");
+        taskError.textContent = "";
+      }
+      toggleTaskValueInput();
+      if (taskModal && typeof taskModal.showModal === "function") {
+        taskModal.showModal();
+      } else if (taskModal) {
+        taskModal.open = true;
+        taskModal.style.display = "block";
+      }
+    } catch (e) {
+      console.error("Erro ao abrir modal de tarefas:", e);
+      alert("Erro ao abrir janela de nova tarefa: " + e.message);
+    }
+  }
+
+  function openEditTaskModal(c) {
+    fillSisterSelect(document.getElementById("task-edit-sister"), c.sisterId);
+    document.getElementById("task-edit-id").value = c.id;
+    document.getElementById("task-edit-title").value = c.title || "";
+    document.getElementById("task-edit-subtitle").value = c.subtitle || "";
+    document.getElementById("task-edit-status").value = c.rewardType === "extra" ? "extra" : "diario";
+    document.getElementById("task-edit-frequency").value = c.frequency || "diario";
+    document.getElementById("task-edit-value").value = String(c.valueBRL || 1);
+    document.getElementById("task-edit-icon").value = c.icon || "task";
+    
+    var isSched = !!c.isScheduled;
+    var editSchedCb = document.getElementById("task-edit-is-scheduled");
+    if (editSchedCb) editSchedCb.checked = isSched;
+    var editSchedWrap = document.getElementById("task-edit-schedule-fields");
+    if (editSchedWrap) editSchedWrap.classList.toggle("hidden", !isSched);
+    
+    var schedDays = Array.isArray(c.scheduledDays) ? c.scheduledDays : [];
+    document.querySelectorAll("#task-edit-schedule-days input[type='checkbox']").forEach(function(cb) {
+      cb.checked = schedDays.indexOf(parseInt(cb.value, 10)) !== -1;
+    });
+    document.getElementById("task-edit-schedule-time").value = c.scheduledTime || "";
+
+    taskEditError.classList.add("hidden");
+    taskEditError.textContent = "";
+    toggleTaskEditValueInput();
+    taskEditModal.showModal();
+  }
+
+  function openDeleteTaskModal(c) {
+    document.getElementById("task-delete-id").value = c.id;
+    document.getElementById("task-delete-title").textContent = c.title || "esta tarefa";
+    taskDeleteModal.showModal();
+  }
+
+  function openRedeemModal() {
+    fillSisterSelect(document.getElementById("redeem-sister"), null);
+    redeemForm.reset();
+    redeemError.classList.add("hidden");
+    redeemError.textContent = "";
+    redeemModal.showModal();
+  }
+
+  function openRejectModal(instanceId) {
+    rejectForm.reset();
+    document.getElementById("reject-instance-id").value = instanceId;
+    rejectModal.showModal();
+  }
+
+  function initializePanel() {
+  CM = getCM();
+  console.log('[Tela2] initializePanel(): CM carregado?', CM ? 'SIM' : 'NÃO');
+  if (!CM) {
+    alert("Erro: Sistema de dados não carregou. Recarregue a página.");
+    console.error("CofrinhoMagico não está disponível em window.CofrinhoMagico");
+    return;
+  }
+
+  document.getElementById("btn-nova-crianca").addEventListener("click", function () {
+    openChildModal(null);
+  });
+  document.getElementById("child-cancel-top").addEventListener("click", function () {
+    childModal.close();
+  });
+  document.getElementById("child-cancel-bottom").addEventListener("click", function () {
+    childModal.close();
+  });
+  document.getElementById("child-delete").addEventListener("click", function () {
+    var id = document.getElementById("child-id").value;
+    if (!id) return;
+    var name = document.getElementById("child-name").value || "esta criança";
+    if (!window.confirm("Remover " + name + "? As tarefas e resgates desta criança também serão removidos.")) return;
+    var result = CM.deleteChild(id);
+    if (!result.ok) {
+      setChildError(result.message || "Não foi possível remover a criança.");
+      return;
+    }
+    childModal.close();
+    refreshChildSelectors();
+    renderAll();
+    showToast("Criança removida com sucesso.", "success");
+  });
+
+  document.getElementById("btn-nova-tarefa").addEventListener("click", openTaskModal);
+  document.getElementById("task-status").addEventListener("change", toggleTaskValueInput);
+  document.getElementById("task-edit-status").addEventListener("change", toggleTaskEditValueInput);
+  document.getElementById("task-cancel-top").addEventListener("click", function () {
+    taskModal.close();
+  });
+  document.getElementById("task-cancel-bottom").addEventListener("click", function () {
+    taskModal.close();
+  });
+  document.getElementById("task-edit-cancel-top").addEventListener("click", function () {
+    taskEditModal.close();
+  });
+  document.getElementById("task-edit-cancel-bottom").addEventListener("click", function () {
+    taskEditModal.close();
+  });
+  document.getElementById("task-delete-cancel-top").addEventListener("click", function () {
+    taskDeleteModal.close();
+  });
+  document.getElementById("task-delete-cancel-bottom").addEventListener("click", function () {
+    taskDeleteModal.close();
+  });
+  document.getElementById("btn-novo-resgate").addEventListener("click", openRedeemModal);
+  document.getElementById("redeem-cancel-top").addEventListener("click", function () {
+    redeemModal.close();
+  });
+  document.getElementById("redeem-cancel-bottom").addEventListener("click", function () {
+    redeemModal.close();
+  });
+  document.getElementById("reject-cancel-top").addEventListener("click", function () {
+    rejectModal.close();
+  });
+  document.getElementById("reject-cancel-bottom").addEventListener("click", function () {
+    rejectModal.close();
+  });
+
+  rejectForm.addEventListener("submit", function (ev) {
+    ev.preventDefault();
+    var instanceId = document.getElementById("reject-instance-id").value;
+    var feedback = document.getElementById("reject-feedback").value.trim();
+    if (!feedback) return;
+    CM.reject(instanceId, feedback);
+    rejectModal.close();
+    showToast("Tarefa rejeitada e devolvida com feedback.", "error");
+  });
+
+  childForm.addEventListener("submit", function (ev) {
+    ev.preventDefault();
+    var name = document.getElementById("child-name").value.trim();
+    if (!name) {
+      setChildError("Informe o nome da criança.");
+      return;
+    }
+    var id = document.getElementById("child-id").value;
+    CM.upsertChild({
+      id: id || null,
+      name: name,
+      age: parseInt(document.getElementById("child-age").value, 10) || 0,
+      borderColor: document.getElementById("child-color").value || "#94d5ab",
+      weeklyBonusLabel: document.getElementById("child-weekly-label").value.trim() || "Bônus semanal",
+      weeklyBonusCoins: parseInt(document.getElementById("child-weekly-coins").value, 10) || 0,
+      balanceBRL: parseFloat(document.getElementById("child-balance").value) || 0,
+      goalLabel: document.getElementById("child-goal-label").value.trim() || "Meta do cofrinho",
+      goalAmountBRL: parseFloat(document.getElementById("child-goal-amount").value) || 100,
+      avatarUrl: document.getElementById("child-avatar-url").value || "",
+    });
+    childModal.close();
+    refreshChildSelectors();
+    renderAll();
+    showToast(id ? "Criança atualizada com sucesso." : "Criança cadastrada com sucesso.", "success");
+  });
+
+  var taskIsScheduled = document.getElementById("task-is-scheduled");
+  if (taskIsScheduled) {
+    taskIsScheduled.addEventListener("change", function(e) {
+      var scheduleFields = document.getElementById("task-schedule-fields");
+      if (scheduleFields) scheduleFields.classList.toggle("hidden", !e.target.checked);
+    });
+  }
+  
+  var taskEditIsScheduled = document.getElementById("task-edit-is-scheduled");
+  if (taskEditIsScheduled) {
+    taskEditIsScheduled.addEventListener("change", function(e) {
+      var editScheduleFields = document.getElementById("task-edit-schedule-fields");
+      if (editScheduleFields) editScheduleFields.classList.toggle("hidden", !e.target.checked);
+    });
+  }
+
+  taskForm.addEventListener("submit", function (ev) {
+    ev.preventDefault();
+    var sid = document.getElementById("task-sister").value;
+    var title = document.getElementById("task-title").value.trim();
+    var sub = document.getElementById("task-subtitle").value.trim();
+    var type = document.getElementById("task-status").value;
+    var fr = document.getElementById("task-frequency").value;
+    var ic = (document.getElementById("task-icon").value || "task").trim();
+    var num = 0;
+
+    var isScheduled = document.getElementById("task-is-scheduled").checked;
+    var scheduledDays = [];
+    document.querySelectorAll("#task-schedule-days input[type='checkbox']:checked").forEach(function(cb) {
+      scheduledDays.push(parseInt(cb.value, 10));
+    });
+    var scheduledTime = document.getElementById("task-schedule-time").value;
+
+    if (!title) {
+      taskError.textContent = "Escreva um nome para a tarefa.";
+      taskError.classList.remove("hidden");
+      return;
+    }
+    if (type === "extra") {
+      num = parseFloat(document.getElementById("task-value").value);
+      if (isNaN(num) || num < 0) {
+        taskError.textContent = "Informe um valor válido para a recompensa.";
+        taskError.classList.remove("hidden");
+        return;
+      }
+    }
+
+    CM.upsertCatalogRow({
+      sisterId: sid,
+      title: title,
+      subtitle: sub,
+      valueBRL: num,
+      rewardType: type,
+      frequency: fr,
+      icon: ic || "task",
+      isScheduled: isScheduled,
+      scheduledDays: scheduledDays,
+      scheduledTime: scheduledTime
+    });
+    taskModal.close();
+    showToast("Nova tarefa cadastrada com sucesso.", "success");
+  });
+
+  taskEditForm.addEventListener("submit", function (ev) {
+    ev.preventDefault();
+    var id = document.getElementById("task-edit-id").value;
+    var sid = document.getElementById("task-edit-sister").value;
+    var title = document.getElementById("task-edit-title").value.trim();
+    var sub = document.getElementById("task-edit-subtitle").value.trim();
+    var type = document.getElementById("task-edit-status").value;
+    var fr = document.getElementById("task-edit-frequency").value;
+    var ic = (document.getElementById("task-edit-icon").value || "task").trim();
+    var num = 0;
+
+    var isScheduled = document.getElementById("task-edit-is-scheduled").checked;
+    var scheduledDays = [];
+    document.querySelectorAll("#task-edit-schedule-days input[type='checkbox']:checked").forEach(function(cb) {
+      scheduledDays.push(parseInt(cb.value, 10));
+    });
+    var scheduledTime = document.getElementById("task-edit-schedule-time").value;
+
+    if (!title) {
+      taskEditError.textContent = "Escreva um nome para a tarefa.";
+      taskEditError.classList.remove("hidden");
+      return;
+    }
+    if (type === "extra") {
+      num = parseFloat(document.getElementById("task-edit-value").value);
+      if (isNaN(num) || num < 0) {
+        taskEditError.textContent = "Informe um valor válido para a recompensa.";
+        taskEditError.classList.remove("hidden");
+        return;
+      }
+    }
+
+    CM.upsertCatalogRow({
+      id: id,
+      sisterId: sid,
+      title: title,
+      subtitle: sub,
+      valueBRL: num,
+      rewardType: type,
+      frequency: fr,
+      icon: ic || "task",
+      isScheduled: isScheduled,
+      scheduledDays: scheduledDays,
+      scheduledTime: scheduledTime
+    });
+    taskEditModal.close();
+    showToast("Tarefa atualizada com sucesso.", "success");
+  });
+
+  taskDeleteForm.addEventListener("submit", function (ev) {
+    ev.preventDefault();
+    var id = document.getElementById("task-delete-id").value;
+    if (!id) return;
+    CM.deleteCatalog(id);
+    taskDeleteModal.close();
+    showToast("Tarefa excluída com sucesso.", "success");
+  });
+
+  redeemForm.addEventListener("submit", function (ev) {
+    ev.preventDefault();
+    var sisterId = document.getElementById("redeem-sister").value;
+    var amount = parseFloat(document.getElementById("redeem-value").value);
+    var description = document.getElementById("redeem-description").value.trim() || "Resgate no cofrinho";
+    var result = CM.redeemFromPiggyBank(sisterId, amount, description);
+    if (!result.ok) {
+      redeemError.textContent = result.message || "Não foi possível concluir o resgate.";
+      redeemError.classList.remove("hidden");
+      return;
+    }
+    redeemModal.close();
+    showToast("Resgate registrado com sucesso.", "success");
+  });
+
+  var filterSelect = document.getElementById("redemption-filter-sister");
+  filterSelect.addEventListener("change", renderRedemptions);
+
+  document.getElementById("btn-export-csv").addEventListener("click", function() {
+    var s = CM.getState();
+    if (!s.redemptions || s.redemptions.length === 0) {
+      showToast("Nenhum resgate para exportar.", "error");
+      return;
+    }
+    var filterSisterId = filterSelect.value;
+    var filtered = s.redemptions;
+    if (filterSisterId && filterSisterId !== "all") {
+      filtered = filtered.filter(function(r) { return r.sisterId === filterSisterId; });
+    }
+    if (filtered.length === 0) {
+      showToast("Nenhum resgate encontrado para este filtro.", "error");
+      return;
+    }
+    
+    var csvRows = ["Data,Crianca,Descricao,Valor(R$)"];
+    filtered.forEach(function(r) {
+      var sis = sister(s, r.sisterId);
+      var name = sis ? sis.name : r.sisterId;
+      var dateStr = formatDateTime(r.createdAt);
+      var desc = (r.description || "Resgate").replace(/"/g, '""');
+      var val = r.amountBRL.toFixed(2);
+      csvRows.push('"' + dateStr + '","' + name + '","' + desc + '","' + val + '"');
+    });
+    
+    // Add BOM for Excel UTF-8 support
+    var csvContent = "data:text/csv;charset=utf-8,\uFEFF" + encodeURIComponent(csvRows.join("\n"));
+    var a = document.createElement("a");
+    a.href = csvContent;
+    a.download = "resgates_cofrinho.csv";
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+  });
+
+  refreshChildSelectors();
+  var qsSisterSelect = document.getElementById("quick-surprise-sister");
+
+  var qsForm = document.getElementById("quick-surprise-form");
+  if (qsForm) {
+    qsForm.addEventListener("submit", function(ev) {
+      ev.preventDefault();
+      var title = document.getElementById("quick-surprise-title").value.trim();
+      var sisterId = qsSisterSelect.value;
+      if (!title || !sisterId) return;
+      
+      CM.upsertCatalogRow({
+        sisterId: sisterId,
+        title: title,
+        subtitle: "Tarefa Surpresa",
+        valueBRL: 1,
+        frequency: "unica",
+        rewardType: "extra",
+        icon: "stars"
+      });
+      
+      document.getElementById("quick-surprise-title").value = "";
+      showToast("Surpresa criada em rascunho! Clique em 'Publicar' na tabela para enviar ao board.", "success");
+    });
+  }
+  var resetBoardBtn = document.getElementById("btn-reset-board");
+  if (resetBoardBtn) {
+    resetBoardBtn.addEventListener("click", function () {
+      if (!confirm("⚠️ REINICIAR TUDO?\n\nIsto vai apagar TODAS as crianças, tarefas, saldos e resgates, tanto localmente quanto no Supabase.\n\nEsta ação NÃO pode ser desfeita.")) {
+        return;
+      }
+      var cm = getCM();
+      if (!cm || typeof cm.resetAll !== "function") {
+        console.error("CofrinhoMagico resetAll não disponível.");
+        showToast("Não foi possível reiniciar. Recarregue a página.", "error");
+        return;
+      }
+      var result = cm.resetAll();
+      if (!result || !result.ok) {
+        showToast("Não foi possível reiniciar: erro desconhecido.", "error");
+        return;
+      }
+      try {
+        renderAll();
+      } catch (e) {
+        console.error("Render after resetAll failed:", e);
+      }
+      showToast("✅ Aplicação reiniciada. Cadastre as crianças novamente.", "success");
+    });
+  }
+
+  CM.onChange(renderAll);
+  CM.initSync().then(function() {
+    renderAll();
+  }).catch(function(err) {
+    console.error("Erro na sincronização:", err);
+    renderAll();
+  });
+  }
+
+  function waitForDataModule(attempt) {
+    CM = getCM();
+    if (attempt % 10 === 0) console.log('[Tela2] Aguardando módulo Cofrinho (tentativa ' + attempt + ')');
+    if (CM) {
+      console.log('[Tela2] Módulo Cofrinho carregado na tentativa ' + attempt);
+      initializePanel();
+      return;
+    }
+    if (attempt >= 50) {
+      alert("Erro: Sistema de dados não carregou. Recarregue a página.");
+      console.error("CofrinhoMagico não está disponível em window.CofrinhoMagico");
+      return;
+    }
+    window.setTimeout(function () {
+      waitForDataModule(attempt + 1);
+    }, 100);
+  }
+
+  waitForDataModule(0);
+})();
+</script>
+</body></html>

@@ -1,0 +1,581 @@
+<!DOCTYPE html>
+
+<html lang="pt-br"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Cofrinho Mágico - Board</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@300..700&amp;family=Montserrat:wght@400..700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "on-primary-fixed-variant": "#0e5131",
+                        "tertiary-container": "#e8db8d",
+                        "secondary-fixed-dim": "#9bcdea",
+                        "on-secondary-fixed": "#001e2c",
+                        "inverse-surface": "#303030",
+                        "on-primary-container": "#2c6a48",
+                        "on-secondary-container": "#32657e",
+                        "on-secondary": "#ffffff",
+                        "surface-dim": "#dbd9d9",
+                        "on-secondary-fixed-variant": "#124c65",
+                        "surface-container-low": "#f5f3f3",
+                        "surface-container-highest": "#e4e2e2",
+                        "on-surface-variant": "#404942",
+                        "surface-tint": "#2c6a48",
+                        "on-tertiary-fixed-variant": "#504707",
+                        "surface-bright": "#fbf9f8",
+                        "surface": "#fbf9f8",
+                        "outline": "#707971",
+                        "on-error-container": "#93000a",
+                        "primary": "#2c6a48",
+                        "tertiary-fixed-dim": "#d4c87c",
+                        "surface-container-lowest": "#ffffff",
+                        "secondary": "#31647e",
+                        "inverse-primary": "#94d5ab",
+                        "error": "#ba1a1a",
+                        "on-error": "#ffffff",
+                        "on-primary-fixed": "#002110",
+                        "on-background": "#1b1c1c",
+                        "surface-container": "#efeded",
+                        "secondary-fixed": "#c3e8ff",
+                        "on-tertiary-fixed": "#201c00",
+                        "background": "#fbf9f8",
+                        "on-primary": "#ffffff",
+                        "error-container": "#ffdad6",
+                        "primary-fixed-dim": "#94d5ab",
+                        "outline-variant": "#c0c9c0",
+                        "surface-container-high": "#eae8e7",
+                        "tertiary-fixed": "#f1e495",
+                        "primary-container": "#a7e8bd",
+                        "inverse-on-surface": "#f2f0f0",
+                        "primary-fixed": "#b0f1c6",
+                        "secondary-container": "#afe1ff",
+                        "on-tertiary": "#ffffff",
+                        "on-surface": "#1b1c1c",
+                        "surface-variant": "#e4e2e2",
+                        "tertiary": "#685f1f",
+                        "on-tertiary-container": "#695f1f"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "section-gap": "32px",
+                        "card-padding": "20px",
+                        "container-margin": "24px",
+                        "gutter": "16px",
+                        "unit": "8px"
+                    },
+                    "fontFamily": {
+                        "headline-lg-mobile": ["Quicksand"],
+                        "body-md": ["Quicksand"],
+                        "label-bold": ["Montserrat"],
+                        "headline-lg": ["Quicksand"],
+                        "display-lg": ["Quicksand"],
+                        "label-sm": ["Montserrat"],
+                        "body-lg": ["Quicksand"],
+                        "title-md": ["Quicksand"]
+                    },
+                    "fontSize": {
+                        "headline-lg-mobile": ["22px", {"lineHeight": "30px", "fontWeight": "700"}],
+                        "body-md": ["14px", {"lineHeight": "22px", "fontWeight": "500"}],
+                        "label-bold": ["13px", {"lineHeight": "18px", "letterSpacing": "0.5px", "fontWeight": "700"}],
+                        "headline-lg": ["28px", {"lineHeight": "36px", "fontWeight": "700"}],
+                        "display-lg": ["36px", {"lineHeight": "44px", "fontWeight": "700"}],
+                        "label-sm": ["11px", {"lineHeight": "16px", "fontWeight": "600"}],
+                        "body-lg": ["16px", {"lineHeight": "24px", "fontWeight": "500"}],
+                        "title-md": ["18px", {"lineHeight": "26px", "fontWeight": "600"}]
+                    }
+                },
+            },
+        }
+    </script>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .hide-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .hide-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+    </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background text-on-surface font-body-md antialiased min-h-screen flex flex-col uppercase tracking-[0.02em]">
+<!-- TopAppBar -->
+<header class="bg-surface dark:bg-surface-dim docked full-width top-0 border-b border-outline-variant dark:border-outline shadow-sm flex justify-between items-center w-full px-container-margin py-unit z-40 sticky">
+<div class="flex items-center gap-3">
+<div class="w-10 h-10 rounded-full bg-primary-container flex items-center justify-center overflow-hidden">
+<img alt="Foto do perfil da família" class="w-full h-full object-cover" data-alt="A warm and colorful illustration of a stylized happy family of four, rendered in a 3D clay-style animation aesthetic. The background is a soft pastel green, reflecting a gentle and nurturing environment. Each family member has a cheerful expression, emphasizing themes of domestic harmony and gentle productivity. The lighting is soft and diffused, creating a welcoming and modern light-mode feel." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDMuUg46xBeL0aczXSMuLNbyFF5p0-9F_p8mRYPqKYx5b9GMdpKaKrsigonh8aCaAHkM_L4s9TmBh0nVGrWVW2UU354LLJ8LDm0gN91gqvzoosvKy5BGu27jByYIsaacBEtRdGkyD5HNPbFu40ByAI61CB0oPaiJZXP3f99fqLVgMJnOXB_LfLagTH-h9C-aZXLt6yicx4wEkS4_pKBlULQ8nOnJvDqw-zNy3iOdqKqcRO-RvxVvqV54VZL-G1I_uTRYMH-HJeMFW40"/>
+</div>
+<h1 class="font-headline-lg text-headline-lg-mobile font-bold text-primary dark:text-primary-fixed-dim">Cofrinho Mágico</h1>
+</div>
+<a href="tela2.html" class="material-symbols-outlined text-primary dark:text-primary-fixed-dim hover:bg-surface-container-low dark:hover:bg-surface-container-highest transition-colors p-2 rounded-full active:scale-95 transition-all duration-200 no-underline inline-flex items-center justify-center" title="Painel dos pais" data-icon="settings">settings</a>
+</header>
+<div id="kid-progress-tracks" class="w-full bg-surface-container-lowest border-b border-outline-variant dark:border-outline shadow-sm flex flex-col py-3 px-container-margin shrink-0 z-30"></div>
+<!-- Main Content: Mobile Board Layout -->
+<main class="flex-1 overflow-x-auto overflow-y-hidden flex md:justify-center hide-scrollbar snap-x snap-mandatory">
+<!-- Column 1: Menu de Tarefas -->
+<section id="sec-tarefas" class="flex-none md:flex-1 w-[85vw] md:w-auto md:min-w-[240px] md:max-w-[320px] h-full p-2 lg:p-4 snap-center">
+<div class="flex items-center justify-between mb-4 px-2">
+<h2 class="font-title-md text-title-md text-on-surface flex items-center gap-2">
+<span class="material-symbols-outlined text-secondary" data-icon="assignment">assignment</span>
+                    Menu de Tarefas
+                </h2>
+<span class="bg-surface-container-high text-on-surface-variant text-label-sm font-label-bold px-2 py-1 rounded-full" id="kid-count-available">0</span>
+</div>
+<div class="space-y-4 overflow-y-auto h-[calc(100vh-200px)] pb-20 hide-scrollbar" id="kid-col-available"></div>
+</section>
+<!-- Column 2: Fazendo -->
+<section class="flex-none md:flex-1 w-[85vw] md:w-auto md:min-w-[240px] md:max-w-[320px] h-full p-2 lg:p-4 snap-center">
+<div class="flex items-center justify-between mb-4 px-2">
+<h2 class="font-title-md text-title-md text-on-surface flex items-center gap-2">
+<span class="material-symbols-outlined text-primary" data-icon="rocket_launch">rocket_launch</span>
+                    Fazendo
+                </h2>
+</div>
+<div id="kid-col-doing" class="bg-surface-container rounded-2xl border-2 border-dashed border-outline-variant min-h-[calc(100vh-250px)] flex flex-col items-stretch justify-start p-4 text-on-surface gap-3 overflow-y-auto hide-scrollbar"></div>
+</section>
+<!-- Column 3: Check dos Pais -->
+<section class="flex-none md:flex-1 w-[85vw] md:w-auto md:min-w-[240px] md:max-w-[320px] h-full p-2 lg:p-4 snap-center flex flex-col">
+<div class="flex items-center justify-between mb-2 px-2">
+<h2 class="font-title-md text-title-md text-on-surface flex items-center gap-2">
+<span class="material-symbols-outlined text-tertiary" data-icon="fact_check">fact_check</span>
+                    Check dos Pais
+                </h2>
+<span class="bg-tertiary-container text-on-tertiary-container text-label-sm font-label-bold px-2 py-1 rounded-full" id="kid-count-pending">0</span>
+</div>
+<p class="text-center text-label-sm text-on-surface-variant px-2 mb-4 bg-surface-container-high rounded-lg py-2 shadow-sm border border-outline-variant/30">O dinheiro só entra depois do ok no telemóvel dos pais.</p>
+<div class="space-y-4 overflow-y-auto flex-1 pb-24 hide-scrollbar" id="kid-col-pending"></div>
+</section>
+<!-- Column 4: Concluídas -->
+<section class="flex-none md:flex-1 w-[85vw] md:w-auto md:min-w-[240px] md:max-w-[320px] h-full p-2 lg:p-4 snap-center flex flex-col">
+<div class="flex items-center justify-between mb-2 px-2">
+<h2 class="font-title-md text-title-md text-on-surface flex items-center gap-2">
+<span class="material-symbols-outlined text-secondary" data-icon="task_alt">task_alt</span>
+                    Concluídas
+                </h2>
+<span class="bg-surface-variant text-on-surface-variant text-label-sm font-label-bold px-2 py-1 rounded-full" id="kid-count-completed">0</span>
+</div>
+<div class="space-y-4 overflow-y-auto flex-1 pb-24 hide-scrollbar" id="kid-col-completed"></div>
+</section>
+<!-- Column 5: Banco/Cofrinho -->
+<section id="sec-cofrinho" class="flex-none md:flex-1 w-[85vw] md:w-auto md:min-w-[240px] md:max-w-[320px] h-full p-2 lg:p-4 snap-center">
+<div class="flex items-center justify-between mb-4 px-2">
+<h2 class="font-title-md text-title-md text-on-surface flex items-center gap-2">
+<span class="material-symbols-outlined text-tertiary" data-icon="savings">savings</span>
+                    Banco/Cofrinho
+                </h2>
+</div>
+<div class="space-y-4" id="kid-col-savings"></div>
+</section>
+</main>
+<!-- BottomNavBar -->
+<nav id="bottom-nav" class="fixed bottom-0 left-0 w-full z-50 flex justify-around items-center px-4 py-3 pb-safe bg-surface dark:bg-surface-dim shadow-[0_-4px_6px_-1px_rgba(0,0,0,0.05)] rounded-t-xl">
+<a class="nav-item flex flex-col items-center justify-center text-on-surface-variant dark:text-outline px-5 py-2 hover:bg-surface-container-high dark:hover:bg-surface-container-highest rounded-full transition-all active:scale-90 duration-150" href="index.html">
+<span class="material-symbols-outlined" data-icon="home">home</span>
+<span class="font-label-bold text-label-bold">Início</span>
+</a>
+<a data-target="sec-tarefas" class="nav-item flex flex-col items-center justify-center bg-primary-container dark:bg-on-primary-container text-on-primary-container dark:text-primary-fixed rounded-full px-5 py-2 hover:bg-surface-container-high dark:hover:bg-surface-container-highest transition-all active:scale-90 duration-150" href="#sec-tarefas">
+<span class="material-symbols-outlined" data-icon="assignment_turned_in">assignment_turned_in</span>
+<span class="font-label-bold text-label-bold">Tarefas</span>
+</a>
+<a data-target="sec-cofrinho" class="nav-item flex flex-col items-center justify-center text-on-surface-variant dark:text-outline px-5 py-2 hover:bg-surface-container-high dark:hover:bg-surface-container-highest rounded-full transition-all active:scale-90 duration-150" href="#sec-cofrinho">
+<span class="material-symbols-outlined" data-icon="savings">savings</span>
+<span class="font-label-bold text-label-bold">Cofrinho</span>
+</a>
+<a class="nav-item flex flex-col items-center justify-center text-on-surface-variant dark:text-outline px-5 py-2 hover:bg-surface-container-high dark:hover:bg-surface-container-highest rounded-full transition-all active:scale-90 duration-150" href="tela2.html" title="Painel dos pais">
+<span class="material-symbols-outlined" data-icon="shield_person">shield_person</span>
+<span class="font-label-bold text-label-bold">Pais</span>
+</a>
+</nav>
+
+<script>
+document.addEventListener("DOMContentLoaded", function() {
+  var observer = new IntersectionObserver(function(entries) {
+    entries.forEach(function(entry) {
+      if (entry.isIntersecting) {
+        var id = entry.target.id;
+        document.querySelectorAll('.nav-item').forEach(function(nav) {
+          if(nav.hasAttribute('data-target')) {
+            if(nav.getAttribute('data-target') === id) {
+              nav.classList.remove('text-on-surface-variant', 'dark:text-outline');
+              nav.classList.add('bg-primary-container', 'dark:bg-on-primary-container', 'text-on-primary-container', 'dark:text-primary-fixed');
+            } else {
+              nav.classList.remove('bg-primary-container', 'dark:bg-on-primary-container', 'text-on-primary-container', 'dark:text-primary-fixed');
+              nav.classList.add('text-on-surface-variant', 'dark:text-outline');
+            }
+          }
+        });
+      }
+    });
+  }, { threshold: 0.5 });
+  
+  var target1 = document.getElementById('sec-tarefas');
+  var target2 = document.getElementById('sec-cofrinho');
+  if(target1) observer.observe(target1);
+  if(target2) observer.observe(target2);
+});
+</script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="supabase-client.js?v=2"></script>
+<script src="cofrinho-data.js?v=10"></script>
+<script>
+(function () {
+  var CM = window.CofrinhoMagico;
+  // avatarUrl agora vem diretamente de sis.avatarUrl
+
+  function sister(state, id) {
+    for (var i = 0; i < state.sisters.length; i++) {
+      if (state.sisters[i].id === id) return state.sisters[i];
+    }
+    return null;
+  }
+
+  function cat(state, id) {
+    for (var i = 0; i < state.catalog.length; i++) {
+      if (state.catalog[i].id === id) return state.catalog[i];
+    }
+    return null;
+  }
+
+  function freqLabel(f) {
+    if (f === "semanal") return "Semanal";
+    return "Diário";
+  }
+
+  function rewardTypeLabel(c) {
+    return c.rewardType === "diario" ? "Diário" : "Extra";
+  }
+
+  function rewardValueLabel(c) {
+    return c.rewardType === "diario" ? "Sem recompensa" : CM.fmtBRL(c.valueBRL);
+  }
+
+  function esc(s) {
+    if (!s) return "";
+    return String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/"/g, "&quot;");
+  }
+
+  function renderProgressTracks(state) {
+    var container = document.getElementById("kid-progress-tracks");
+    if (!container) return;
+    container.innerHTML = "";
+    
+    var hasTracks = false;
+    
+    state.sisters.forEach(function(sis) {
+      var countA = 0, countD = 0, countP = 0, countC = 0;
+      
+      state.catalog.forEach(function(cat) {
+        if (cat.sisterId !== sis.id) return;
+        
+        if (CM.isTaskCompletedInPeriod && CM.isTaskCompletedInPeriod(cat.id)) {
+          countC++;
+          return;
+        }
+        
+        var inDoing = state.doing.some(function(i) { return i.catalogId === cat.id; });
+        if (inDoing) { countD++; return; }
+        
+        var inPending = state.pending.some(function(i) { return i.catalogId === cat.id; });
+        if (inPending) { countP++; return; }
+        
+        var inAvailable = state.available.some(function(i) { return i.catalogId === cat.id; });
+        if (inAvailable) { countA++; return; }
+      });
+      
+      var total = countA + countD + countP + countC;
+      if (total === 0) return;
+      
+      hasTracks = true;
+      var maxScore = total * 3;
+      var score = (countD * 1) + (countP * 2) + (countC * 3);
+      var pct = Math.round((score / maxScore) * 100);
+      
+      var img = sis.avatarUrl || "";
+      var bar = sis.borderColor || "#ccc";
+      
+      var trackDiv = document.createElement("div");
+      trackDiv.className = "relative w-full h-[52px] flex flex-col justify-center my-1";
+      
+      trackDiv.innerHTML = 
+        "<div class=\"absolute w-full h-3 rounded-full overflow-hidden bg-surface-variant dark:bg-outline-variant shadow-inner\">" +
+          "<div class=\"h-full transition-all duration-700 ease-out\" style=\"width:" + pct + "%; background-color:" + esc(bar) + ";\"></div>" +
+        "</div>" +
+        "<div class=\"absolute right-0 -mr-2 w-8 h-8 flex items-center justify-center text-[22px] z-10 drop-shadow-md\">🏁</div>" +
+        "<div class=\"absolute w-[44px] h-[44px] rounded-full border-[3px] border-surface shadow-md z-20 transition-all duration-700 ease-out flex items-center justify-center overflow-hidden\" " +
+             "style=\"left: calc(" + pct + "% - " + (pct * 44 / 100) + "px); background-color: " + esc(bar) + ";\">" +
+          (img ? "<img src=\"" + esc(img) + "\" class=\"w-full h-full object-cover\" />" : "<span class=\"text-lg\">👧</span>") +
+        "</div>";
+        
+      container.appendChild(trackDiv);
+    });
+    
+    if (!hasTracks) {
+      container.style.display = "none";
+    } else {
+      container.style.display = "flex";
+    }
+  }
+
+  function renderAvailable(state) {
+    var el = document.getElementById("kid-col-available");
+    var openNow = state.available.filter(function (inst) {
+      var c = cat(state, inst.catalogId);
+      if (!c) return false;
+      return !CM.isTaskBlockedByRecurrence(c.id);
+    });
+    document.getElementById("kid-count-available").textContent = String(openNow.length);
+    el.innerHTML = "";
+    if (openNow.length === 0) {
+      el.innerHTML = "<p class=\"text-on-surface-variant text-center py-8 font-body-md\">Todas as tarefas recorrentes deste período já foram concluídas.</p>";
+      return;
+    }
+    openNow.forEach(function (inst) {
+      var c = cat(state, inst.catalogId);
+      if (!c) return;
+      var sis = sister(state, c.sisterId);
+      var border = sis && sis.borderColor ? sis.borderColor : "#ccc";
+      var badge = sis && sis.badgeClass ? sis.badgeClass : "bg-secondary-container text-on-secondary-container";
+      var label = sis ? sis.name + " (" + sis.age + ")" : "?";
+      var div = document.createElement("div");
+      div.className = "bg-surface-container-lowest rounded-xl shadow-sm p-card-padding hover:shadow-md transition-all active:scale-[0.98] cursor-pointer";
+      div.style.borderTop = "4px solid " + border;
+      div.setAttribute("role", "button");
+      div.setAttribute("data-instance-id", inst.id);
+      var feedbackHtml = "";
+      if (inst.feedback) {
+        feedbackHtml = "<div class=\"bg-error-container text-on-error-container text-label-sm p-3 rounded-lg mt-2 mb-3 border border-error/30 flex gap-2 items-start\">" +
+                       "<span class=\"material-symbols-outlined text-[18px] shrink-0\">campaign</span>" +
+                       "<span><strong>Correção pedida:</strong> " + esc(inst.feedback) + "</span>" +
+                       "</div>";
+      }
+
+      div.innerHTML =
+        "<div class=\"flex justify-between items-start mb-2\">" +
+        "<span class=\"" + esc(badge) + " text-label-sm font-label-bold px-3 py-1 rounded-full\">" + esc(label) + "</span>" +
+        "<span class=\"material-symbols-outlined\" style=\"color:" + esc(border) + "\">" + esc(c.icon || "task") + "</span>" +
+        "</div>" +
+        "<h3 class=\"font-body-lg text-body-lg mb-2\">" + esc(c.title) + "</h3>" +
+        feedbackHtml +
+        (c.subtitle && !inst.feedback ? "<p class=\"text-label-sm text-on-surface-variant mb-3\">" + esc(c.subtitle) + "</p>" : (!inst.feedback ? "<div class=\"mb-3\"></div>" : "")) +
+        "<div class=\"flex justify-between items-center flex-wrap gap-2\">" +
+        "<span class=\"bg-surface-variant text-on-surface-variant text-label-sm px-2 py-0.5 rounded-full\">" + esc(freqLabel(c.frequency)) + "</span>" +
+        "<span class=\"" + (c.rewardType === "diario" ? "bg-secondary-container text-on-secondary-container" : "bg-primary-container text-on-primary-container") + " text-label-sm px-2 py-0.5 rounded-full font-label-bold\">" + esc(rewardTypeLabel(c)) + "</span>" +
+        "<div class=\"bg-tertiary-container text-on-tertiary-container font-label-bold px-4 py-1.5 rounded-full flex items-center gap-1 shadow-[0_2px_0_0_rgba(105,95,31,0.2)]\">" +
+        "<span class=\"material-symbols-outlined text-[18px]\">payments</span>" +
+        esc(rewardValueLabel(c)) +
+        "</div>" +
+        "</div>" +
+        "<p class=\"mt-3 text-primary font-label-bold text-label-sm text-center\">Toque para começar</p>";
+      div.addEventListener("click", function () {
+        CM.startTask(inst.id);
+      });
+      el.appendChild(div);
+    });
+  }
+
+  function renderDoing(state) {
+    var el = document.getElementById("kid-col-doing");
+    el.innerHTML = "";
+    if (state.doing.length === 0) {
+      el.classList.add("items-center", "justify-center", "text-center", "text-on-surface-variant");
+      el.innerHTML =
+        "<span class=\"material-symbols-outlined text-[48px] mb-2 opacity-50\">touch_app</span>" +
+        "<p class=\"font-body-md px-4\">Escolhe uma tarefa na primeira coluna para começar!</p>";
+      return;
+    }
+    el.classList.remove("items-center", "justify-center", "text-center", "text-on-surface-variant");
+    state.doing.forEach(function (inst) {
+      var c = cat(state, inst.catalogId);
+      if (!c) return;
+      var sis = sister(state, c.sisterId);
+      var border = sis && sis.borderColor ? sis.borderColor : "#ccc";
+      var badge = sis && sis.badgeClass ? sis.badgeClass : "bg-secondary-container text-on-secondary-container";
+      var label = sis ? sis.name + " (" + sis.age + ")" : "?";
+      var wrap = document.createElement("div");
+      wrap.className = "bg-surface-container-lowest rounded-xl shadow-md p-card-padding border-t-4";
+      wrap.style.borderTopColor = border;
+      wrap.innerHTML =
+        "<div class=\"flex justify-between items-start mb-2\">" +
+        "<span class=\"" + esc(badge) + " text-label-sm font-label-bold px-3 py-1 rounded-full\">" + esc(label) + "</span>" +
+        "<span class=\"material-symbols-outlined text-primary\">rocket_launch</span>" +
+        "</div>" +
+        "<h3 class=\"font-body-lg text-body-lg mb-3\">" + esc(c.title) + "</h3>" +
+        "<div class=\"flex justify-between items-center mb-4\">" +
+        "<div class=\"bg-tertiary-container text-on-tertiary-container font-label-bold px-4 py-1.5 rounded-full flex items-center gap-1\">" +
+        "<span class=\"material-symbols-outlined text-[18px]\">payments</span> " +
+        esc(rewardValueLabel(c)) +
+        "</div></div>" +
+        "<button type=\"button\" class=\"kid-done-btn w-full bg-primary text-on-primary font-label-bold py-3 rounded-xl shadow-[0_2px_0_0_#0e5131] active:translate-y-[2px] active:shadow-none transition-all\">Terminei — pedir ok dos pais</button>";
+      wrap.querySelector(".kid-done-btn").addEventListener("click", function (e) {
+        e.stopPropagation();
+        CM.submitForApproval(inst.id);
+      });
+      el.appendChild(wrap);
+    });
+  }
+
+  function renderPending(state) {
+    var el = document.getElementById("kid-col-pending");
+    document.getElementById("kid-count-pending").textContent = String(state.pending.length);
+    el.innerHTML = "";
+    if (state.pending.length === 0) {
+      el.innerHTML = "<p class=\"text-on-surface-variant text-center py-6 font-body-md\">Nada à espera de confirmação.</p>";
+      return;
+    }
+    state.pending.forEach(function (inst) {
+      var c = cat(state, inst.catalogId);
+      if (!c) return;
+      var sis = sister(state, c.sisterId);
+      var border = sis && sis.borderColor ? sis.borderColor : "#ccc";
+      var badge = sis && sis.badgeClass ? sis.badgeClass : "bg-primary-container text-on-primary-container";
+      var label = sis ? sis.name + " (" + sis.age + ")" : "?";
+      var div = document.createElement("div");
+      div.className = "bg-surface-container-lowest rounded-xl shadow-md border-t-4 p-card-padding relative overflow-hidden opacity-95";
+      div.style.borderTopColor = border;
+      div.innerHTML =
+        "<div class=\"flex justify-between items-start mb-2\">" +
+        "<span class=\"" + esc(badge) + " text-label-sm font-label-bold px-3 py-1 rounded-full\">" + esc(label) + "</span>" +
+        "<span class=\"material-symbols-outlined text-primary\">hourglass_empty</span>" +
+        "</div>" +
+        "<h3 class=\"font-body-lg text-body-lg mb-4\">" + esc(c.title) + "</h3>" +
+        "<div class=\"bg-tertiary-container text-on-tertiary-container font-label-bold px-4 py-1.5 rounded-full inline-flex items-center gap-1\">" +
+        "<span class=\"material-symbols-outlined text-[18px]\">payments</span> " +
+        esc(rewardValueLabel(c)) +
+        "</div>" +
+        "<p class=\"mt-3 text-label-sm text-on-surface-variant\">À espera do ok no painel dos pais…</p>";
+      el.appendChild(div);
+    });
+  }
+
+  function renderCompleted(state) {
+    var el = document.getElementById("kid-col-completed");
+    var completedNow = state.available.filter(function (inst) {
+      var c = cat(state, inst.catalogId);
+      if (!c) return false;
+      return CM.isTaskCompletedInPeriod && CM.isTaskCompletedInPeriod(c.id);
+    });
+    document.getElementById("kid-count-completed").textContent = String(completedNow.length);
+    el.innerHTML = "";
+    if (completedNow.length === 0) {
+      el.innerHTML = "<p class=\"text-on-surface-variant text-center py-8 font-body-md\">Nenhuma tarefa concluída ainda.</p>";
+      return;
+    }
+    completedNow.forEach(function (inst) {
+      var c = cat(state, inst.catalogId);
+      if (!c) return;
+      var sis = sister(state, c.sisterId);
+      var border = sis && sis.borderColor ? sis.borderColor : "#ccc";
+      var badge = sis && sis.badgeClass ? sis.badgeClass : "bg-secondary-container text-on-secondary-container";
+      var label = sis ? sis.name + " (" + sis.age + ")" : "?";
+      
+      var doneTime = state.completedAtByCatalog[c.id];
+      var doneText = "";
+      if (doneTime) {
+         var d = new Date(doneTime);
+         var today = new Date();
+         if (d.getDate() === today.getDate() && d.getMonth() === today.getMonth() && d.getFullYear() === today.getFullYear()) {
+            doneText = "Hoje às " + d.toLocaleTimeString("pt-BR", {hour: '2-digit', minute:'2-digit'});
+         } else {
+            doneText = d.toLocaleDateString("pt-BR", {day: '2-digit', month: '2-digit'}) + " às " + d.toLocaleTimeString("pt-BR", {hour: '2-digit', minute:'2-digit'});
+         }
+      }
+
+      var div = document.createElement("div");
+      div.className = "bg-surface-container rounded-xl shadow-sm p-card-padding border-t-4 opacity-75";
+      div.style.borderTopColor = border;
+      div.innerHTML =
+        "<div class=\"flex justify-between items-start mb-2\">" +
+        "<span class=\"" + esc(badge) + " text-label-sm font-label-bold px-3 py-1 rounded-full\">" + esc(label) + "</span>" +
+        "<span class=\"material-symbols-outlined text-secondary\">check_circle</span>" +
+        "</div>" +
+        "<h3 class=\"font-body-lg text-body-lg mb-2 line-through text-on-surface-variant\">" + esc(c.title) + "</h3>" +
+        "<div class=\"flex justify-between items-center mt-3\">" +
+        "<span class=\"text-label-sm font-label-bold text-secondary\">" + (c.rewardType === "extra" ? "Recompensa paga" : "Cumprimento registrado") + "</span>" +
+        (doneText ? "<span class=\"text-label-sm text-on-surface-variant\">" + doneText + "</span>" : "") +
+        "</div>";
+      el.appendChild(div);
+    });
+  }
+
+  function goalPercent(sis) {
+    var g = Number(sis.goalAmountBRL) || 1;
+    var b = Number(sis.balanceBRL) || 0;
+    return Math.min(100, Math.round((b / g) * 100));
+  }
+
+  function renderSavings(state) {
+    var el = document.getElementById("kid-col-savings");
+    el.innerHTML = "";
+    state.sisters.forEach(function (sis) {
+      var pct = goalPercent(sis);
+      var img = sis.avatarUrl || "";
+      var bar = sis.borderColor || "#94d5ab";
+      var card = document.createElement("div");
+      card.className = "bg-surface-container-lowest rounded-2xl shadow-lg p-6 border-b-4 border-secondary/20 relative overflow-hidden";
+      card.innerHTML =
+        "<div class=\"flex items-center gap-4 mb-4\">" +
+        "<div class=\"w-14 h-14 rounded-full flex items-center justify-center border-2 border-white overflow-hidden\" style=\"background:" + esc(bar) + "\">" +
+        (img ? "<img alt=\"" + esc(sis.name) + "\" class=\"w-full h-full object-cover rounded-full\" src=\"" + esc(img) + "\"/>" : "<span class=\"text-2xl\">⭐</span>") +
+        "</div>" +
+        "<div>" +
+        "<p class=\"font-label-bold text-label-bold text-on-surface-variant\">" + esc(sis.name) + " (" + esc(String(sis.age)) + " anos)</p>" +
+        "<p class=\"font-display-lg text-[28px] text-primary\">" + esc(CM.fmtBRL(sis.balanceBRL)) + "</p>" +
+        "</div></div>" +
+        "<div class=\"h-3 bg-surface-container rounded-full overflow-hidden mb-2\">" +
+        "<div class=\"h-full rounded-full transition-all\" style=\"width:" + pct + "%;background:" + esc(bar) + "\"></div>" +
+        "</div>" +
+        "<p class=\"text-label-sm font-label-bold text-right text-outline\">Meta: " + esc(sis.goalLabel) + " (" + pct + "%)</p>";
+      el.appendChild(card);
+    });
+  }
+
+  function renderAll() {
+    console.log('[Tela1] renderAll chamado');
+    var state = CM.getState();
+    console.log('[Tela1] Estado atual:', state.sisters ? state.sisters.length + ' filhas' : 'sem filhas');
+    renderProgressTracks(state);
+    renderAvailable(state);
+    renderDoing(state);
+    renderPending(state);
+    renderCompleted(state);
+    renderSavings(state);
+  }
+
+  console.log('[Tela1] Script iniciado');
+  CM.onChange(renderAll);
+  console.log('[Tela1] Aguardando initSync()...');
+  CM.initSync().then(function() {
+    console.log('[Tela1] initSync() concluído, chamando renderAll');
+    renderAll();
+  }).catch(function(err) {
+    console.error("[Tela1] Erro na sincronização:", err);
+    console.log('[Tela1] Chamando renderAll mesmo com erro');
+    renderAll();
+  });
+
+  // Verifica as tarefas agendadas a cada minuto
+  setInterval(function() {
+    renderAll();
+  }, 60000);
+})();
+</script>
+</body></html>

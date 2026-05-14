@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="pt-BR" class="h-full">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Cofrinho Mágico</title>
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#f0fdf4">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@500;600;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0" rel="stylesheet">
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Quicksand', 'sans-serif'],
+          },
+          colors: {
+            primary: "#146c2e",
+            "primary-container": "#94f990",
+            "on-primary-container": "#002204",
+            background: "#f0fdf4",
+            surface: "#f8fafc",
+            error: "#ba1a1a",
+          }
+        }
+      }
+    }
+  </script>
+</head>
+<body class="bg-background min-h-screen flex flex-col items-center justify-center p-6 uppercase tracking-[0.02em]">
+  
+  <div class="max-w-md w-full bg-white rounded-3xl shadow-xl p-8 text-center border-t-8 border-primary-container relative overflow-hidden">
+    <div class="w-24 h-24 mx-auto bg-primary-container rounded-full flex items-center justify-center mb-6 shadow-sm border-4 border-white">
+      <span class="material-symbols-outlined text-primary text-5xl">savings</span>
+    </div>
+    
+    <h1 class="text-3xl font-bold text-primary mb-2">Cofrinho Mágico</h1>
+    <p class="text-gray-600 mb-8 text-sm font-semibold normal-case">Aprenda a poupar se divertindo!</p>
+    
+    <!-- ÁREA DE LOADING -->
+    <div id="loading-area" class="py-8">
+      <span class="material-symbols-outlined animate-spin text-primary text-4xl">refresh</span>
+      <p class="mt-4 font-bold text-primary">Carregando...</p>
+    </div>
+
+    <!-- ÁREA DE LOGIN -->
+    <div id="auth-area" class="hidden space-y-4 text-left">
+      <p class="text-center font-bold text-sm text-gray-500 mb-6">Crie ou entre na conta da sua família</p>
+      
+      <form id="auth-form" class="space-y-4">
+        <div>
+          <label class="font-bold text-sm text-gray-700 block mb-1">E-mail</label>
+          <input type="email" id="auth-email" required class="w-full bg-surface border-none rounded-lg p-3 font-semibold text-gray-800 focus:ring-2 focus:ring-primary normal-case" placeholder="familia@exemplo.com">
+        </div>
+        <div>
+          <label class="font-bold text-sm text-gray-700 block mb-1">Senha</label>
+          <input type="password" id="auth-password" required minlength="6" class="w-full bg-surface border-none rounded-lg p-3 font-semibold text-gray-800 focus:ring-2 focus:ring-primary normal-case" placeholder="No mínimo 6 caracteres">
+        </div>
+        
+        <p id="auth-error" class="text-sm font-bold text-error hidden text-center"></p>
+
+        <div class="flex flex-col gap-3 pt-2">
+          <button type="submit" id="btn-login" class="w-full bg-primary text-white font-bold py-3 rounded-xl shadow-md hover:opacity-90 active:scale-[0.98] transition-all">Entrar</button>
+          <button type="button" id="btn-register" class="w-full bg-surface border-2 border-primary text-primary font-bold py-3 rounded-xl hover:bg-green-50 active:scale-[0.98] transition-all">Criar Conta Nova</button>
+        </div>
+      </form>
+    </div>
+
+    <!-- ÁREA LOGADA (BOTÕES) -->
+    <div id="app-area" class="hidden space-y-4">
+      <p class="text-center font-bold text-sm text-primary mb-6" id="welcome-msg">Bem-vindo!</p>
+
+      <a href="tela1.html" onclick="localStorage.setItem('viewMode','child')" class="flex items-center gap-4 bg-surface hover:bg-green-50 border-2 border-primary-container rounded-2xl p-4 transition-all hover:scale-105 active:scale-95 group">
+        <div class="w-12 h-12 rounded-full bg-green-100 flex items-center justify-center text-2xl group-hover:bg-primary-container transition-colors">👧</div>
+        <div class="text-left">
+          <h2 class="font-bold text-primary text-lg">Sou Criança</h2>
+          <p class="text-xs text-gray-500 normal-case font-semibold">Ver minhas tarefas e moedas</p>
+        </div>
+      </a>
+      
+      <a href="tela2.html" onclick="localStorage.setItem('viewMode','parent')" class="flex items-center gap-4 bg-surface hover:bg-blue-50 border-2 border-blue-200 rounded-2xl p-4 transition-all hover:scale-105 active:scale-95 group">
+        <div class="w-12 h-12 rounded-full bg-blue-100 flex items-center justify-center text-2xl text-blue-600 group-hover:bg-blue-200 transition-colors">
+          <span class="material-symbols-outlined">shield_person</span>
+        </div>
+        <div class="text-left">
+          <h2 class="font-bold text-blue-700 text-lg">Sou Pai/Mãe</h2>
+          <p class="text-xs text-gray-500 normal-case font-semibold">Gerenciar quadro e recompensas</p>
+        </div>
+      </a>
+
+      <button id="btn-logout" class="mt-6 text-sm font-bold text-gray-400 hover:text-error transition-colors flex items-center justify-center gap-1 mx-auto w-full pt-4 border-t border-gray-100">
+        <span class="material-symbols-outlined text-sm">logout</span> Sair da Conta
+      </button>
+    </div>
+  </div>
+  
+  <p class="mt-8 text-xs text-gray-400 font-bold">V 2.0.0 • FEITO COM ❤️</p>
+  
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="supabase-client.js?v=2"></script>
+  
+  <script>
+    document.addEventListener("DOMContentLoaded", async function() {
+      const supabase = window.supabaseClient;
+      const loadingArea = document.getElementById("loading-area");
+      const authArea = document.getElementById("auth-area");
+      const appArea = document.getElementById("app-area");
+      const authError = document.getElementById("auth-error");
+      const emailInput = document.getElementById("auth-email");
+      const passInput = document.getElementById("auth-password");
+      const welcomeMsg = document.getElementById("welcome-msg");
+
+      function showError(msg) {
+        authError.textContent = msg;
+        authError.classList.remove("hidden");
+      }
+
+      function hideError() {
+        authError.classList.add("hidden");
+      }
+
+      async function checkSession() {
+        loadingArea.classList.remove("hidden");
+        authArea.classList.add("hidden");
+        appArea.classList.add("hidden");
+
+        const { data: { session }, error } = await supabase.auth.getSession();
+        
+        loadingArea.classList.add("hidden");
+        
+        if (session) {
+          welcomeMsg.textContent = "Logado como: " + session.user.email;
+          appArea.classList.remove("hidden");
+        } else {
+          authArea.classList.remove("hidden");
+        }
+      }
+
+      document.getElementById("btn-login").addEventListener("click", async function(e) {
+        e.preventDefault();
+        hideError();
+        const email = emailInput.value;
+        const password = passInput.value;
+        
+        if (!email || !password) return showError("Preencha e-mail e senha.");
+        
+        loadingArea.classList.remove("hidden");
+        authArea.classList.add("hidden");
+
+        const { data, error } = await supabase.auth.signInWithPassword({ email, password });
+        
+        if (error) {
+          showError("Erro: " + (error.message === "Invalid login credentials" ? "E-mail/senha incorretos ou e-mail não confirmado." : error.message));
+          loadingArea.classList.add("hidden");
+          authArea.classList.remove("hidden");
+        } else {
+          checkSession();
+        }
+      });
+
+      document.getElementById("btn-register").addEventListener("click", async function(e) {
+        e.preventDefault();
+        hideError();
+        const email = emailInput.value;
+        const password = passInput.value;
+        
+        if (!email || !password) return showError("Preencha e-mail e senha.");
+        if (password.length < 6) return showError("A senha deve ter pelo menos 6 caracteres.");
+        
+        loadingArea.classList.remove("hidden");
+        authArea.classList.add("hidden");
+
+        const { data, error } = await supabase.auth.signUp({ email, password });
+        
+        if (error) {
+          showError("Erro ao criar conta: " + error.message);
+          loadingArea.classList.add("hidden");
+          authArea.classList.remove("hidden");
+        } else {
+          if (!data.session) {
+            loadingArea.classList.add("hidden");
+            authArea.classList.remove("hidden");
+            showError("Conta criada! Verifique sua caixa de e-mail para confirmar antes de entrar.");
+            authError.classList.replace("text-error", "text-primary");
+          } else {
+            checkSession();
+          }
+        }
+      });
+
+      document.getElementById("btn-logout").addEventListener("click", async function() {
+        localStorage.removeItem("viewMode");
+        await supabase.auth.signOut();
+        checkSession();
+      });
+
+      // Run on boot
+      checkSession();
+
+      // Listen for auth state changes
+      supabase.auth.onAuthStateChange((event, session) => {
+        if (event === 'SIGNED_IN' || event === 'SIGNED_OUT') {
+          checkSession();
+        }
+      });
+    });
+  </script>
+</body>
+</html>
