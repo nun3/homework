@@ -129,12 +129,12 @@
         
         console.log('[Cofrinho] Session:', session ? 'autenticado' : 'não autenticado');
         
-        var isIndex = window.location.pathname.endsWith('index.html') || window.location.pathname === '/';
+        var isIndex = window.location.pathname.endsWith('index.html') || window.location.pathname === '/' || window.location.pathname.endsWith('/');
         
         if (!session) {
           if (!isIndex) {
-            console.log('[Cofrinho] Sem sessão, redirecionando para index.html');
-            window.location.href = 'index.html';
+            console.log('[Cofrinho] Sem sessão, redirecionando para o início');
+            window.location.href = './';
           }
           return;
         }

@@ -150,7 +150,7 @@
               Olá! Esta área mágica é reservada para os pais e mães organizarem as tarefas e recompensas.
             </p>
             <div class="flex justify-center">
-              <button onclick="window.location.href='index.html'" class="bg-primary hover:opacity-90 text-white font-label-bold px-8 py-3.5 rounded-full transition-all shadow hover:shadow-md flex items-center gap-2">
+              <button onclick="window.location.href='./'" class="bg-primary hover:opacity-90 text-white font-label-bold px-8 py-3.5 rounded-full transition-all shadow hover:shadow-md flex items-center gap-2">
                 <span class="material-symbols-outlined text-lg">arrow_back</span>
                 Voltar ao Início
               </button>
@@ -159,7 +159,7 @@
         `;
         // Redireciona suavemente após 4.5 segundos caso o usuário não clique
         setTimeout(() => {
-          window.location.href = 'index.html';
+          window.location.href = './';
         }, 4500);
       });
     }
@@ -174,7 +174,7 @@
 <h1 class="font-headline-lg-mobile text-lg sm:text-headline-lg-mobile font-bold text-primary truncate">Painel dos Pais</h1>
 </div>
 <div class="flex items-center gap-4">
-<button type="button" onclick="localStorage.removeItem('viewMode'); window.supabaseClient && window.supabaseClient.auth.signOut().then(() => window.location.href='index.html')" class="font-label-bold text-label-bold text-error hidden sm:flex items-center gap-1 hover:opacity-80">
+<button type="button" onclick="localStorage.removeItem('viewMode'); window.supabaseClient && window.supabaseClient.auth.signOut().then(() => window.location.href='./')" class="font-label-bold text-label-bold text-error hidden sm:flex items-center gap-1 hover:opacity-80">
   <span class="material-symbols-outlined text-xl">logout</span> Sair
 </button>
 <div class="relative group w-10 h-10 rounded-full bg-secondary-container flex items-center justify-center overflow-hidden cursor-pointer" title="Mudar foto do perfil dos pais" onclick="document.getElementById('parent-photo-upload').click()">
@@ -332,7 +332,7 @@
 <span class="font-label-bold text-label-bold">Loja de Recompensas</span>
 </a>
 <div class="mt-auto pt-6 border-t border-outline-variant mx-4">
-<a class="text-error hover:bg-error-container/20 rounded-full flex items-center gap-4 px-6 py-3 transition-colors cursor-pointer" onclick="localStorage.removeItem('viewMode'); window.supabaseClient && window.supabaseClient.auth.signOut().then(() => window.location.href='index.html')">
+<a class="text-error hover:bg-error-container/20 rounded-full flex items-center gap-4 px-6 py-3 transition-colors cursor-pointer" onclick="localStorage.removeItem('viewMode'); window.supabaseClient && window.supabaseClient.auth.signOut().then(() => window.location.href='./')">
 <span class="material-symbols-outlined">logout</span>
 <span class="font-label-bold text-label-bold">Sair</span>
 </a>
