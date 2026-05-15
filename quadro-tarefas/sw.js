@@ -3,7 +3,7 @@
  * Cache Strategy: Network-first para API, Cache-first para assets
  */
 
-const CACHE_NAME = 'cofrinho-v1';
+const CACHE_NAME = 'cofrinho-v2';
 const ASSETS_TO_CACHE = [
   './',
   './index.html',
@@ -11,6 +11,7 @@ const ASSETS_TO_CACHE = [
   './tela2.html',
   './cofrinho-data.js',
   './supabase-client.js',
+  './app-shell.js',
   './manifest.json',
 ];
 

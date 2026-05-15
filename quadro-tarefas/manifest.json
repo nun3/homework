@@ -3,7 +3,9 @@
   "short_name": "Cofrinho",
   "description": "Quadro de tarefas gamificado para a família",
   "start_url": "./index.html",
+  "scope": "./",
   "display": "standalone",
+  "orientation": "portrait",
   "background_color": "#f0fdf4",
   "theme_color": "#146c2e",
   "icons": [

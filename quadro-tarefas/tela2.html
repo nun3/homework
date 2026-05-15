@@ -5,7 +5,6 @@
 <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
 <title>Painel dos Pais — Cofrinho Mágico</title>
 <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;500;600;700&amp;family=Montserrat:wght@600;700&amp;family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
 <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
 <style>
@@ -166,16 +165,16 @@
     }
   </script>
   </head>
-<body class="bg-background text-on-background min-h-screen pb-32 uppercase tracking-[0.02em]">
+<body class="bg-background text-on-background min-h-screen pb-32 lg:pb-0">
 <!-- TopAppBar -->
-<header class="bg-surface border-b border-outline-variant shadow-sm docked full-width top-0 z-50 flex justify-between items-center w-full px-container-margin py-unit h-16 sticky">
+<header class="bg-surface border-b border-outline-variant shadow-sm docked full-width top-0 z-50 flex justify-between items-center w-full px-4 sm:px-6 lg:px-8 py-3 h-14 sm:h-16 sticky">
 <div class="flex items-center gap-3">
 <a href="tela1.html" class="material-symbols-outlined text-primary text-2xl no-underline hover:opacity-80" title="Board das crianças">arrow_back</a>
-<span class="material-symbols-outlined text-primary text-2xl">admin_panel_settings</span>
-<h1 class="font-headline-lg-mobile text-headline-lg-mobile font-bold text-primary">Painel dos Pais</h1>
+<span class="material-symbols-outlined text-primary text-2xl hidden sm:inline">admin_panel_settings</span>
+<h1 class="font-headline-lg-mobile text-lg sm:text-headline-lg-mobile font-bold text-primary truncate">Painel dos Pais</h1>
 </div>
 <div class="flex items-center gap-4">
-<button type="button" onclick="localStorage.removeItem('viewMode'); window.supabaseClient && window.supabaseClient.auth.signOut().then(() => window.location.href='index.html')" class="font-label-bold text-label-bold text-error flex items-center gap-1 hover:opacity-80">
+<button type="button" onclick="localStorage.removeItem('viewMode'); window.supabaseClient && window.supabaseClient.auth.signOut().then(() => window.location.href='index.html')" class="font-label-bold text-label-bold text-error hidden sm:flex items-center gap-1 hover:opacity-80">
   <span class="material-symbols-outlined text-xl">logout</span> Sair
 </button>
 <div class="relative group w-10 h-10 rounded-full bg-secondary-container flex items-center justify-center overflow-hidden cursor-pointer" title="Mudar foto do perfil dos pais" onclick="document.getElementById('parent-photo-upload').click()">
@@ -187,29 +186,29 @@
 </div>
 </div>
 </header>
-<main class="max-w-5xl mx-auto px-container-margin py-8 space-y-section-gap">
+<main class="w-full max-w-5xl mx-auto px-4 sm:px-6 lg:ml-64 lg:max-w-none lg:px-8 py-5 sm:py-8 space-y-6 sm:space-y-section-gap">
 <!-- Children Goals Section -->
-<section class="grid grid-cols-1 md:grid-cols-3 gap-gutter">
-<div class="md:col-span-2 bg-surface-container-lowest p-card-padding rounded-xl shadow-sm border-l-4 border-primary">
+<section class="grid grid-cols-1 md:grid-cols-3 gap-4">
+<div class="md:col-span-2 bg-surface-container-lowest p-4 sm:p-card-padding rounded-2xl shadow-sm border border-outline-variant/60 md:border-l-4 md:border-primary">
 <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-4">
 <h2 class="font-title-md text-title-md text-primary flex items-center gap-2">
 <span class="material-symbols-outlined">child_care</span>
                     Crianças cadastradas
                 </h2>
-<div class="flex flex-wrap gap-3 items-center">
-<button type="button" id="btn-nova-crianca" class="chunky-button bg-primary text-on-primary font-label-bold text-label-bold px-4 py-2.5 rounded-xl flex items-center gap-2 self-start sm:self-auto">
+<div class="flex flex-col sm:flex-row sm:flex-wrap gap-3 items-stretch sm:items-center w-full sm:w-auto">
+<button type="button" id="btn-nova-crianca" class="chunky-button min-h-12 bg-primary text-on-primary font-label-bold text-label-bold px-4 py-2.5 rounded-xl flex items-center justify-center gap-2 self-stretch sm:self-auto">
 <span class="material-symbols-outlined text-[20px]">add</span>
                     Nova criança
                 </button>
-<button type="button" id="btn-reset-board" class="chunky-button bg-error text-on-error font-label-bold text-label-bold px-4 py-2.5 rounded-xl flex items-center gap-2 self-start sm:self-auto">
+<button type="button" id="btn-reset-board" class="chunky-button min-h-12 bg-error text-on-error font-label-bold text-label-bold px-4 py-2.5 rounded-xl flex items-center justify-center gap-2 self-stretch sm:self-auto">
 <span class="material-symbols-outlined text-[20px]">restart_alt</span>
                     Reiniciar tudo
                 </button>
 </div>
 </div>
-<div id="parent-children-grid" class="grid grid-cols-1 sm:grid-cols-2 gap-gutter"></div>
+<div id="parent-children-grid" class="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4"></div>
 </div>
-<div class="bg-tertiary-container text-on-tertiary-container p-card-padding rounded-xl shadow-sm flex flex-col justify-between">
+<div class="bg-tertiary-container text-on-tertiary-container p-4 sm:p-card-padding rounded-2xl shadow-sm flex flex-col justify-between">
 <div>
 <h3 class="font-label-bold text-label-bold uppercase tracking-wider mb-1">Status do Cofrinho</h3>
 <p class="font-display-lg text-display-lg"><span id="parent-month-saved">R$ 0,00</span></p>
@@ -222,13 +221,13 @@
 </section>
 <!-- Task Statistics -->
 <section class="space-y-4">
-<div class="flex items-center justify-between">
+<div class="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
 <h2 class="font-headline-lg text-headline-lg text-primary flex items-center gap-2">
 <span class="material-symbols-outlined">pie_chart</span>
                     Estatísticas das Tarefas
                 </h2>
 </div>
-<div id="parent-charts-grid" class="grid grid-cols-1 md:grid-cols-2 gap-gutter"></div>
+<div id="parent-charts-grid" class="grid grid-cols-1 xl:grid-cols-2 gap-4"></div>
 </section>
 <!-- Pending Approval Bento Grid -->
 <section class="space-y-4">
@@ -239,7 +238,7 @@
                 </h2>
 <span id="parent-pending-count" class="bg-error-container text-on-error-container font-label-bold text-label-bold px-3 py-1 rounded-full">0 aguardando</span>
 </div>
-<div id="parent-pending-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-gutter"></div>
+<div id="parent-pending-grid" class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4"></div>
 </section>
 <section class="space-y-4">
 <div class="flex items-center justify-between">
@@ -272,24 +271,25 @@
 <span class="material-symbols-outlined">payments</span>
                     Configuração de Valores
                 </h2>
-<div class="flex flex-col sm:flex-row gap-4 items-start sm:items-center">
-  <form id="quick-surprise-form" class="flex gap-2 items-center bg-surface-container-high p-1 rounded-full pl-3 pr-1 shadow-sm">
+<div class="flex flex-col sm:flex-row gap-4 items-stretch sm:items-center">
+  <form id="quick-surprise-form" class="grid grid-cols-1 sm:grid-cols-[1fr_auto_auto] gap-2 items-center bg-surface-container-high p-3 sm:p-1 sm:pl-3 sm:pr-1 rounded-2xl sm:rounded-full shadow-sm w-full sm:w-auto">
     <span class="material-symbols-outlined text-secondary text-base">stars</span>
-    <input type="text" id="quick-surprise-title" placeholder="Tarefa surpresa rápida..." required class="bg-transparent border-none outline-none text-sm w-32 sm:w-48 text-on-surface placeholder:text-on-surface-variant/70" />
-    <select id="quick-surprise-sister" class="bg-surface border-none rounded-full text-sm py-1.5 px-3 text-on-surface outline-none cursor-pointer">
+    <input type="text" id="quick-surprise-title" placeholder="Tarefa surpresa rápida..." required class="bg-transparent border-none outline-none text-base sm:text-sm w-full sm:w-48 text-on-surface placeholder:text-on-surface-variant/70" />
+    <select id="quick-surprise-sister" class="bg-surface border-none rounded-full text-base sm:text-sm py-2 sm:py-1.5 px-3 text-on-surface outline-none cursor-pointer">
       <!-- Options injected via JS -->
     </select>
-    <button type="submit" class="bg-primary text-on-primary rounded-full w-8 h-8 flex items-center justify-center hover:opacity-90 transition-opacity" title="Criar Surpresa">
+    <button type="submit" class="bg-primary text-on-primary rounded-full min-h-11 sm:w-8 sm:h-8 flex items-center justify-center hover:opacity-90 transition-opacity" title="Criar Surpresa">
       <span class="material-symbols-outlined text-[20px]">add</span>
     </button>
   </form>
-  <button type="button" id="btn-nova-tarefa" class="flex items-center gap-2 text-primary font-label-bold text-label-bold hover:underline whitespace-nowrap">
+  <button type="button" id="btn-nova-tarefa" class="min-h-12 flex items-center justify-center gap-2 text-primary font-label-bold text-label-bold hover:underline whitespace-nowrap">
     <span class="material-symbols-outlined">add_circle</span>
     Nova tarefa
   </button>
 </div>
 </div>
-<div class="bg-surface-container-lowest rounded-2xl shadow-lg overflow-x-auto border border-outline-variant">
+<div id="parent-catalog-cards" class="grid grid-cols-1 gap-3 md:hidden"></div>
+<div class="hidden md:block bg-surface-container-lowest rounded-2xl shadow-lg overflow-x-auto border border-outline-variant">
 <table class="w-full border-collapse min-w-[650px]">
 <thead class="bg-surface-container-high border-b border-outline-variant">
 <tr>
@@ -738,6 +738,7 @@
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="supabase-client.js?v=2"></script>
 <script src="cofrinho-data.js?v=10"></script>
+<script src="app-shell.js?v=1"></script>
 <script>
 (function () {
   // Getter dinâmico: garante que CM é sempre buscado no momento da chamada,
@@ -790,6 +791,23 @@
   var appToast = document.getElementById("app-toast");
   var toastTimer = null;
   var chartInstances = {};
+  var chartJsPromise = null;
+
+  function loadChartsLibrary() {
+    if (window.Chart) return Promise.resolve(window.Chart);
+    if (chartJsPromise) return chartJsPromise;
+
+    chartJsPromise = new Promise(function(resolve, reject) {
+      var script = document.createElement("script");
+      script.src = "https://cdn.jsdelivr.net/npm/chart.js";
+      script.async = true;
+      script.onload = function() { resolve(window.Chart); };
+      script.onerror = function() { reject(new Error("Chart.js nao carregou")); };
+      document.head.appendChild(script);
+    });
+
+    return chartJsPromise;
+  }
 
   function sister(state, id) {
     for (var i = 0; i < state.sisters.length; i++) {
@@ -957,7 +975,17 @@
   function renderCatalog() {
     var s = CM.getState();
     var tb = document.getElementById("parent-catalog-tbody");
+    var cards = document.getElementById("parent-catalog-cards");
     tb.innerHTML = "";
+    if (cards) cards.innerHTML = "";
+    if (s.catalog.length === 0 && cards) {
+      cards.innerHTML =
+        "<div class=\"rounded-2xl border border-dashed border-outline-variant bg-surface-container-lowest p-5 text-center text-on-surface-variant\">" +
+        "<span class=\"material-symbols-outlined text-4xl mb-2 text-primary\">payments</span>" +
+        "<p class=\"font-title-md text-title-md text-on-surface\">Nenhuma tarefa cadastrada</p>" +
+        "<p class=\"font-body-md text-sm mt-1\">Crie uma tarefa para ela aparecer no board das crianÃ§as.</p>" +
+        "</div>";
+    }
     s.catalog.forEach(function (c) {
       var sis = sister(s, c.sisterId);
       var sisName = sis ? sis.name : c.sisterId;
@@ -1013,6 +1041,63 @@
         openDeleteTaskModal(c);
       });
       tb.appendChild(tr);
+
+      if (cards) {
+        var card = document.createElement("div");
+        card.className = "bg-surface-container-lowest rounded-2xl shadow-sm border border-outline-variant/60 p-4";
+        card.innerHTML =
+          "<div class=\"flex items-start justify-between gap-3\">" +
+          "<div class=\"min-w-0\">" +
+          "<div class=\"flex items-center gap-2 mb-2\">" +
+          "<div class=\"w-10 h-10 rounded-xl bg-primary-container flex items-center justify-center text-primary shrink-0\">" +
+          "<span class=\"material-symbols-outlined\">" + esc(c.icon || "task") + "</span>" +
+          "</div>" +
+          "<div class=\"min-w-0\">" +
+          "<p class=\"font-title-md text-title-md text-on-surface leading-tight truncate\">" + esc(c.title) + "</p>" +
+          "<p class=\"font-label-sm text-label-sm text-on-surface-variant normal-case truncate\">" + esc(sisName) + (c.subtitle ? " Â· " + esc(c.subtitle) : "") + "</p>" +
+          "</div>" +
+          "</div>" +
+          "</div>" +
+          "<span class=\"font-body-lg font-bold text-primary shrink-0\">" + esc(rewardValueLabel(c)) + "</span>" +
+          "</div>" +
+          "<div class=\"grid grid-cols-2 gap-2 mt-4\">" +
+          "<div class=\"rounded-xl bg-surface-container p-3\">" +
+          "<p class=\"font-label-bold text-label-sm text-on-surface-variant\">FrequÃªncia</p>" +
+          "<p class=\"font-body-md text-on-surface\">" + esc(freqLabel(c.frequency)) + "</p>" +
+          "</div>" +
+          "<div class=\"rounded-xl bg-surface-container p-3\">" +
+          "<p class=\"font-label-bold text-label-sm text-on-surface-variant\">Status</p>" +
+          "<p class=\"font-body-md text-on-surface\">" + esc(recurrenceStatus(c.id)) + "</p>" +
+          "</div>" +
+          "<div class=\"rounded-xl bg-surface-container p-3\">" +
+          "<p class=\"font-label-bold text-label-sm text-on-surface-variant\">Tipo</p>" +
+          "<p class=\"font-body-md text-on-surface\">" + esc(rewardTypeLabel(c)) + "</p>" +
+          "</div>" +
+          "<div class=\"rounded-xl bg-surface-container p-3\">" +
+          "<p class=\"font-label-bold text-label-sm text-on-surface-variant\">CrianÃ§a</p>" +
+          "<p class=\"font-body-md text-on-surface normal-case truncate\">" + esc(sisName) + "</p>" +
+          "</div>" +
+          "</div>" +
+          "<div class=\"flex flex-wrap gap-2 mt-4\">" +
+          (isUnpublished ? "<button type=\"button\" class=\"cat-card-pub min-h-11 flex-1 chunky-button bg-primary text-on-primary font-label-bold text-label-bold px-4 py-2.5 rounded-xl\">Publicar</button>" : "") +
+          "<button type=\"button\" class=\"cat-card-edit min-h-11 flex-1 bg-secondary-container text-on-secondary-container font-label-bold text-label-bold px-4 py-2.5 rounded-xl flex items-center justify-center gap-2\"><span class=\"material-symbols-outlined text-[18px]\">edit</span>Editar</button>" +
+          "<button type=\"button\" class=\"cat-card-del min-h-11 bg-error-container text-on-error-container font-label-bold text-label-bold px-4 py-2.5 rounded-xl flex items-center justify-center\"><span class=\"material-symbols-outlined text-[20px]\">delete</span></button>" +
+          "</div>";
+
+        if (isUnpublished) {
+          card.querySelector(".cat-card-pub").addEventListener("click", function () {
+            CM.publishTask(c.id);
+            showToast("Tarefa surpresa enviada para o board da crianÃ§a!", "success");
+          });
+        }
+        card.querySelector(".cat-card-edit").addEventListener("click", function () {
+          openEditTaskModal(c);
+        });
+        card.querySelector(".cat-card-del").addEventListener("click", function () {
+          openDeleteTaskModal(c);
+        });
+        cards.appendChild(card);
+      }
     });
   }
 
@@ -1177,6 +1262,22 @@
     });
   }
 
+  function renderChartsAsync() {
+    var grid = document.getElementById("parent-charts-grid");
+    if (grid && !window.Chart) {
+      grid.innerHTML = "<div class=\"bg-surface-container-lowest p-card-padding rounded-xl shadow-sm border border-outline-variant text-on-surface-variant font-body-md\">Carregando estatisticas...</div>";
+    }
+
+    loadChartsLibrary().then(function() {
+      renderCharts();
+    }).catch(function(err) {
+      console.warn("[Tela2] Chart.js lazy load failed:", err);
+      if (grid) {
+        grid.innerHTML = "<div class=\"bg-surface-container-lowest p-card-padding rounded-xl shadow-sm border border-outline-variant text-on-surface-variant font-body-md\">Nao foi possivel carregar os graficos agora.</div>";
+      }
+    });
+  }
+
   function renderAll() {
     console.log('[Tela2] renderAll chamado');
     var s = CM.getState();
@@ -1184,9 +1285,7 @@
     refreshChildSelectors();
     renderChildren();
     renderMonthStatus();
-    if (typeof Chart !== 'undefined') {
-      renderCharts();
-    }
+    renderChartsAsync();
     renderPending();
     renderRedemptions();
     renderCatalog();

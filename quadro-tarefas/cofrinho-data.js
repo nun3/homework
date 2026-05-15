@@ -61,6 +61,12 @@
   var SYNC_DEBOUNCE_MS = 300; // Agrupar mudanças em 300ms
   var isSyncing = false;
 
+  function emitSyncEvent(name) {
+    try {
+      window.dispatchEvent(new CustomEvent(name));
+    } catch (e) {}
+  }
+
   function save(state) {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
     window.dispatchEvent(new CustomEvent("cofrinho-changed"));
@@ -76,6 +82,7 @@
         if (isSyncing) return; // Evita requisições simultâneas
         
         isSyncing = true;
+        emitSyncEvent("cofrinho-sync-start");
         console.log('[Cofrinho] Sincronizando com Supabase...');
         
         window.supabaseClient.from('family_state').upsert({
@@ -84,12 +91,15 @@
         }).then(function(res) {
           isSyncing = false;
           if (res.error) {
+            emitSyncEvent("cofrinho-sync-error");
             console.error('[Cofrinho] Sync Error:', res.error);
           } else {
+            emitSyncEvent("cofrinho-sync-end");
             console.log('[Cofrinho] ✅ Sincronizado com sucesso');
           }
         }).catch(function(err) {
           isSyncing = false;
+          emitSyncEvent("cofrinho-sync-error");
           console.error('[Cofrinho] Sync falhou:', err);
         });
       }, SYNC_DEBOUNCE_MS);
@@ -109,6 +119,7 @@
     }
 
     isSyncing = true;
+    emitSyncEvent("cofrinho-sync-start");
     console.log('[Cofrinho] Iniciando sincronização com Supabase...');
 
     return (async function() {
@@ -180,10 +191,12 @@
         
         console.log('[Cofrinho] Sincronização concluída com sucesso');
       } catch (err) {
+        emitSyncEvent("cofrinho-sync-error");
         console.error('[Cofrinho] initSync failed:', err);
         ensureState();
       } finally {
         isSyncing = false;
+        emitSyncEvent("cofrinho-sync-end");
       }
     })();
   }
@@ -664,12 +677,21 @@
       window.dispatchEvent(new CustomEvent("cofrinho-changed"));
       // Sincroniza reset com Supabase
       if (window.supabaseClient && FAMILY_ID) {
+        emitSyncEvent("cofrinho-sync-start");
         window.supabaseClient.from('family_state').upsert({
           family_id: FAMILY_ID,
           data: emptyState
         }).then(function(res) {
-          if (res.error) console.error('Supabase resetAll Error:', res.error);
-          else console.log('[Cofrinho] resetAll sincronizado com Supabase');
+          if (res.error) {
+            emitSyncEvent("cofrinho-sync-error");
+            console.error('Supabase resetAll Error:', res.error);
+          } else {
+            emitSyncEvent("cofrinho-sync-end");
+            console.log('[Cofrinho] resetAll sincronizado com Supabase');
+          }
+        }).catch(function(err) {
+          emitSyncEvent("cofrinho-sync-error");
+          console.error('Supabase resetAll Error:', err);
         });
       }
       return { ok: true };

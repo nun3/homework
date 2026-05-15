@@ -29,15 +29,15 @@
     }
   </script>
 </head>
-<body class="bg-background min-h-screen flex flex-col items-center justify-center p-6 uppercase tracking-[0.02em]">
+<body class="bg-background min-h-dvh flex flex-col items-center justify-center px-4 py-6 sm:p-8 text-gray-900">
   
-  <div class="max-w-md w-full bg-white rounded-3xl shadow-xl p-8 text-center border-t-8 border-primary-container relative overflow-hidden">
-    <div class="w-24 h-24 mx-auto bg-primary-container rounded-full flex items-center justify-center mb-6 shadow-sm border-4 border-white">
-      <span class="material-symbols-outlined text-primary text-5xl">savings</span>
+  <div class="max-w-md sm:max-w-lg w-full bg-white rounded-2xl sm:rounded-3xl shadow-lg sm:shadow-xl p-5 sm:p-8 text-center border border-primary-container/70 sm:border-t-8 relative overflow-hidden">
+    <div class="w-20 h-20 sm:w-24 sm:h-24 mx-auto bg-primary-container rounded-full flex items-center justify-center mb-5 sm:mb-6 shadow-sm border-4 border-white">
+      <span class="material-symbols-outlined text-primary text-4xl sm:text-5xl">savings</span>
     </div>
     
-    <h1 class="text-3xl font-bold text-primary mb-2">Cofrinho Mágico</h1>
-    <p class="text-gray-600 mb-8 text-sm font-semibold normal-case">Aprenda a poupar se divertindo!</p>
+    <h1 class="text-2xl sm:text-3xl font-bold text-primary mb-2">Cofrinho Mágico</h1>
+    <p class="text-gray-600 mb-6 sm:mb-8 text-sm sm:text-base font-semibold normal-case">Aprenda a poupar se divertindo!</p>
     
     <!-- ÁREA DE LOADING -->
     <div id="loading-area" class="py-8">
@@ -52,18 +52,18 @@
       <form id="auth-form" class="space-y-4">
         <div>
           <label class="font-bold text-sm text-gray-700 block mb-1">E-mail</label>
-          <input type="email" id="auth-email" required class="w-full bg-surface border-none rounded-lg p-3 font-semibold text-gray-800 focus:ring-2 focus:ring-primary normal-case" placeholder="familia@exemplo.com">
+          <input type="email" id="auth-email" required class="w-full h-12 bg-surface border-none rounded-xl px-4 font-semibold text-base text-gray-800 focus:ring-2 focus:ring-primary normal-case" placeholder="familia@exemplo.com">
         </div>
         <div>
           <label class="font-bold text-sm text-gray-700 block mb-1">Senha</label>
-          <input type="password" id="auth-password" required minlength="6" class="w-full bg-surface border-none rounded-lg p-3 font-semibold text-gray-800 focus:ring-2 focus:ring-primary normal-case" placeholder="No mínimo 6 caracteres">
+          <input type="password" id="auth-password" required minlength="6" class="w-full h-12 bg-surface border-none rounded-xl px-4 font-semibold text-base text-gray-800 focus:ring-2 focus:ring-primary normal-case" placeholder="No mínimo 6 caracteres">
         </div>
         
         <p id="auth-error" class="text-sm font-bold text-error hidden text-center"></p>
 
         <div class="flex flex-col gap-3 pt-2">
-          <button type="submit" id="btn-login" class="w-full bg-primary text-white font-bold py-3 rounded-xl shadow-md hover:opacity-90 active:scale-[0.98] transition-all">Entrar</button>
-          <button type="button" id="btn-register" class="w-full bg-surface border-2 border-primary text-primary font-bold py-3 rounded-xl hover:bg-green-50 active:scale-[0.98] transition-all">Criar Conta Nova</button>
+          <button type="submit" id="btn-login" class="w-full min-h-12 bg-primary text-white font-bold px-4 py-3 rounded-xl shadow-md hover:opacity-90 active:scale-[0.98] transition-all">Entrar</button>
+          <button type="button" id="btn-register" class="w-full min-h-12 bg-surface border-2 border-primary text-primary font-bold px-4 py-3 rounded-xl hover:bg-green-50 active:scale-[0.98] transition-all">Criar Conta Nova</button>
         </div>
       </form>
     </div>
@@ -72,7 +72,7 @@
     <div id="app-area" class="hidden space-y-4">
       <p class="text-center font-bold text-sm text-primary mb-6" id="welcome-msg">Bem-vindo!</p>
 
-      <a href="tela1.html" onclick="localStorage.setItem('viewMode','child')" class="flex items-center gap-4 bg-surface hover:bg-green-50 border-2 border-primary-container rounded-2xl p-4 transition-all hover:scale-105 active:scale-95 group">
+      <a href="tela1.html" onclick="localStorage.setItem('viewMode','child')" class="flex items-center gap-4 bg-surface hover:bg-green-50 border-2 border-primary-container rounded-2xl p-4 min-h-20 transition-all active:scale-[0.98] group">
         <div class="w-12 h-12 rounded-full bg-green-100 flex items-center justify-center text-2xl group-hover:bg-primary-container transition-colors">👧</div>
         <div class="text-left">
           <h2 class="font-bold text-primary text-lg">Sou Criança</h2>
@@ -80,7 +80,7 @@
         </div>
       </a>
       
-      <a href="tela2.html" onclick="localStorage.setItem('viewMode','parent')" class="flex items-center gap-4 bg-surface hover:bg-blue-50 border-2 border-blue-200 rounded-2xl p-4 transition-all hover:scale-105 active:scale-95 group">
+      <a href="tela2.html" onclick="localStorage.setItem('viewMode','parent')" class="flex items-center gap-4 bg-surface hover:bg-blue-50 border-2 border-blue-200 rounded-2xl p-4 min-h-20 transition-all active:scale-[0.98] group">
         <div class="w-12 h-12 rounded-full bg-blue-100 flex items-center justify-center text-2xl text-blue-600 group-hover:bg-blue-200 transition-colors">
           <span class="material-symbols-outlined">shield_person</span>
         </div>
@@ -100,6 +100,7 @@
   
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="supabase-client.js?v=2"></script>
+  <script src="app-shell.js?v=1"></script>
   
   <script>
     document.addEventListener("DOMContentLoaded", async function() {
