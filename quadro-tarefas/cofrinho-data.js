@@ -57,6 +57,9 @@
   }
 
   var FAMILY_ID = null;
+  var syncDebounceTimer = null;
+  var SYNC_DEBOUNCE_MS = 300; // Agrupar mudanças em 300ms
+  var isSyncing = false;
 
   function save(state) {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
@@ -65,21 +68,35 @@
       window.dispatchEvent(new StorageEvent("storage", { key: STORAGE_KEY, newValue: JSON.stringify(state) }));
     } catch (e) {}
 
-    // Sincronização em background com Supabase
+    // ⚡ DEBOUNCE Sincronização com Supabase (evita múltiplas requisições)
     if (window.supabaseClient && FAMILY_ID) {
-      window.supabaseClient.from('family_state').upsert({
-        family_id: FAMILY_ID,
-        data: state
-      }).then(function(res) {
-        if (res.error) console.error('Supabase Sync Error:', res.error);
-      });
+      clearTimeout(syncDebounceTimer);
+      
+      syncDebounceTimer = setTimeout(function() {
+        if (isSyncing) return; // Evita requisições simultâneas
+        
+        isSyncing = true;
+        console.log('[Cofrinho] Sincronizando com Supabase...');
+        
+        window.supabaseClient.from('family_state').upsert({
+          family_id: FAMILY_ID,
+          data: state
+        }).then(function(res) {
+          isSyncing = false;
+          if (res.error) {
+            console.error('[Cofrinho] Sync Error:', res.error);
+          } else {
+            console.log('[Cofrinho] ✅ Sincronizado com sucesso');
+          }
+        }).catch(function(err) {
+          isSyncing = false;
+          console.error('[Cofrinho] Sync falhou:', err);
+        });
+      }, SYNC_DEBOUNCE_MS);
     }
   }
 
-  var isSyncing = false;
-
   function initSync() {
-    // Se já estão sincronizando ou não há cliente, retorna promise resolvida
     if (isSyncing) {
       console.log('[Cofrinho] initSync já em progresso, ignorando nova chamada');
       return Promise.resolve();
@@ -87,7 +104,6 @@
     
     if (!window.supabaseClient) {
       console.log('[Cofrinho] Sem cliente Supabase, usando apenas localStorage');
-      // Sem cliente Supabase, apenas garante estado local
       ensureState();
       return Promise.resolve();
     }
