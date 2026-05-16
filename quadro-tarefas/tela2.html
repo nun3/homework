@@ -319,17 +319,13 @@
 </div>
 </div>
 </div>
-<a class="bg-secondary-container text-on-secondary-container font-bold rounded-full mx-2 flex items-center gap-4 px-6 py-3 transition-all" href="#">
+<div class="bg-secondary-container text-on-secondary-container font-bold rounded-full mx-2 flex items-center gap-4 px-6 py-3">
 <span class="material-symbols-outlined">admin_panel_settings</span>
 <span class="font-label-bold text-label-bold">Painel dos Pais</span>
-</a>
+</div>
 <a class="text-on-surface-variant hover:bg-surface-container-high rounded-full mx-2 flex items-center gap-4 px-6 py-3 transition-colors" href="tela1.html">
 <span class="material-symbols-outlined">dashboard</span>
 <span class="font-label-bold text-label-bold">Board das crianças</span>
-</a>
-<a class="text-on-surface-variant hover:bg-surface-container-high rounded-full mx-2 flex items-center gap-4 px-6 py-3 transition-colors" href="#">
-<span class="material-symbols-outlined">redeem</span>
-<span class="font-label-bold text-label-bold">Loja de Recompensas</span>
 </a>
 <div class="mt-auto pt-6 border-t border-outline-variant mx-4">
 <a class="text-error hover:bg-error-container/20 rounded-full flex items-center gap-4 px-6 py-3 transition-colors cursor-pointer" onclick="localStorage.removeItem('viewMode'); window.supabaseClient && window.supabaseClient.auth.signOut().then(() => window.location.href='./')">
@@ -339,22 +335,14 @@
 </div>
 </nav>
 <!-- BottomNavBar (Mobile Only) -->
-<nav class="fixed bottom-0 left-0 w-full z-50 flex justify-around items-center px-4 py-3 pb-safe md:hidden bg-surface rounded-t-xl shadow-lg">
-<a href="tela1.html" class="flex flex-col items-center justify-center text-on-surface-variant px-5 py-2 no-underline">
+<nav class="fixed bottom-0 left-0 w-full z-50 grid grid-cols-2 gap-2 px-4 py-3 pb-safe md:hidden bg-surface rounded-t-xl shadow-lg">
+<a href="tela1.html" class="flex flex-col items-center justify-center text-on-surface-variant px-5 py-2 no-underline rounded-full">
 <span class="material-symbols-outlined">home</span>
 <span class="font-label-bold text-label-bold">Board</span>
 </a>
-<div class="flex flex-col items-center justify-center text-on-surface-variant px-5 py-2">
-<span class="material-symbols-outlined">assignment_turned_in</span>
-<span class="font-label-bold text-label-bold">Tarefas</span>
-</div>
 <div class="flex flex-col items-center justify-center bg-primary-container text-on-primary-container rounded-full px-5 py-2">
 <span class="material-symbols-outlined">admin_panel_settings</span>
 <span class="font-label-bold text-label-bold">Ajustes</span>
-</div>
-<div class="flex flex-col items-center justify-center text-on-surface-variant px-5 py-2">
-<span class="material-symbols-outlined">child_care</span>
-<span class="font-label-bold text-label-bold">Crianças</span>
 </div>
 </nav>
 <dialog id="child-modal" class="rounded-3xl shadow-2xl bg-surface border-none max-w-md w-full p-0 backdrop:bg-black/50 backdrop:backdrop-blur-sm transition-all">
