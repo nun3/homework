@@ -231,7 +231,7 @@
 </section>
 <!-- Pending Approval Bento Grid -->
 <section class="space-y-4">
-<div class="flex items-center justify-between">
+<div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
 <h2 class="font-headline-lg text-headline-lg text-primary flex items-center gap-2">
 <span class="material-symbols-outlined">pending_actions</span>
                     Aprovação Pendente
@@ -241,7 +241,7 @@
 <div id="parent-pending-grid" class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-4"></div>
 </section>
 <section class="space-y-4">
-<div class="flex items-center justify-between">
+<div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
 <h2 class="font-headline-lg text-headline-lg text-primary flex items-center gap-2">
 <span class="material-symbols-outlined">redeem</span>
                     Resgate do Cofrinho
@@ -266,28 +266,37 @@
 </section>
 <!-- Task Values Management -->
 <section class="space-y-4">
-<div class="flex items-center justify-between">
+<div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
 <h2 class="font-headline-lg text-headline-lg text-primary flex items-center gap-2">
 <span class="material-symbols-outlined">payments</span>
                     Configuração de Valores
                 </h2>
 <div class="flex flex-col sm:flex-row gap-4 items-stretch sm:items-center">
-  <form id="quick-surprise-form" class="grid grid-cols-1 sm:grid-cols-[1fr_auto_auto] gap-2 items-center bg-surface-container-high p-3 sm:p-1 sm:pl-3 sm:pr-1 rounded-2xl sm:rounded-full shadow-sm w-full sm:w-auto">
-    <span class="material-symbols-outlined text-secondary text-base">stars</span>
-    <input type="text" id="quick-surprise-title" placeholder="Tarefa surpresa rápida..." required class="bg-transparent border-none outline-none text-base sm:text-sm w-full sm:w-48 text-on-surface placeholder:text-on-surface-variant/70" />
-    <select id="quick-surprise-sister" class="bg-surface border-none rounded-full text-base sm:text-sm py-2 sm:py-1.5 px-3 text-on-surface outline-none cursor-pointer">
-      <!-- Options injected via JS -->
-    </select>
-    <button type="submit" class="bg-primary text-on-primary rounded-full min-h-11 sm:w-8 sm:h-8 flex items-center justify-center hover:opacity-90 transition-opacity" title="Criar Surpresa">
-      <span class="material-symbols-outlined text-[20px]">add</span>
-    </button>
-  </form>
-  <button type="button" id="btn-nova-tarefa" class="min-h-12 flex items-center justify-center gap-2 text-primary font-label-bold text-label-bold hover:underline whitespace-nowrap">
+  <button type="button" id="btn-nova-tarefa" class="min-h-12 flex items-center justify-center gap-2 rounded-xl bg-primary text-on-primary px-4 py-2.5 font-label-bold text-label-bold shadow-sm hover:opacity-90 whitespace-nowrap">
     <span class="material-symbols-outlined">add_circle</span>
     Nova tarefa
   </button>
 </div>
 </div>
+<form id="quick-surprise-form" class="bg-surface-container-lowest border border-outline-variant/60 rounded-2xl shadow-sm p-4 grid grid-cols-1 gap-3 lg:grid-cols-[auto_1fr_minmax(160px,220px)_auto] lg:items-center">
+  <div class="flex items-center gap-3 text-secondary">
+    <div class="w-11 h-11 rounded-xl bg-secondary-container flex items-center justify-center shrink-0">
+      <span class="material-symbols-outlined">stars</span>
+    </div>
+    <div class="min-w-0">
+      <p class="font-label-bold text-label-bold text-on-surface">Tarefa surpresa rápida</p>
+      <p class="text-label-sm text-on-surface-variant normal-case">Crie uma tarefa rápida para enviar ao board da criança.</p>
+    </div>
+  </div>
+  <input type="text" id="quick-surprise-title" placeholder="Ex: Ajudar a preparar a mesa" required class="w-full min-h-12 bg-surface-container border-none rounded-xl px-4 text-base text-on-surface placeholder:text-on-surface-variant/70 focus:ring-2 focus:ring-primary normal-case" />
+  <select id="quick-surprise-sister" class="w-full min-h-12 bg-surface-container border-none rounded-xl px-4 text-base text-on-surface focus:ring-2 focus:ring-primary">
+    <!-- Options injected via JS -->
+  </select>
+  <button type="submit" class="min-h-12 bg-secondary text-on-secondary rounded-xl px-5 py-2.5 flex items-center justify-center gap-2 font-label-bold text-label-bold hover:opacity-90 transition-opacity" title="Criar surpresa">
+    <span class="material-symbols-outlined text-[20px]">add</span>
+    <span>Criar</span>
+  </button>
+</form>
 <div id="parent-catalog-cards" class="grid grid-cols-1 gap-3 md:hidden"></div>
 <div class="hidden md:block bg-surface-container-lowest rounded-2xl shadow-lg overflow-x-auto border border-outline-variant">
 <table class="w-full border-collapse min-w-[650px]">
