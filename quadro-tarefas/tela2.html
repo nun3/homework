@@ -812,25 +812,60 @@
   }
   var CM = window.CofrinhoMagico; // mantido por compatibilidade
 
+  var MAX_PROFILE_PHOTO_MB = 8;
+  var MAX_PROFILE_PHOTO_BYTES = MAX_PROFILE_PHOTO_MB * 1024 * 1024;
+  var PROFILE_PHOTO_MAX_SIDE = 768;
+  var PROFILE_PHOTO_QUALITY = 0.82;
+
+  function processProfilePhoto(file, inputEl, onReady) {
+    if (!file) return;
+    if (!file.type || file.type.indexOf("image/") !== 0) {
+      alert("Escolha um arquivo de imagem.");
+      if (inputEl) inputEl.value = "";
+      return;
+    }
+    if (file.size > MAX_PROFILE_PHOTO_BYTES) {
+      alert("Foto muito grande. Escolha uma imagem menor que " + MAX_PROFILE_PHOTO_MB + " MB.");
+      if (inputEl) inputEl.value = "";
+      return;
+    }
+
+    var objectUrl = URL.createObjectURL(file);
+    var img = new Image();
+    img.onload = function () {
+      var scale = Math.min(1, PROFILE_PHOTO_MAX_SIDE / Math.max(img.width, img.height));
+      var width = Math.max(1, Math.round(img.width * scale));
+      var height = Math.max(1, Math.round(img.height * scale));
+      var canvas = document.createElement("canvas");
+      canvas.width = width;
+      canvas.height = height;
+      var ctx = canvas.getContext("2d");
+      ctx.fillStyle = "#ffffff";
+      ctx.fillRect(0, 0, width, height);
+      ctx.drawImage(img, 0, 0, width, height);
+      URL.revokeObjectURL(objectUrl);
+      onReady(canvas.toDataURL("image/jpeg", PROFILE_PHOTO_QUALITY));
+      if (inputEl) inputEl.value = "";
+    };
+    img.onerror = function () {
+      URL.revokeObjectURL(objectUrl);
+      alert("Não foi possível processar esta imagem. Tente outra foto.");
+      if (inputEl) inputEl.value = "";
+    };
+    img.src = objectUrl;
+  }
+
   window.handleParentPhoto = function(e) {
     var file = e.target.files && e.target.files[0];
     if (!file) return;
-    if (file.size > 2 * 1024 * 1024) {
-      alert("Foto muito grande. Escolha uma imagem menor que 2 MB.");
-      return;
-    }
-    var reader = new FileReader();
-    reader.onload = function(ev) {
-      var dataUrl = ev.target.result;
+    processProfilePhoto(file, e.target, function(dataUrl) {
       var cm = getCM();
       if (cm && typeof cm.updateFamilyFields === "function") {
         cm.updateFamilyFields({ parentAvatarUrl: dataUrl });
       }
       var img = document.getElementById("parent-profile-img");
       if (img) img.src = dataUrl;
-    };
-    reader.readAsDataURL(file);
-    e.target.value = "";
+    });
   };
 
   var taskModal = document.getElementById("task-modal");
@@ -1539,13 +1574,7 @@
       newFileInput.addEventListener("change", function(e) {
         var file = e.target.files && e.target.files[0];
         if (!file) return;
-        if (file.size > 2 * 1024 * 1024) {
-          alert("Foto muito grande. Escolha uma imagem menor que 2 MB.");
-          return;
-        }
-        var reader = new FileReader();
-        reader.onload = function(ev) {
-          var dataUrl = ev.target.result;
+        processProfilePhoto(file, newFileInput, function(dataUrl) {
           selectAvatar(dataUrl, grid, hiddenInput);
           // Atualiza preview no botão de upload
           uploadBtn.className = uploadBtn.className.replace("border-dashed border-secondary", "border-primary");
@@ -1560,10 +1589,7 @@
             b.style.transform = "";
             b.style.boxShadow = "none";
           });
-        };
-        reader.readAsDataURL(file);
-        // Limpa o input para permitir re-selecionar o mesmo arquivo
-        newFileInput.value = "";
+        });
       });
     }
 
