@@ -129,20 +129,63 @@
     dialog#task-modal::backdrop {
       background: rgba(0, 0, 0, 0.45);
     }
-    @media (orientation: landscape) and (max-height: 520px) {
-      .quick-surprise-panel {
-        grid-template-columns: minmax(0, 1fr) minmax(136px, 180px) auto;
+    .quick-task-shell {
+      container-type: inline-size;
+    }
+    .quick-task-form {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 12px;
+    }
+    .quick-task-controls {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 10px;
+    }
+    .quick-task-field {
+      display: grid;
+      grid-template-columns: auto minmax(0, 1fr);
+      align-items: center;
+      gap: 8px;
+    }
+    @container (min-width: 560px) {
+      .quick-task-controls {
+        grid-template-columns: minmax(220px, 1fr) minmax(140px, 190px) auto;
+        align-items: stretch;
+      }
+      .quick-task-submit {
+        min-width: 116px;
+      }
+    }
+    @container (min-width: 860px) {
+      .quick-task-form {
+        grid-template-columns: minmax(240px, 0.7fr) minmax(0, 1fr);
         align-items: center;
-        gap: 10px;
+      }
+    }
+    @media (orientation: landscape) and (max-height: 560px) {
+      .quick-task-form {
+        grid-template-columns: 1fr;
         padding: 12px;
       }
-      .quick-surprise-intro {
+      .quick-task-intro {
         display: none;
       }
-      .quick-surprise-panel input,
-      .quick-surprise-panel select,
-      .quick-surprise-panel button {
+      .quick-task-controls {
+        grid-template-columns: minmax(190px, 1fr) minmax(124px, 164px) 48px;
+        gap: 8px;
+      }
+      .quick-task-control,
+      .quick-task-submit {
         min-height: 44px;
+      }
+      .quick-task-submit {
+        min-width: 48px;
+        padding-left: 0;
+        padding-right: 0;
+      }
+      .quick-task-submit-label {
+        display: none;
       }
     }
   </style>
@@ -294,25 +337,32 @@
   </button>
 </div>
 </div>
-<form id="quick-surprise-form" class="quick-surprise-panel bg-surface-container-lowest border border-outline-variant/60 rounded-2xl shadow-sm p-4 grid grid-cols-1 gap-3 lg:grid-cols-[auto_1fr_minmax(160px,220px)_auto] lg:items-center">
-  <div class="quick-surprise-intro flex items-center gap-3 text-secondary">
-    <div class="w-11 h-11 rounded-xl bg-secondary-container flex items-center justify-center shrink-0">
-      <span class="material-symbols-outlined">stars</span>
+<div class="quick-task-shell">
+  <form id="quick-surprise-form" class="quick-task-form bg-surface-container-lowest border border-outline-variant/60 rounded-2xl shadow-sm p-4">
+    <div class="quick-task-intro flex items-center gap-3 text-secondary min-w-0">
+      <div class="w-11 h-11 rounded-xl bg-secondary-container flex items-center justify-center shrink-0">
+        <span class="material-symbols-outlined">bolt</span>
+      </div>
+      <div class="min-w-0">
+        <p class="font-title-md text-title-md text-on-surface leading-tight">Tarefa rápida</p>
+        <p class="text-label-sm text-on-surface-variant normal-case">Crie uma surpresa em poucos toques.</p>
+      </div>
     </div>
-    <div class="min-w-0">
-      <p class="font-label-bold text-label-bold text-on-surface">Tarefa surpresa rápida</p>
-      <p class="text-label-sm text-on-surface-variant normal-case">Crie uma tarefa rápida para enviar ao board da criança.</p>
+    <div class="quick-task-controls">
+      <label class="quick-task-field quick-task-control w-full min-h-12 bg-surface-container border border-transparent rounded-xl px-3 text-on-surface focus-within:ring-2 focus-within:ring-primary">
+        <span class="material-symbols-outlined text-secondary text-[20px]">edit_note</span>
+        <input type="text" id="quick-surprise-title" placeholder="Ex: Preparar a mesa" required class="w-full bg-transparent border-none p-0 text-base text-on-surface placeholder:text-on-surface-variant/70 focus:ring-0 normal-case" />
+      </label>
+      <select id="quick-surprise-sister" class="quick-task-control w-full min-h-12 bg-surface-container border-none rounded-xl px-4 text-base text-on-surface focus:ring-2 focus:ring-primary">
+        <!-- Options injected via JS -->
+      </select>
+      <button type="submit" class="quick-task-submit min-h-12 bg-secondary text-on-secondary rounded-xl px-5 py-2.5 flex items-center justify-center gap-2 font-label-bold text-label-bold hover:opacity-90 transition-opacity" title="Criar tarefa rápida">
+        <span class="material-symbols-outlined text-[20px]">add</span>
+        <span class="quick-task-submit-label">Criar</span>
+      </button>
     </div>
-  </div>
-  <input type="text" id="quick-surprise-title" placeholder="Ex: Ajudar a preparar a mesa" required class="w-full min-h-12 bg-surface-container border-none rounded-xl px-4 text-base text-on-surface placeholder:text-on-surface-variant/70 focus:ring-2 focus:ring-primary normal-case" />
-  <select id="quick-surprise-sister" class="w-full min-h-12 bg-surface-container border-none rounded-xl px-4 text-base text-on-surface focus:ring-2 focus:ring-primary">
-    <!-- Options injected via JS -->
-  </select>
-  <button type="submit" class="min-h-12 bg-secondary text-on-secondary rounded-xl px-5 py-2.5 flex items-center justify-center gap-2 font-label-bold text-label-bold hover:opacity-90 transition-opacity" title="Criar surpresa">
-    <span class="material-symbols-outlined text-[20px]">add</span>
-    <span>Criar</span>
-  </button>
-</form>
+  </form>
+</div>
 <div id="parent-catalog-cards" class="grid grid-cols-1 gap-3 md:hidden"></div>
 <div class="hidden md:block bg-surface-container-lowest rounded-2xl shadow-lg overflow-x-auto border border-outline-variant">
 <table class="w-full border-collapse min-w-[650px]">
