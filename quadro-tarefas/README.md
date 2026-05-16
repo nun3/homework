@@ -1,4 +1,4 @@
-# Cofrinho Mágico
+# Minhas Tarefas
 
 Aplicativo web gamificado para o controle de tarefas e poupança familiar.
 

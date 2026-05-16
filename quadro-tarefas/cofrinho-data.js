@@ -1,5 +1,5 @@
 /**
- * Estado partilhado do Cofrinho Mágico (localStorage).
+ * Estado partilhado do Minhas Tarefas (localStorage).
  * Abrir as páginas a partir do mesmo servidor (ex.: http://localhost:8000)
  * para tela1 e tela2 partilharem os dados.
  */

@@ -1,6 +1,6 @@
 {
-  "name": "Cofrinho Mágico",
-  "short_name": "Cofrinho",
+  "name": "Minhas Tarefas",
+  "short_name": "Tarefas",
   "description": "Quadro de tarefas gamificado para a família",
   "start_url": "./",
   "scope": "./",
