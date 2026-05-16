@@ -92,7 +92,11 @@
 
       var url = new URL(link.getAttribute("href"), window.location.href);
       if (url.origin !== window.location.origin || url.pathname === window.location.pathname && url.hash) return;
-      if (!/\.html$|\/$/.test(url.pathname)) return;
+      if (!/\.html$|\/$|\/tela1$|\/tela2$/.test(url.pathname)) return;
+
+      if ((url.hostname === "localhost" || url.hostname === "127.0.0.1") && /\/tela[12]$/.test(url.pathname)) {
+        url.pathname += ".html";
+      }
 
       event.preventDefault();
       document.body.classList.add("app-shell-exit");
