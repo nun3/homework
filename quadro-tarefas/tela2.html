@@ -1056,7 +1056,7 @@
         "<div class=\"rounded-2xl border border-dashed border-outline-variant bg-surface-container-lowest p-5 text-center text-on-surface-variant\">" +
         "<span class=\"material-symbols-outlined text-4xl mb-2 text-primary\">payments</span>" +
         "<p class=\"font-title-md text-title-md text-on-surface\">Nenhuma tarefa cadastrada</p>" +
-        "<p class=\"font-body-md text-sm mt-1\">Crie uma tarefa para ela aparecer no board das crianÃ§as.</p>" +
+        "<p class=\"font-body-md text-sm mt-1\">Crie uma tarefa para ela aparecer no board das crianças.</p>" +
         "</div>";
     }
     s.catalog.forEach(function (c) {
@@ -1127,7 +1127,7 @@
           "</div>" +
           "<div class=\"min-w-0\">" +
           "<p class=\"font-title-md text-title-md text-on-surface leading-tight truncate\">" + esc(c.title) + "</p>" +
-          "<p class=\"font-label-sm text-label-sm text-on-surface-variant normal-case truncate\">" + esc(sisName) + (c.subtitle ? " Â· " + esc(c.subtitle) : "") + "</p>" +
+          "<p class=\"font-label-sm text-label-sm text-on-surface-variant normal-case truncate\">" + esc(sisName) + (c.subtitle ? " · " + esc(c.subtitle) : "") + "</p>" +
           "</div>" +
           "</div>" +
           "</div>" +
@@ -1135,7 +1135,7 @@
           "</div>" +
           "<div class=\"grid grid-cols-2 gap-2 mt-4\">" +
           "<div class=\"rounded-xl bg-surface-container p-3\">" +
-          "<p class=\"font-label-bold text-label-sm text-on-surface-variant\">FrequÃªncia</p>" +
+          "<p class=\"font-label-bold text-label-sm text-on-surface-variant\">Frequência</p>" +
           "<p class=\"font-body-md text-on-surface\">" + esc(freqLabel(c.frequency)) + "</p>" +
           "</div>" +
           "<div class=\"rounded-xl bg-surface-container p-3\">" +
@@ -1147,7 +1147,7 @@
           "<p class=\"font-body-md text-on-surface\">" + esc(rewardTypeLabel(c)) + "</p>" +
           "</div>" +
           "<div class=\"rounded-xl bg-surface-container p-3\">" +
-          "<p class=\"font-label-bold text-label-sm text-on-surface-variant\">CrianÃ§a</p>" +
+          "<p class=\"font-label-bold text-label-sm text-on-surface-variant\">Criança</p>" +
           "<p class=\"font-body-md text-on-surface normal-case truncate\">" + esc(sisName) + "</p>" +
           "</div>" +
           "</div>" +
@@ -1160,7 +1160,7 @@
         if (isUnpublished) {
           card.querySelector(".cat-card-pub").addEventListener("click", function () {
             CM.publishTask(c.id);
-            showToast("Tarefa surpresa enviada para o board da crianÃ§a!", "success");
+            showToast("Tarefa surpresa enviada para o board da criança!", "success");
           });
         }
         card.querySelector(".cat-card-edit").addEventListener("click", function () {
