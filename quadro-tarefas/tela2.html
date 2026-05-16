@@ -227,16 +227,16 @@
 <body class="bg-background text-on-background min-h-screen pb-32 lg:pb-0">
 <!-- TopAppBar -->
 <header class="bg-surface border-b border-outline-variant shadow-sm docked full-width top-0 z-50 flex justify-between items-center w-full px-4 sm:px-6 lg:px-8 py-3 h-14 sm:h-16 sticky">
-<div class="flex items-center gap-3">
+<div class="flex min-w-0 flex-1 items-center gap-3">
 <a href="tela1" class="material-symbols-outlined text-primary text-2xl no-underline hover:opacity-80" title="Board das crianças">arrow_back</a>
 <span class="material-symbols-outlined text-primary text-2xl hidden sm:inline">admin_panel_settings</span>
 <h1 class="font-headline-lg-mobile text-lg sm:text-headline-lg-mobile font-bold text-primary truncate">Painel dos Pais</h1>
 </div>
-<div class="flex items-center gap-4">
-<button type="button" onclick="localStorage.removeItem('viewMode'); window.supabaseClient && window.supabaseClient.auth.signOut().then(() => window.location.href='./')" class="font-label-bold text-label-bold text-error hidden sm:flex items-center gap-1 hover:opacity-80">
+<div class="flex shrink-0 items-center gap-2 sm:gap-4">
+<button type="button" onclick="localStorage.removeItem('viewMode'); window.supabaseClient && window.supabaseClient.auth.signOut().then(() => window.location.href='./')" class="min-h-10 rounded-xl bg-error-container px-3 py-2 font-label-bold text-label-bold text-on-error-container flex items-center justify-center gap-1 hover:opacity-80 sm:bg-transparent sm:px-0 sm:py-0 sm:text-error">
   <span class="material-symbols-outlined text-xl">logout</span> Sair
 </button>
-<div class="relative group w-10 h-10 rounded-full bg-secondary-container flex items-center justify-center overflow-hidden cursor-pointer" title="Mudar foto do perfil dos pais" onclick="document.getElementById('parent-photo-upload').click()">
+<div class="relative group h-9 w-9 sm:w-10 sm:h-10 rounded-full bg-secondary-container flex items-center justify-center overflow-hidden cursor-pointer" title="Mudar foto do perfil dos pais" onclick="document.getElementById('parent-photo-upload').click()">
 <img id="parent-profile-img" alt="Foto do perfil dos pais" class="w-full h-full object-cover transition-transform group-hover:scale-110" src="https://lh3.googleusercontent.com/aida-public/AB6AXuBi-etLSDqgmIFK873epQzLs53EDWrhTB09XQplVTAlCTM6F1_Vf4GamMQYUcX9J5QaMLUGV_iaOfqKb7ym8HrAuHguEhl5PE2RW0xZI6e0Grkw76f6itG5CEXVOEaux947x0wpTXVzC1Ky7MTYgAiS42EPlWH-mExCAl9SggUw4F5GOOIwOfIS_NDeQ8ILBvzTDbOwQRZ3Y3NxWxudyEtVMQ8h9KK4Q9FYfOA0LZAf42_gsPi_kXdzfw1JPyL5YKmpFSHcPl8BEd0l"/>
 <div class="absolute inset-0 bg-black/20 opacity-0 group-hover:opacity-100 flex items-center justify-center transition-opacity">
   <span class="material-symbols-outlined text-white text-xs">photo_camera</span>
