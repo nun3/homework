@@ -1,9 +1,10 @@
 /**
  * Service Worker - Cache inteligente e Offline support
- * Cache Strategy: Network-first para API, Cache-first para assets
+ * Cache Strategy: Network-first para dados e arquivos locais,
+ * Cache-first apenas para CDNs.
  */
 
-const CACHE_NAME = 'cofrinho-v2';
+const CACHE_NAME = 'cofrinho-v3';
 const ASSETS_TO_CACHE = [
   './',
   './index.html',
@@ -90,6 +91,37 @@ self.addEventListener('fetch', (event) => {
   }
 
   // 📦 Para CDNs (Tailwind, Material Symbols, Fonts): Cache-first
+  // Arquivos locais: Network-first para que deploys novos aparecam no celular.
+  // Se estiver offline, usa o ultimo cache disponivel.
+  if (url.origin === self.location.origin) {
+    event.respondWith(
+      fetch(event.request)
+        .then((response) => {
+          if (response && response.status === 200) {
+            const responseClone = response.clone();
+            caches.open(CACHE_NAME).then((cache) => {
+              cache.put(event.request, responseClone);
+            });
+          }
+          return response;
+        })
+        .catch(() => {
+          return caches.match(event.request).then((cached) => {
+            if (cached) {
+              return cached;
+            }
+
+            if (event.request.mode === 'navigate') {
+              return caches.match('./index.html');
+            }
+
+            return new Response('Recurso nao disponivel offline', { status: 404 });
+          });
+        })
+    );
+    return;
+  }
+
   if (url.hostname.includes('cdn.') || url.hostname.includes('fonts.')) {
     event.respondWith(
       caches.match(event.request).then((cached) => {
