@@ -129,6 +129,22 @@
     dialog#task-modal::backdrop {
       background: rgba(0, 0, 0, 0.45);
     }
+    @media (orientation: landscape) and (max-height: 520px) {
+      .quick-surprise-panel {
+        grid-template-columns: minmax(0, 1fr) minmax(136px, 180px) auto;
+        align-items: center;
+        gap: 10px;
+        padding: 12px;
+      }
+      .quick-surprise-intro {
+        display: none;
+      }
+      .quick-surprise-panel input,
+      .quick-surprise-panel select,
+      .quick-surprise-panel button {
+        min-height: 44px;
+      }
+    }
   </style>
   <script>
     // Controle de Acesso Seguro e Amigável
@@ -278,8 +294,8 @@
   </button>
 </div>
 </div>
-<form id="quick-surprise-form" class="bg-surface-container-lowest border border-outline-variant/60 rounded-2xl shadow-sm p-4 grid grid-cols-1 gap-3 lg:grid-cols-[auto_1fr_minmax(160px,220px)_auto] lg:items-center">
-  <div class="flex items-center gap-3 text-secondary">
+<form id="quick-surprise-form" class="quick-surprise-panel bg-surface-container-lowest border border-outline-variant/60 rounded-2xl shadow-sm p-4 grid grid-cols-1 gap-3 lg:grid-cols-[auto_1fr_minmax(160px,220px)_auto] lg:items-center">
+  <div class="quick-surprise-intro flex items-center gap-3 text-secondary">
     <div class="w-11 h-11 rounded-xl bg-secondary-container flex items-center justify-center shrink-0">
       <span class="material-symbols-outlined">stars</span>
     </div>
