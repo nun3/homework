@@ -2,7 +2,7 @@
   "name": "Cofrinho Mágico",
   "short_name": "Cofrinho",
   "description": "Quadro de tarefas gamificado para a família",
-  "start_url": "./index.html",
+  "start_url": "./",
   "scope": "./",
   "display": "standalone",
   "orientation": "portrait",

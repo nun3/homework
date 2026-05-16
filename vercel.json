@@ -4,7 +4,7 @@
   "rewrites": [
     {
       "source": "/",
-      "destination": "/quadro-tarefas/index.html"
+      "destination": "/quadro-tarefas"
     },
     {
       "source": "/:path*",
