@@ -24,8 +24,29 @@
       .slice(0, 32) || "crianca";
   }
 
+  function normalizeTaskKey(title) {
+    return String(title || "")
+      .normalize("NFD")
+      .replace(/[\u0300-\u036f]/g, "")
+      .toLowerCase()
+      .replace(/[^a-z0-9]+/g, " ")
+      .trim();
+  }
+
   function newChildId(name) {
     return "child_" + slugifyName(name) + "_" + Date.now().toString(36);
+  }
+
+  function makeInstance(catalogItem, extra) {
+    var inst = Object.assign({
+      id: uid(),
+      catalogId: catalogItem.id,
+    }, extra || {});
+    var minutes = Number(catalogItem.timeLimitMinutes) || 0;
+    if (minutes > 0) {
+      inst.dueAt = Date.now() + minutes * 60000;
+    }
+    return inst;
   }
 
   function normalizeChild(child) {
@@ -60,11 +81,52 @@
   var syncDebounceTimer = null;
   var SYNC_DEBOUNCE_MS = 300; // Agrupar mudanças em 300ms
   var isSyncing = false;
+  var pendingSyncState = null;
 
   function emitSyncEvent(name) {
     try {
       window.dispatchEvent(new CustomEvent(name));
     } catch (e) {}
+  }
+
+  function scheduleSync(state) {
+    if (!window.supabaseClient || !FAMILY_ID) return;
+    pendingSyncState = JSON.parse(JSON.stringify(state));
+    clearTimeout(syncDebounceTimer);
+    syncDebounceTimer = setTimeout(function() {
+      if (!pendingSyncState) return;
+      if (isSyncing) {
+        scheduleSync(pendingSyncState);
+        return;
+      }
+
+      var stateToSync = pendingSyncState;
+      pendingSyncState = null;
+      isSyncing = true;
+      emitSyncEvent("cofrinho-sync-start");
+      console.log('[Cofrinho] Sincronizando com Supabase...');
+
+      window.supabaseClient.from('family_state').upsert({
+        family_id: FAMILY_ID,
+        data: stateToSync
+      }).then(function(res) {
+        if (res.error) {
+          pendingSyncState = pendingSyncState || stateToSync;
+          emitSyncEvent("cofrinho-sync-error");
+          console.error('[Cofrinho] Sync Error:', res.error);
+        } else {
+          emitSyncEvent("cofrinho-sync-end");
+          console.log('[Cofrinho] Sincronizado com sucesso');
+        }
+      }).catch(function(err) {
+        pendingSyncState = pendingSyncState || stateToSync;
+        emitSyncEvent("cofrinho-sync-error");
+        console.error('[Cofrinho] Sync falhou:', err);
+      }).finally(function() {
+        isSyncing = false;
+        if (pendingSyncState) scheduleSync(pendingSyncState);
+      });
+    }, SYNC_DEBOUNCE_MS);
   }
 
   function save(state) {
@@ -74,36 +136,7 @@
       window.dispatchEvent(new StorageEvent("storage", { key: STORAGE_KEY, newValue: JSON.stringify(state) }));
     } catch (e) {}
 
-    // ⚡ DEBOUNCE Sincronização com Supabase (evita múltiplas requisições)
-    if (window.supabaseClient && FAMILY_ID) {
-      clearTimeout(syncDebounceTimer);
-      
-      syncDebounceTimer = setTimeout(function() {
-        if (isSyncing) return; // Evita requisições simultâneas
-        
-        isSyncing = true;
-        emitSyncEvent("cofrinho-sync-start");
-        console.log('[Cofrinho] Sincronizando com Supabase...');
-        
-        window.supabaseClient.from('family_state').upsert({
-          family_id: FAMILY_ID,
-          data: state
-        }).then(function(res) {
-          isSyncing = false;
-          if (res.error) {
-            emitSyncEvent("cofrinho-sync-error");
-            console.error('[Cofrinho] Sync Error:', res.error);
-          } else {
-            emitSyncEvent("cofrinho-sync-end");
-            console.log('[Cofrinho] ✅ Sincronizado com sucesso');
-          }
-        }).catch(function(err) {
-          isSyncing = false;
-          emitSyncEvent("cofrinho-sync-error");
-          console.error('[Cofrinho] Sync falhou:', err);
-        });
-      }, SYNC_DEBOUNCE_MS);
-    }
+    scheduleSync(state);
   }
 
   function initSync() {
@@ -197,6 +230,7 @@
       } finally {
         isSyncing = false;
         emitSyncEvent("cofrinho-sync-end");
+        if (pendingSyncState) scheduleSync(pendingSyncState);
       }
     })();
   }
@@ -218,7 +252,8 @@
   function initialPoolFromCatalog(state) {
     var pool = [];
     for (var i = 0; i < state.catalog.length; i++) {
-      pool.push({ id: uid(), catalogId: state.catalog[i].id });
+      if (state.catalog[i].archived) continue;
+      pool.push(makeInstance(state.catalog[i]));
     }
     return pool;
   }
@@ -272,7 +307,30 @@
         }
         if (state.catalog[i].rewardType === "obrigacao") state.catalog[i].rewardType = "diario";
         if (state.catalog[i].rewardType === "diario") state.catalog[i].valueBRL = 0;
+        if (state.catalog[i].archived == null) state.catalog[i].archived = false;
+        state.catalog[i].timeLimitMinutes = Number(state.catalog[i].timeLimitMinutes) || 0;
       }
+      state.available = state.available.filter(function (x) {
+        var item = catalogById(state, x.catalogId);
+        return item && !item.archived;
+      });
+      state.doing = state.doing.filter(function (x) {
+        var item = catalogById(state, x.catalogId);
+        return item && !item.archived;
+      });
+      state.pending = state.pending.filter(function (x) {
+        var item = catalogById(state, x.catalogId);
+        return item && !item.archived;
+      });
+      var timerChanged = false;
+      for (var ai = 0; ai < state.available.length; ai++) {
+        var availableCat = catalogById(state, state.available[ai].catalogId);
+        if (!availableCat || !availableCat.timeLimitMinutes || state.available[ai].dueAt) continue;
+        if (isTaskBlockedByRecurrence(state, availableCat.id, Date.now())) continue;
+        state.available[ai].dueAt = Date.now() + Number(availableCat.timeLimitMinutes) * 60000;
+        timerChanged = true;
+      }
+      if (timerChanged) save(state);
     }
     return state;
   }
@@ -287,10 +345,9 @@
       if (!state || !state.catalog) {
         return { ok: false, message: "Estado inválido para reset." };
       }
-      state.available = [];
+      state.available = initialPoolFromCatalog(state);
       state.doing = [];
       state.pending = [];
-      state.redemptions = [];
       state.completedAtByCatalog = {};
       persist(state);
       return { ok: true };
@@ -339,18 +396,23 @@
     var now = nowTs || Date.now();
     var d = new Date(now);
 
-    if (cat.isScheduled && Array.isArray(cat.scheduledDays) && cat.scheduledTime) {
+    if (cat.isScheduled) {
       var currentDay = d.getDay();
-      if (cat.scheduledDays.indexOf(currentDay) === -1) {
+      var scheduledDays = Array.isArray(cat.scheduledDays) ? cat.scheduledDays.map(function(day) {
+        return parseInt(day, 10);
+      }).filter(function(day) {
+        return Number.isFinite(day);
+      }) : [];
+      if (scheduledDays.length > 0 && scheduledDays.indexOf(currentDay) === -1) {
         return true;
       }
       var currentHour = d.getHours();
       var currentMin = d.getMinutes();
-      var timeParts = cat.scheduledTime.split(":");
+      var timeParts = String(cat.scheduledTime || "").split(":");
       if (timeParts.length === 2) {
         var schedHour = parseInt(timeParts[0], 10);
         var schedMin = parseInt(timeParts[1], 10);
-        if (currentHour < schedHour || (currentHour === schedHour && currentMin < schedMin)) {
+        if (Number.isFinite(schedHour) && Number.isFinite(schedMin) && (currentHour < schedHour || (currentHour === schedHour && currentMin < schedMin))) {
           return true;
         }
       }
@@ -385,6 +447,26 @@
     for (var i = arr.length - 1; i >= 0; i--) {
       if (arr[i].id === instanceId) arr.splice(i, 1);
     }
+  }
+
+  function isCatalogOnBoard(state, catalogId) {
+    return state.available.some(function(x){ return x.catalogId === catalogId; }) ||
+           state.doing.some(function(x){ return x.catalogId === catalogId; }) ||
+           state.pending.some(function(x){ return x.catalogId === catalogId; });
+  }
+
+  function findReusableCatalog(state, row) {
+    var targetTitle = normalizeTaskKey(row.title);
+    var targetSister = row.sisterId || (state.sisters[0] && state.sisters[0].id) || "child";
+    if (!targetTitle) return null;
+    for (var i = 0; i < state.catalog.length; i++) {
+      var item = state.catalog[i];
+      if (item.sisterId !== targetSister) continue;
+      if (normalizeTaskKey(item.title) !== targetTitle) continue;
+      if (row.frequency && item.frequency !== row.frequency) continue;
+      return item;
+    }
+    return null;
   }
 
   window.CofrinhoMagico = {
@@ -425,7 +507,7 @@
       }
       if (!found) return;
       if (isTaskBlockedByRecurrence(state, found.catalogId, Date.now())) return;
-      state.doing.push({ id: found.id, catalogId: found.catalogId, startedAt: Date.now() });
+      state.doing.push({ id: found.id, catalogId: found.catalogId, startedAt: Date.now(), dueAt: found.dueAt || 0 });
       persist(state);
     },
 
@@ -445,6 +527,7 @@
         id: found.id,
         catalogId: found.catalogId,
         submittedAt: Date.now(),
+        dueAt: found.dueAt || 0,
       });
       persist(state);
     },
@@ -464,7 +547,7 @@
         }
         state.completedAtByCatalog[item.catalogId] = Date.now();
       }
-      state.available.push({ id: uid(), catalogId: item.catalogId });
+      if (cat) state.available.push({ id: uid(), catalogId: item.catalogId });
       persist(state);
     },
 
@@ -475,7 +558,8 @@
       if (ix < 0) return;
       var item = state.pending[ix];
       state.pending.splice(ix, 1);
-      state.available.push({ id: uid(), catalogId: item.catalogId, feedback: feedbackMsg });
+      var cat = catalogById(state, item.catalogId);
+      if (cat) state.available.push(makeInstance(cat, { feedback: feedbackMsg }));
       persist(state);
     },
 
@@ -486,6 +570,7 @@
       if (fields.weeklyBonusLabel != null) state.family.weeklyBonusLabel = String(fields.weeklyBonusLabel);
       if (fields.weeklyBonusCoins != null) state.family.weeklyBonusCoins = Number(fields.weeklyBonusCoins);
       if (fields.parentAvatarUrl != null) state.family.parentAvatarUrl = String(fields.parentAvatarUrl);
+      if (fields.parentPin != null) state.family.parentPin = String(fields.parentPin);
       persist(state);
     },
 
@@ -565,10 +650,30 @@
             if (!state.catalog[i].rewardType) state.catalog[i].rewardType = "extra";
             if (state.catalog[i].rewardType === "obrigacao") state.catalog[i].rewardType = "diario";
             if (state.catalog[i].rewardType === "diario") state.catalog[i].valueBRL = 0;
+            state.catalog[i].timeLimitMinutes = Number(state.catalog[i].timeLimitMinutes) || 0;
             persist(state);
             return row.id;
           }
         }
+      }
+      var reusable = findReusableCatalog(state, row);
+      if (reusable) {
+        reusable.sisterId = row.sisterId || reusable.sisterId;
+        reusable.title = row.title || reusable.title;
+        reusable.subtitle = row.subtitle != null ? row.subtitle : reusable.subtitle;
+        reusable.valueBRL = row.rewardType === "diario" ? 0 : Number(row.valueBRL != null ? row.valueBRL : reusable.valueBRL) || 1;
+        reusable.frequency = row.frequency || reusable.frequency || "diario";
+        reusable.icon = row.icon || reusable.icon || "task";
+        reusable.rewardType = row.rewardType || reusable.rewardType || "extra";
+        if (reusable.rewardType === "obrigacao") reusable.rewardType = "diario";
+        if (reusable.rewardType === "diario") reusable.valueBRL = 0;
+        reusable.isScheduled = !!row.isScheduled;
+        reusable.scheduledDays = row.scheduledDays || reusable.scheduledDays || [];
+        reusable.scheduledTime = row.scheduledTime || reusable.scheduledTime || "";
+        reusable.timeLimitMinutes = Number(row.timeLimitMinutes) || 0;
+        reusable.archived = false;
+        persist(state);
+        return reusable.id;
       }
       var id = row.id || "cat_" + uid();
       state.catalog.push({
@@ -583,6 +688,8 @@
         isScheduled: !!row.isScheduled,
         scheduledDays: row.scheduledDays || [],
         scheduledTime: row.scheduledTime || "",
+        timeLimitMinutes: Number(row.timeLimitMinutes) || 0,
+        archived: !!row.archived,
       });
       if (state.catalog[state.catalog.length - 1].rewardType === "obrigacao") {
         state.catalog[state.catalog.length - 1].rewardType = "diario";
@@ -591,7 +698,7 @@
         state.catalog[state.catalog.length - 1].valueBRL = 0;
       }
       if (row.frequency !== "unica") {
-        state.available.push({ id: uid(), catalogId: id });
+        state.available.push(makeInstance(state.catalog[state.catalog.length - 1]));
       }
       persist(state);
       return id;
@@ -611,17 +718,75 @@
       state.pending = state.pending.filter(function (x) {
         return x.catalogId !== catalogId;
       });
+      if (state.completedAtByCatalog) {
+        delete state.completedAtByCatalog[catalogId];
+      }
       persist(state);
+    },
+
+    archiveCatalog: function (catalogId, archived) {
+      var state = ensureState();
+      var item = catalogById(state, catalogId);
+      if (!item) return { ok: false, message: "Tarefa nao encontrada." };
+      item.archived = archived !== false;
+      state.available = state.available.filter(function (x) {
+        return x.catalogId !== catalogId;
+      });
+      state.doing = state.doing.filter(function (x) {
+        return x.catalogId !== catalogId;
+      });
+      state.pending = state.pending.filter(function (x) {
+        return x.catalogId !== catalogId;
+      });
+      if (!item.archived && item.frequency !== "unica") {
+        state.available.push(makeInstance(item));
+      }
+      persist(state);
+      return { ok: true };
     },
 
     publishTask: function(catalogId) {
       var state = ensureState();
-      var exists = state.available.some(function(x){ return x.catalogId === catalogId; }) ||
-                   state.doing.some(function(x){ return x.catalogId === catalogId; }) ||
-                   state.pending.some(function(x){ return x.catalogId === catalogId; });
+      var item = catalogById(state, catalogId);
+      if (!item || item.archived) return;
+      if (item.frequency === "unica") {
+        state.available = state.available.filter(function(x) { return x.catalogId !== catalogId; });
+        if (state.completedAtByCatalog) delete state.completedAtByCatalog[catalogId];
+      }
+      var exists = isCatalogOnBoard(state, catalogId);
       if (exists) return;
-      state.available.push({ id: uid(), catalogId: catalogId });
+      state.available.push(makeInstance(item));
       persist(state);
+    },
+
+    reuseCatalogRow: function(row) {
+      var state = ensureState();
+      var reusable = findReusableCatalog(state, row);
+      var id = reusable ? reusable.id : this.upsertCatalogRow(row);
+      state = ensureState();
+      var item = catalogById(state, id);
+      if (!item) return { ok: false, message: "Tarefa nao encontrada." };
+
+      item.archived = false;
+      if (row.subtitle != null) item.subtitle = row.subtitle;
+      if (row.valueBRL != null) item.valueBRL = Number(row.valueBRL) || 0;
+      if (row.rewardType) item.rewardType = row.rewardType;
+      if (row.frequency) item.frequency = row.frequency;
+      if (row.icon) item.icon = row.icon;
+      if (row.timeLimitMinutes != null) item.timeLimitMinutes = Number(row.timeLimitMinutes) || 0;
+      if (item.rewardType === "diario") item.valueBRL = 0;
+
+      if (item.frequency === "unica") {
+        state.available = state.available.filter(function(x) { return x.catalogId !== id; });
+        if (state.completedAtByCatalog) delete state.completedAtByCatalog[id];
+      }
+      if (isCatalogOnBoard(state, id)) {
+        persist(state);
+        return { ok: true, id: id, reused: !!reusable, published: false, message: "Tarefa ja esta no board." };
+      }
+      state.available.push(makeInstance(item));
+      persist(state);
+      return { ok: true, id: id, reused: !!reusable, published: true };
     },
 
     redeemFromPiggyBank: function (sisterId, amountBRL, description) {

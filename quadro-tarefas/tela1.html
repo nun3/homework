@@ -236,6 +236,7 @@ document.addEventListener("DOMContentLoaded", function() {
 <script>
 (function () {
   var CM = window.CofrinhoMagico;
+  var completedExpanded = false;
   // avatarUrl agora vem diretamente de sis.avatarUrl
 
   function sister(state, id) {
@@ -263,6 +264,20 @@ document.addEventListener("DOMContentLoaded", function() {
 
   function rewardValueLabel(c) {
     return c.rewardType === "diario" ? "Sem recompensa" : CM.fmtBRL(c.valueBRL);
+  }
+
+  function timerHtml(inst) {
+    if (!inst || !inst.dueAt) return "";
+    var remainingMs = Number(inst.dueAt) - Date.now();
+    var overdue = remainingMs <= 0;
+    var totalMin = Math.max(0, Math.ceil(Math.abs(remainingMs) / 60000));
+    var hours = Math.floor(totalMin / 60);
+    var mins = totalMin % 60;
+    var timeText = hours > 0 ? hours + "h " + String(mins).padStart(2, "0") + "min" : totalMin + "min";
+    return "<div class=\"" + (overdue ? "bg-error-container text-on-error-container border-error/30" : "bg-tertiary-container text-on-tertiary-container border-tertiary/30") + " text-label-sm p-3 rounded-lg mt-2 mb-3 border flex gap-2 items-center\">" +
+      "<span class=\"material-symbols-outlined text-[18px] shrink-0\">" + (overdue ? "warning" : "timer") + "</span>" +
+      "<span><strong>" + (overdue ? "Tempo esgotado:" : "Tempo restante:") + "</strong> " + timeText + "</span>" +
+      "</div>";
   }
 
   function esc(s) {
@@ -377,6 +392,7 @@ document.addEventListener("DOMContentLoaded", function() {
         "</div>" +
         "<h3 class=\"font-title-md text-title-md text-on-surface mb-2 leading-snug\">" + esc(c.title) + "</h3>" +
         feedbackHtml +
+        timerHtml(inst) +
         (c.subtitle && !inst.feedback ? "<p class=\"text-label-sm text-on-surface-variant mb-3\">" + esc(c.subtitle) + "</p>" : (!inst.feedback ? "<div class=\"mb-3\"></div>" : "")) +
         "<div class=\"flex justify-between items-center flex-wrap gap-2 mb-3\">" +
         "<span class=\"bg-surface-variant text-on-surface-variant text-label-sm px-2 py-0.5 rounded-full\">" + esc(freqLabel(c.frequency)) + "</span>" +
@@ -427,6 +443,7 @@ document.addEventListener("DOMContentLoaded", function() {
         "<span class=\"material-symbols-outlined text-primary text-[28px] shrink-0\">rocket_launch</span>" +
         "</div>" +
         "<h3 class=\"font-title-md text-title-md text-on-surface mb-3 leading-snug\">" + esc(c.title) + "</h3>" +
+        timerHtml(inst) +
         "<div class=\"flex justify-between items-center mb-4 flex-wrap gap-2\">" +
         "<div class=\"bg-tertiary-container text-on-tertiary-container font-label-bold px-4 py-1.5 rounded-full flex items-center gap-1\">" +
         "<span class=\"material-symbols-outlined text-[18px]\">payments</span> " +
@@ -488,6 +505,8 @@ document.addEventListener("DOMContentLoaded", function() {
       var c = cat(state, inst.catalogId);
       if (!c) return false;
       return CM.isTaskCompletedInPeriod && CM.isTaskCompletedInPeriod(c.id);
+    }).sort(function(a, b) {
+      return (state.completedAtByCatalog[b.catalogId] || 0) - (state.completedAtByCatalog[a.catalogId] || 0);
     });
     document.getElementById("kid-count-completed").textContent = String(completedNow.length);
     el.innerHTML = "";
@@ -500,7 +519,23 @@ document.addEventListener("DOMContentLoaded", function() {
         "</div>";
       return;
     }
-    completedNow.forEach(function (inst) {
+    var visibleCompleted = completedExpanded ? completedNow : completedNow.slice(0, 5);
+    if (completedNow.length > 5) {
+      var summary = document.createElement("div");
+      summary.className = "rounded-2xl bg-surface-container-low border border-outline-variant/60 p-3 flex items-center justify-between gap-3";
+      summary.innerHTML =
+        "<div class=\"min-w-0\">" +
+        "<p class=\"font-label-bold text-label-bold text-on-surface\">" + completedNow.length + " tarefas concluídas</p>" +
+        "<p class=\"text-label-sm text-on-surface-variant normal-case\">" + (completedExpanded ? "Mostrando todas." : "Mostrando as 5 mais recentes.") + "</p>" +
+        "</div>" +
+        "<button type=\"button\" class=\"completed-toggle min-h-10 rounded-xl bg-secondary-container text-on-secondary-container px-3 py-2 font-label-bold text-label-bold shrink-0\">" + (completedExpanded ? "Ver menos" : "Ver todas") + "</button>";
+      summary.querySelector(".completed-toggle").addEventListener("click", function() {
+        completedExpanded = !completedExpanded;
+        renderCompleted(state);
+      });
+      el.appendChild(summary);
+    }
+    visibleCompleted.forEach(function (inst) {
       var c = cat(state, inst.catalogId);
       if (!c) return;
       var sis = sister(state, c.sisterId);
@@ -597,10 +632,10 @@ document.addEventListener("DOMContentLoaded", function() {
     renderAll();
   });
 
-  // Verifica as tarefas agendadas a cada minuto
+  // Atualiza tarefas agendadas e temporizadores.
   setInterval(function() {
     renderAll();
-  }, 60000);
+  }, 30000);
 })();
 </script>
 </body></html>

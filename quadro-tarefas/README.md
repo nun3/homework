@@ -41,7 +41,9 @@ O fluxo principal é:
 - Menu de tarefas disponíveis.
 - Mover tarefas para "Fazendo".
 - Enviar tarefas para "Check dos Pais".
+- Exibir alerta e temporizador para tarefas com prazo.
 - Visualizar tarefas concluídas.
+- Visualização compacta das tarefas concluídas para evitar poluição no board.
 - Ver saldo do cofrinho e metas familiares.
 - Sincronização em tempo real entre telas e dispositivos usando Supabase Realtime.
 
@@ -52,8 +54,14 @@ O fluxo principal é:
 - Gráficos de estatísticas de tarefas.
 - Aprovação ou rejeição de tarefas pendentes.
 - Resgates do cofrinho com histórico e filtro.
-- Criação de novas tarefas e surpresas rápidas.
+- Criação e reaproveitamento de tarefas e surpresas rápidas.
+- Lista de tarefas cadastradas recolhida por padrão, com busca, filtros, arquivamento e exclusão controlada para manter a tela enxuta.
+- Agendamento de tarefas por dia da semana e/ou horário.
+- Definição de tempo limite por tarefa, incluindo tarefas rápidas.
+- PIN simples para restringir o acesso ao painel dos pais na sessão familiar.
+- Alteração de e-mail, senha e PIN dos pais pelo painel.
 - Exportação de histórico (CSV).
+- Reinício do board de tarefas preservando crianças, saldos e histórico de resgates.
 
 ## Como o estado funciona
 
@@ -130,13 +138,15 @@ npx serve .
 
 - `supabase-client.js` contém a chave `anon`, que é apropriada para apps frontend.
 - Nunca exponha ou publique a chave `service_role` no frontend.
+- As políticas RLS isolam os dados entre famílias autenticadas.
+- A escolha entre visão das crianças e painel dos pais é uma separação de interface no navegador. Para impedir acesso dentro da mesma sessão familiar, adicione uma senha ou PIN específico para os pais.
 
 ## Personalização
 
-O estado inicial define:
+O estado inicial começa vazio para cada família:
 
-- duas crianças (Tabitha e Hinata);
-- catálogo inicial de tarefas com frequências `diario` e `extra`;
-- metas familiares e bônus semanais.
+- crianças são cadastradas no painel dos pais;
+- tarefas são criadas no painel dos pais;
+- metas familiares e bônus semanais podem ser ajustados pelo app ou em `cofrinho-data.js`.
 
 Você pode ajustar esses valores em `cofrinho-data.js` ou via painel dos pais.

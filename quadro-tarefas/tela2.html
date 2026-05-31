@@ -233,6 +233,10 @@
 <h1 class="font-headline-lg-mobile text-lg sm:text-headline-lg-mobile font-bold text-primary truncate">Painel dos Pais</h1>
 </div>
 <div class="flex shrink-0 items-center gap-2 sm:gap-4">
+<button type="button" id="btn-account-settings" class="min-h-10 rounded-xl bg-surface-container px-3 py-2 font-label-bold text-label-bold text-on-surface-variant flex items-center justify-center gap-1 hover:bg-surface-container-high" title="Conta e PIN">
+  <span class="material-symbols-outlined text-xl">manage_accounts</span>
+  <span class="hidden sm:inline">Conta</span>
+</button>
 <button type="button" onclick="localStorage.removeItem('viewMode'); window.supabaseClient && window.supabaseClient.auth.signOut().then(() => window.location.href='./')" class="min-h-10 rounded-xl bg-error-container px-3 py-2 font-label-bold text-label-bold text-on-error-container flex items-center justify-center gap-1 hover:opacity-80 sm:bg-transparent sm:px-0 sm:py-0 sm:text-error">
   <span class="material-symbols-outlined text-xl">logout</span> Sair
 </button>
@@ -261,7 +265,7 @@
                 </button>
 <button type="button" id="btn-reset-board" class="chunky-button min-h-12 bg-error text-on-error font-label-bold text-label-bold px-4 py-2.5 rounded-xl flex items-center justify-center gap-2 self-stretch sm:self-auto">
 <span class="material-symbols-outlined text-[20px]">restart_alt</span>
-                    Reiniciar tudo
+                    Reiniciar board
                 </button>
 </div>
 </div>
@@ -345,7 +349,7 @@
       </div>
       <div class="min-w-0">
         <p class="font-title-md text-title-md text-on-surface leading-tight">Tarefa rápida</p>
-        <p class="text-label-sm text-on-surface-variant normal-case">Crie uma surpresa em poucos toques.</p>
+        <p class="text-label-sm text-on-surface-variant normal-case">Envie ou reaproveite uma tarefa em poucos toques.</p>
       </div>
     </div>
     <div class="quick-task-controls">
@@ -356,15 +360,56 @@
       <select id="quick-surprise-sister" class="quick-task-control w-full min-h-12 bg-surface-container border-none rounded-xl px-4 text-base text-on-surface focus:ring-2 focus:ring-primary">
         <!-- Options injected via JS -->
       </select>
+      <label class="quick-task-control w-full min-h-12 bg-surface-container border border-transparent rounded-xl px-3 flex items-center gap-2 focus-within:ring-2 focus-within:ring-primary">
+        <span class="material-symbols-outlined text-secondary text-[20px]">timer</span>
+        <input type="number" id="quick-surprise-limit" min="0" step="1" value="30" placeholder="Min" class="w-full bg-transparent border-none p-0 text-base text-on-surface placeholder:text-on-surface-variant/70 focus:ring-0 normal-case" />
+      </label>
       <button type="submit" class="quick-task-submit min-h-12 bg-secondary text-on-secondary rounded-xl px-5 py-2.5 flex items-center justify-center gap-2 font-label-bold text-label-bold hover:opacity-90 transition-opacity" title="Criar tarefa rápida">
         <span class="material-symbols-outlined text-[20px]">add</span>
-        <span class="quick-task-submit-label">Criar</span>
+        <span class="quick-task-submit-label">Enviar</span>
       </button>
     </div>
   </form>
 </div>
-<div id="parent-catalog-cards" class="grid grid-cols-1 gap-3 md:hidden"></div>
-<div class="hidden md:block bg-surface-container-lowest rounded-2xl shadow-lg overflow-x-auto border border-outline-variant">
+<div class="bg-surface-container-lowest border border-outline-variant/60 rounded-2xl shadow-sm p-3 sm:p-4 space-y-3">
+  <div class="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+    <div class="min-w-0">
+      <p class="font-title-md text-title-md text-on-surface">Tarefas cadastradas</p>
+      <p id="parent-catalog-summary" class="text-label-sm text-on-surface-variant normal-case">Carregando tarefas...</p>
+    </div>
+    <button type="button" id="btn-nova-tarefa-inline" class="min-h-11 rounded-xl bg-primary text-on-primary px-4 py-2 font-label-bold text-label-bold flex items-center justify-center gap-2 sm:hidden">
+      <span class="material-symbols-outlined text-[20px]">add</span>
+      Nova tarefa
+    </button>
+    <button type="button" id="btn-toggle-catalog-list" class="min-h-11 rounded-xl bg-surface-container text-on-surface-variant px-4 py-2 font-label-bold text-label-bold flex items-center justify-center gap-2">
+      <span class="material-symbols-outlined text-[20px]">visibility</span>
+      Ver tarefas
+    </button>
+  </div>
+  <div class="grid grid-cols-1 gap-2 sm:grid-cols-2 lg:grid-cols-4">
+    <label class="min-h-12 bg-surface-container border border-transparent rounded-xl px-3 flex items-center gap-2 focus-within:ring-2 focus-within:ring-primary">
+      <span class="material-symbols-outlined text-secondary text-[20px]">search</span>
+      <input id="catalog-search" type="search" placeholder="Buscar tarefa" class="w-full bg-transparent border-none p-0 text-base text-on-surface placeholder:text-on-surface-variant/70 focus:ring-0 normal-case" />
+    </label>
+    <select id="catalog-filter-child" class="min-h-12 bg-surface-container border-none rounded-xl px-3 text-base text-on-surface focus:ring-2 focus:ring-primary">
+      <option value="all">Todas as criancas</option>
+    </select>
+    <select id="catalog-filter-type" class="min-h-12 bg-surface-container border-none rounded-xl px-3 text-base text-on-surface focus:ring-2 focus:ring-primary">
+      <option value="all">Todos os tipos</option>
+      <option value="extra">Extras</option>
+      <option value="diario">Diarias</option>
+      <option value="unica">Surpresas</option>
+    </select>
+    <select id="catalog-filter-status" class="min-h-12 bg-surface-container border-none rounded-xl px-3 text-base text-on-surface focus:ring-2 focus:ring-primary">
+      <option value="active">Ativas</option>
+      <option value="draft">Rascunhos</option>
+      <option value="archived">Arquivadas</option>
+      <option value="all">Todas</option>
+    </select>
+  </div>
+</div>
+<div id="parent-catalog-cards" class="hidden grid-cols-1 gap-3 md:hidden"></div>
+<div id="parent-catalog-table-wrap" class="hidden bg-surface-container-lowest rounded-2xl shadow-lg overflow-x-auto border border-outline-variant">
 <table class="w-full border-collapse min-w-[650px]">
 <thead class="bg-surface-container-high border-b border-outline-variant">
 <tr>
@@ -531,6 +576,12 @@
     </div>
 
     <div>
+      <label class="font-label-bold text-label-bold text-on-surface-variant block mb-2" for="task-time-limit">Tempo limite apos publicar (min)</label>
+      <input id="task-time-limit" class="w-full bg-surface-container border-none rounded-lg p-3 font-body-md text-on-surface focus:ring-2 focus:ring-primary" min="0" step="1" type="number" placeholder="Ex: 30"/>
+      <p class="text-label-sm text-on-surface-variant mt-1">Deixe vazio para tarefa sem temporizador.</p>
+    </div>
+
+    <div>
       <label class="font-label-bold text-label-bold text-on-surface-variant block mb-2" for="task-icon">Ícone da tarefa</label>
       <select id="task-icon" class="w-full bg-surface-container border-none rounded-lg p-3 font-body-md text-on-surface focus:ring-2 focus:ring-primary">
         <option value="task">Tarefa geral</option>
@@ -655,6 +706,12 @@
       <input id="task-edit-value" class="w-full bg-surface-container border-none rounded-lg p-3 font-body-md text-on-surface focus:ring-2 focus:ring-primary" min="0" step="0.01" type="number" value="1"/>
     </div>
 
+    <div>
+      <label class="font-label-bold text-label-bold text-on-surface-variant block mb-2" for="task-edit-time-limit">Tempo limite apos publicar (min)</label>
+      <input id="task-edit-time-limit" class="w-full bg-surface-container border-none rounded-lg p-3 font-body-md text-on-surface focus:ring-2 focus:ring-primary" min="0" step="1" type="number" placeholder="Ex: 30"/>
+      <p class="text-label-sm text-on-surface-variant mt-1">Deixe vazio para tarefa sem temporizador.</p>
+    </div>
+
     <div class="p-3 bg-surface-container-lowest border border-outline-variant rounded-xl">
       <label class="flex items-center gap-2 cursor-pointer mb-3">
         <input type="checkbox" id="task-edit-is-scheduled" class="w-5 h-5 rounded text-primary focus:ring-primary border-outline"/>
@@ -736,12 +793,13 @@
     <div class="flex items-start justify-between gap-3">
       <div>
         <h3 class="font-title-md text-title-md text-error">Excluir tarefa</h3>
-        <p class="text-label-sm text-on-surface-variant">Esta ação não pode ser desfeita.</p>
+        <p class="text-label-sm text-on-surface-variant">Esta acao nao pode ser desfeita.</p>
       </div>
       <button type="button" id="task-delete-cancel-top" class="material-symbols-outlined text-on-surface-variant hover:text-primary">close</button>
     </div>
     <input type="hidden" id="task-delete-id"/>
     <p class="font-body-md">Tem certeza que deseja excluir a tarefa <strong id="task-delete-title"></strong>?</p>
+    <p class="rounded-xl bg-error-container/60 text-on-error-container text-label-sm p-3">Ela sera removida do cadastro e tambem saira de Disponiveis, Fazendo e Check dos Pais. Saldos e resgates ja registrados serao preservados.</p>
     <div class="flex items-center justify-end gap-2 pt-2">
       <button type="button" id="task-delete-cancel-bottom" class="px-4 py-2 rounded-lg bg-surface-container-high text-on-surface-variant font-label-bold">Cancelar</button>
       <button type="submit" class="chunky-button bg-error text-on-error font-label-bold px-5 py-2.5 rounded-lg">Excluir tarefa</button>
@@ -794,6 +852,37 @@
     <div class="flex items-center justify-end gap-2 pt-2">
       <button type="button" id="reject-cancel-bottom" class="px-4 py-2 rounded-lg bg-surface-container-high text-on-surface-variant font-label-bold">Cancelar</button>
       <button type="submit" class="chunky-button bg-error text-on-error font-label-bold px-5 py-2.5 rounded-lg">Confirmar rejeição</button>
+    </div>
+  </form>
+</dialog>
+<dialog id="account-modal" class="rounded-3xl shadow-2xl bg-surface border-none max-w-md w-full p-0 backdrop:bg-black/50 backdrop:backdrop-blur-sm transition-all">
+  <form id="account-form" class="p-6 space-y-4">
+    <div class="flex items-start justify-between gap-3">
+      <div>
+        <h3 class="font-title-md text-title-md text-primary">Conta e PIN</h3>
+        <p class="text-label-sm text-on-surface-variant">Altere apenas os campos desejados.</p>
+      </div>
+      <button type="button" id="account-cancel-top" class="material-symbols-outlined text-on-surface-variant hover:text-primary">close</button>
+    </div>
+    <div class="space-y-3">
+      <label class="block">
+        <span class="font-label-bold text-label-bold text-on-surface-variant">Novo e-mail</span>
+        <input type="email" id="account-email" class="mt-1 w-full bg-surface-container border-none rounded-xl p-3 text-base text-on-surface focus:ring-2 focus:ring-primary normal-case" placeholder="familia@exemplo.com"/>
+      </label>
+      <label class="block">
+        <span class="font-label-bold text-label-bold text-on-surface-variant">Nova senha</span>
+        <input type="password" id="account-password" minlength="6" class="mt-1 w-full bg-surface-container border-none rounded-xl p-3 text-base text-on-surface focus:ring-2 focus:ring-primary normal-case" placeholder="Minimo 6 caracteres"/>
+      </label>
+      <label class="block">
+        <span class="font-label-bold text-label-bold text-on-surface-variant">Novo PIN dos pais</span>
+        <input type="password" id="account-parent-pin" inputmode="numeric" maxlength="4" class="mt-1 w-full bg-surface-container border-none rounded-xl p-3 text-center text-xl tracking-[0.35em] text-on-surface focus:ring-2 focus:ring-primary" placeholder="0000"/>
+      </label>
+    </div>
+    <p id="account-error" class="text-sm text-error hidden"></p>
+    <p class="text-label-sm text-on-surface-variant normal-case">Alterar e-mail pode exigir confirmacao pelo Supabase antes de entrar em vigor.</p>
+    <div class="flex flex-col sm:flex-row sm:items-center sm:justify-end gap-2 pt-2">
+      <button type="button" id="account-cancel-bottom" class="min-h-11 px-4 py-2 rounded-xl bg-surface-container-high text-on-surface-variant font-label-bold">Cancelar</button>
+      <button type="submit" class="min-h-11 chunky-button bg-primary text-on-primary font-label-bold px-5 py-2.5 rounded-xl">Guardar alteracoes</button>
     </div>
   </form>
 </dialog>
@@ -883,6 +972,9 @@
   var redeemError = document.getElementById("redeem-error");
   var rejectModal = document.getElementById("reject-modal");
   var rejectForm = document.getElementById("reject-form");
+  var accountModal = document.getElementById("account-modal");
+  var accountForm = document.getElementById("account-form");
+  var accountError = document.getElementById("account-error");
   var childModal = document.getElementById("child-modal");
   var childForm = document.getElementById("child-form");
   var childError = document.getElementById("child-error");
@@ -890,6 +982,7 @@
   var toastTimer = null;
   var chartInstances = {};
   var chartJsPromise = null;
+  var catalogListVisible = false;
 
   function loadChartsLibrary() {
     if (window.Chart) return Promise.resolve(window.Chart);
@@ -1080,7 +1173,7 @@
     });
   }
 
-  function renderCatalog() {
+  function renderCatalogLegacy() {
     var s = CM.getState();
     var tb = document.getElementById("parent-catalog-tbody");
     var cards = document.getElementById("parent-catalog-cards");
@@ -1204,6 +1297,151 @@
         card.querySelector(".cat-card-del").addEventListener("click", function () {
           openDeleteTaskModal(c);
         });
+        cards.appendChild(card);
+      }
+    });
+  }
+
+  function isCatalogOnBoard(state, catalogId) {
+    return state.available.some(function(x){ return x.catalogId === catalogId; }) ||
+           state.doing.some(function(x){ return x.catalogId === catalogId; }) ||
+           state.pending.some(function(x){ return x.catalogId === catalogId; });
+  }
+
+  function isCatalogDraft(state, c) {
+    return c.frequency === "unica" && !c.archived && !isCatalogOnBoard(state, c.id);
+  }
+
+  function getCatalogFilters() {
+    var search = document.getElementById("catalog-search");
+    var child = document.getElementById("catalog-filter-child");
+    var type = document.getElementById("catalog-filter-type");
+    var status = document.getElementById("catalog-filter-status");
+    return {
+      search: search ? search.value.trim().toLowerCase() : "",
+      child: child ? child.value : "all",
+      type: type ? type.value : "all",
+      status: status ? status.value : "active",
+    };
+  }
+
+  function syncCatalogChildFilter(state) {
+    var select = document.getElementById("catalog-filter-child");
+    if (!select) return;
+    var current = select.value || "all";
+    select.innerHTML = "<option value=\"all\">Todas as criancas</option>";
+    state.sisters.forEach(function(sis) {
+      var opt = document.createElement("option");
+      opt.value = sis.id;
+      opt.textContent = sis.name || "Crianca";
+      select.appendChild(opt);
+    });
+    select.value = state.sisters.some(function(sis) { return sis.id === current; }) ? current : "all";
+  }
+
+  function catalogMatchesFilters(state, c, filters) {
+    var sis = sister(state, c.sisterId);
+    var haystack = [c.title, c.subtitle, sis && sis.name, c.icon].join(" ").toLowerCase();
+    if (filters.search && haystack.indexOf(filters.search) === -1) return false;
+    if (filters.child !== "all" && c.sisterId !== filters.child) return false;
+    if (filters.type === "extra" && c.rewardType !== "extra") return false;
+    if (filters.type === "diario" && c.rewardType !== "diario") return false;
+    if (filters.type === "unica" && c.frequency !== "unica") return false;
+    if (filters.status === "active" && (c.archived || isCatalogDraft(state, c))) return false;
+    if (filters.status === "draft" && !isCatalogDraft(state, c)) return false;
+    if (filters.status === "archived" && !c.archived) return false;
+    return true;
+  }
+
+  function attachCatalogActions(root, c, isUnpublished) {
+    var pub = root.querySelector(".cat-pub, .cat-card-pub");
+    if (pub && isUnpublished) {
+      pub.addEventListener("click", function () {
+        CM.publishTask(c.id);
+        showToast("Tarefa surpresa enviada para o board da crianca!", "success");
+      });
+    }
+    var edit = root.querySelector(".cat-edit, .cat-card-edit");
+    if (edit) {
+      edit.addEventListener("click", function () {
+        openEditTaskModal(c);
+      });
+    }
+    var archive = root.querySelector(".cat-archive, .cat-card-archive");
+    if (archive) {
+      archive.addEventListener("click", function () {
+        var result = CM.archiveCatalog(c.id, !c.archived);
+        if (result && result.ok) {
+          showToast(c.archived ? "Tarefa restaurada." : "Tarefa arquivada.", "success");
+        }
+      });
+    }
+    var del = root.querySelector(".cat-del, .cat-card-del");
+    if (del) {
+      del.addEventListener("click", function () {
+        openDeleteTaskModal(c);
+      });
+    }
+  }
+
+  function renderCatalog() {
+    var s = CM.getState();
+    var tb = document.getElementById("parent-catalog-tbody");
+    var cards = document.getElementById("parent-catalog-cards");
+    var summary = document.getElementById("parent-catalog-summary");
+    syncCatalogChildFilter(s);
+    var filters = getCatalogFilters();
+    var totalActive = s.catalog.filter(function(c) { return !c.archived && !isCatalogDraft(s, c); }).length;
+    var totalDraft = s.catalog.filter(function(c) { return isCatalogDraft(s, c); }).length;
+    var totalArchived = s.catalog.filter(function(c) { return !!c.archived; }).length;
+    var visible = s.catalog.filter(function(c) { return catalogMatchesFilters(s, c, filters); });
+
+    tb.innerHTML = "";
+    if (cards) cards.innerHTML = "";
+    if (summary) {
+      summary.textContent = visible.length + " exibidas - " + totalActive + " ativas - " + totalDraft + " rascunhos - " + totalArchived + " arquivadas";
+    }
+    if (visible.length === 0) {
+      if (cards) {
+        cards.innerHTML =
+          "<div class=\"rounded-2xl border border-dashed border-outline-variant bg-surface-container-lowest p-5 text-center text-on-surface-variant\">" +
+          "<span class=\"material-symbols-outlined text-4xl mb-2 text-primary\">manage_search</span>" +
+          "<p class=\"font-title-md text-title-md text-on-surface\">Nenhuma tarefa neste filtro</p>" +
+          "<p class=\"font-body-md text-sm mt-1\">Ajuste a busca ou crie uma nova tarefa.</p>" +
+          "</div>";
+      }
+      tb.innerHTML = "<tr><td colspan=\"6\" class=\"p-6 text-center text-on-surface-variant font-body-md\">Nenhuma tarefa neste filtro.</td></tr>";
+      return;
+    }
+
+    visible.forEach(function (c) {
+      var sis = sister(s, c.sisterId);
+      var sisName = sis ? sis.name : c.sisterId;
+      var isUnpublished = isCatalogDraft(s, c);
+      var statusText = c.archived ? "Arquivada" : recurrenceStatus(c.id);
+      var statusClass = c.archived ? "bg-surface-variant text-on-surface-variant" :
+        (CM.isTaskBlockedByRecurrence(c.id) ? "bg-primary-container text-on-primary-container" : "bg-secondary-container text-on-secondary-container");
+
+      var tr = document.createElement("tr");
+      tr.className = "hover:bg-surface-container-low transition-colors group";
+      tr.innerHTML =
+        "<td class=\"p-4\"><div class=\"flex items-center gap-3 min-w-0\"><div class=\"w-10 h-10 rounded-xl bg-primary-container flex items-center justify-center text-primary shrink-0\"><span class=\"material-symbols-outlined\">" + esc(c.icon || "task") + "</span></div><div class=\"min-w-0\"><p class=\"font-title-md text-on-surface leading-tight truncate\">" + esc(c.title) + "</p><p class=\"font-label-sm text-on-surface-variant truncate\">" + esc(sisName) + (c.subtitle ? " - " + esc(c.subtitle) : "") + "</p></div></div></td>" +
+        "<td class=\"p-4 text-center\"><span class=\"bg-surface-variant text-on-surface-variant px-3 py-1 rounded-full font-label-sm cat-freq\">" + esc(freqLabel(c.frequency)) + "</span></td>" +
+        "<td class=\"p-4 text-center\"><span class=\"px-3 py-1 rounded-full font-label-sm " + statusClass + "\">" + esc(statusText) + "</span></td>" +
+        "<td class=\"p-4 text-center\"><span class=\"px-3 py-1 rounded-full font-label-sm " + (c.rewardType === "diario" ? "bg-secondary-container text-on-secondary-container" : "bg-primary-container text-on-primary-container") + "\">" + esc(rewardTypeLabel(c)) + "</span></td>" +
+        "<td class=\"p-4 text-right\"><div class=\"flex items-center justify-end gap-2\">" + (isUnpublished ? "<button type=\"button\" class=\"chunky-button bg-primary text-on-primary text-xs px-3 py-1.5 rounded-lg cat-pub\">Publicar</button>" : "") + "<span class=\"font-body-lg font-bold text-primary cat-val\">" + esc(rewardValueLabel(c)) + "</span><button type=\"button\" class=\"material-symbols-outlined text-outline hover:text-primary transition-colors text-lg cat-edit\" title=\"Editar\">edit</button></div></td>" +
+        "<td class=\"p-4 text-right\"><div class=\"flex justify-end gap-2\"><button type=\"button\" class=\"material-symbols-outlined text-outline-variant hover:text-primary transition-colors cat-archive\" title=\"" + (c.archived ? "Restaurar" : "Arquivar") + "\">" + (c.archived ? "unarchive" : "archive") + "</button><button type=\"button\" class=\"material-symbols-outlined text-outline-variant hover:text-error transition-colors cat-del\" title=\"Excluir\">delete</button></div></td>";
+      attachCatalogActions(tr, c, isUnpublished);
+      tb.appendChild(tr);
+
+      if (cards) {
+        var card = document.createElement("div");
+        card.className = "bg-surface-container-lowest rounded-2xl shadow-sm border border-outline-variant/60 p-3";
+        card.innerHTML =
+          "<div class=\"flex items-start gap-3\"><div class=\"w-10 h-10 rounded-xl bg-primary-container flex items-center justify-center text-primary shrink-0\"><span class=\"material-symbols-outlined\">" + esc(c.icon || "task") + "</span></div><div class=\"min-w-0 flex-1\"><div class=\"flex items-start justify-between gap-2\"><div class=\"min-w-0\"><p class=\"font-title-md text-title-md text-on-surface leading-tight truncate\">" + esc(c.title) + "</p><p class=\"font-label-sm text-label-sm text-on-surface-variant normal-case truncate\">" + esc(sisName) + (c.subtitle ? " - " + esc(c.subtitle) : "") + "</p></div><span class=\"font-label-bold text-label-bold text-primary shrink-0\">" + esc(rewardValueLabel(c)) + "</span></div>" +
+          "<div class=\"flex flex-wrap gap-1.5 mt-3\"><span class=\"px-2 py-1 rounded-full bg-surface-variant text-on-surface-variant text-label-sm font-label-bold\">" + esc(freqLabel(c.frequency)) + "</span><span class=\"px-2 py-1 rounded-full text-label-sm font-label-bold " + statusClass + "\">" + esc(statusText) + "</span><span class=\"px-2 py-1 rounded-full text-label-sm font-label-bold " + (c.rewardType === "diario" ? "bg-secondary-container text-on-secondary-container" : "bg-primary-container text-on-primary-container") + "\">" + esc(rewardTypeLabel(c)) + "</span></div>" +
+          "<div class=\"flex gap-2 mt-3\">" + (isUnpublished ? "<button type=\"button\" class=\"cat-card-pub min-h-11 flex-1 chunky-button bg-primary text-on-primary font-label-bold text-label-bold px-3 py-2 rounded-xl\">Publicar</button>" : "") + "<button type=\"button\" class=\"cat-card-edit min-h-11 flex-1 bg-secondary-container text-on-secondary-container font-label-bold text-label-bold px-3 py-2 rounded-xl flex items-center justify-center gap-1\"><span class=\"material-symbols-outlined text-[18px]\">edit</span>Editar</button><button type=\"button\" class=\"cat-card-archive min-h-11 bg-surface-container text-on-surface-variant font-label-bold text-label-bold px-3 py-2 rounded-xl flex items-center justify-center\" title=\"" + (c.archived ? "Restaurar" : "Arquivar") + "\"><span class=\"material-symbols-outlined text-[20px]\">" + (c.archived ? "unarchive" : "archive") + "</span></button><button type=\"button\" class=\"cat-card-del min-h-11 bg-error-container text-on-error-container font-label-bold text-label-bold px-3 py-2 rounded-xl flex items-center justify-center\" title=\"Excluir\"><span class=\"material-symbols-outlined text-[20px]\">delete</span></button></div></div></div>";
+        attachCatalogActions(card, c, isUnpublished);
         cards.appendChild(card);
       }
     });
@@ -1425,6 +1663,103 @@
     toastTimer = setTimeout(function () {
       appToast.classList.add("hidden");
     }, 2800);
+  }
+
+  function setCatalogListVisible(visible) {
+    catalogListVisible = !!visible;
+    var cards = document.getElementById("parent-catalog-cards");
+    var table = document.getElementById("parent-catalog-table-wrap");
+    var btn = document.getElementById("btn-toggle-catalog-list");
+    if (cards) {
+      cards.classList.toggle("hidden", !catalogListVisible);
+      cards.classList.toggle("grid", catalogListVisible);
+    }
+    if (table) {
+      table.classList.add("hidden");
+      table.classList.toggle("md:block", catalogListVisible);
+    }
+    if (btn) {
+      btn.innerHTML = catalogListVisible
+        ? '<span class="material-symbols-outlined text-[20px]">visibility_off</span>Ocultar tarefas'
+        : '<span class="material-symbols-outlined text-[20px]">visibility</span>Ver tarefas';
+    }
+  }
+
+  function setAccountError(message) {
+    accountError.textContent = message || "";
+    accountError.classList.toggle("hidden", !message);
+  }
+
+  async function openAccountModal() {
+    accountForm.reset();
+    setAccountError("");
+    try {
+      if (window.supabaseClient) {
+        var res = await window.supabaseClient.auth.getUser();
+        if (res && res.data && res.data.user && res.data.user.email) {
+          document.getElementById("account-email").placeholder = res.data.user.email;
+        }
+      }
+    } catch (e) {}
+    accountModal.showModal();
+  }
+
+  function ensureParentPinAccess(onReady) {
+    var state = CM.getState();
+    if (!state.family) state.family = {};
+    var storedPin = String(state.family.parentPin || "");
+    var unlockKey = "parentPinUnlocked_" + (state.version || "v2");
+    if (storedPin && sessionStorage.getItem(unlockKey) === "1") {
+      onReady();
+      return;
+    }
+
+    var overlay = document.createElement("div");
+    overlay.id = "parent-pin-lock";
+    overlay.className = "fixed inset-0 z-[100] bg-background/95 backdrop-blur-sm flex items-center justify-center p-4";
+    overlay.innerHTML =
+      "<form class=\"w-full max-w-sm bg-surface-container-lowest border border-outline-variant/60 rounded-2xl shadow-xl p-5 space-y-4\">" +
+      "<div class=\"text-center space-y-2\">" +
+      "<div class=\"w-14 h-14 rounded-2xl bg-primary-container text-primary mx-auto flex items-center justify-center\"><span class=\"material-symbols-outlined text-3xl\">lock</span></div>" +
+      "<h2 class=\"font-title-md text-title-md text-on-surface\">" + (storedPin ? "PIN dos pais" : "Crie o PIN dos pais") + "</h2>" +
+      "<p class=\"text-label-sm text-on-surface-variant normal-case\">" + (storedPin ? "Digite o PIN para abrir o painel." : "Use 4 números para proteger este painel nesta família.") + "</p>" +
+      "</div>" +
+      "<input id=\"parent-pin-input\" inputmode=\"numeric\" autocomplete=\"one-time-code\" maxlength=\"4\" class=\"w-full min-h-12 rounded-xl bg-surface-container border-none px-4 text-center text-2xl tracking-[0.4em] font-label-bold text-on-surface focus:ring-2 focus:ring-primary\" type=\"password\" />" +
+      "<p id=\"parent-pin-error\" class=\"hidden text-center text-label-sm font-label-bold text-error\"></p>" +
+      "<button type=\"submit\" class=\"w-full min-h-12 rounded-xl bg-primary text-on-primary font-label-bold text-label-bold flex items-center justify-center gap-2\"><span class=\"material-symbols-outlined text-[20px]\">check</span>Entrar</button>" +
+      "<button type=\"button\" id=\"parent-pin-back\" class=\"w-full min-h-11 rounded-xl bg-surface-container text-on-surface-variant font-label-bold text-label-bold\">Voltar</button>" +
+      "</form>";
+    document.body.appendChild(overlay);
+
+    var input = overlay.querySelector("#parent-pin-input");
+    var error = overlay.querySelector("#parent-pin-error");
+    var form = overlay.querySelector("form");
+    input.focus();
+    overlay.querySelector("#parent-pin-back").addEventListener("click", function() {
+      window.location.href = "./";
+    });
+    form.addEventListener("submit", function(ev) {
+      ev.preventDefault();
+      var pin = input.value.trim();
+      if (!/^\d{4}$/.test(pin)) {
+        error.textContent = "Digite 4 numeros.";
+        error.classList.remove("hidden");
+        return;
+      }
+      if (storedPin && pin !== storedPin) {
+        error.textContent = "PIN incorreto.";
+        error.classList.remove("hidden");
+        input.value = "";
+        input.focus();
+        return;
+      }
+      if (!storedPin) {
+        CM.updateFamilyFields({ parentPin: pin });
+      }
+      sessionStorage.setItem(unlockKey, "1");
+      overlay.remove();
+      onReady();
+    });
   }
 
   function toggleTaskValueInput() {
@@ -1692,6 +2027,8 @@
       if (ic) ic.value = "task";
       var val = document.getElementById("task-value");
       if (val) val.value = "1";
+      var timeLimit = document.getElementById("task-time-limit");
+      if (timeLimit) timeLimit.value = "";
       if (taskError) {
         taskError.classList.add("hidden");
         taskError.textContent = "";
@@ -1717,6 +2054,7 @@
     document.getElementById("task-edit-status").value = c.rewardType === "extra" ? "extra" : "diario";
     document.getElementById("task-edit-frequency").value = c.frequency || "diario";
     document.getElementById("task-edit-value").value = String(c.valueBRL || 1);
+    document.getElementById("task-edit-time-limit").value = c.timeLimitMinutes ? String(c.timeLimitMinutes) : "";
     document.getElementById("task-edit-icon").value = c.icon || "task";
     
     var isSched = !!c.isScheduled;
@@ -1792,6 +2130,29 @@
   });
 
   document.getElementById("btn-nova-tarefa").addEventListener("click", openTaskModal);
+  document.getElementById("btn-account-settings").addEventListener("click", openAccountModal);
+  document.getElementById("account-cancel-top").addEventListener("click", function () {
+    accountModal.close();
+  });
+  document.getElementById("account-cancel-bottom").addEventListener("click", function () {
+    accountModal.close();
+  });
+  var inlineTaskBtn = document.getElementById("btn-nova-tarefa-inline");
+  if (inlineTaskBtn) {
+    inlineTaskBtn.addEventListener("click", openTaskModal);
+  }
+  var toggleCatalogBtn = document.getElementById("btn-toggle-catalog-list");
+  if (toggleCatalogBtn) {
+    toggleCatalogBtn.addEventListener("click", function() {
+      setCatalogListVisible(!catalogListVisible);
+    });
+  }
+  setCatalogListVisible(false);
+  ["catalog-search", "catalog-filter-child", "catalog-filter-type", "catalog-filter-status"].forEach(function(id) {
+    var el = document.getElementById(id);
+    if (!el) return;
+    el.addEventListener(id === "catalog-search" ? "input" : "change", renderCatalog);
+  });
   document.getElementById("task-status").addEventListener("change", toggleTaskValueInput);
   document.getElementById("task-edit-status").addEventListener("change", toggleTaskEditValueInput);
   document.getElementById("task-cancel-top").addEventListener("click", function () {
@@ -1834,6 +2195,53 @@
     CM.reject(instanceId, feedback);
     rejectModal.close();
     showToast("Tarefa rejeitada e devolvida com feedback.", "error");
+  });
+
+  accountForm.addEventListener("submit", async function (ev) {
+    ev.preventDefault();
+    setAccountError("");
+    var email = document.getElementById("account-email").value.trim();
+    var password = document.getElementById("account-password").value;
+    var pin = document.getElementById("account-parent-pin").value.trim();
+    var authPayload = {};
+    var changed = false;
+
+    if (email) authPayload.email = email;
+    if (password) {
+      if (password.length < 6) {
+        setAccountError("A senha deve ter pelo menos 6 caracteres.");
+        return;
+      }
+      authPayload.password = password;
+    }
+    if (pin) {
+      if (!/^\d{4}$/.test(pin)) {
+        setAccountError("O PIN deve ter 4 numeros.");
+        return;
+      }
+      CM.updateFamilyFields({ parentPin: pin });
+      changed = true;
+    }
+
+    if (authPayload.email || authPayload.password) {
+      if (!window.supabaseClient) {
+        setAccountError("Supabase nao esta disponivel.");
+        return;
+      }
+      var res = await window.supabaseClient.auth.updateUser(authPayload);
+      if (res.error) {
+        setAccountError(res.error.message || "Nao foi possivel atualizar a conta.");
+        return;
+      }
+      changed = true;
+    }
+
+    if (!changed) {
+      setAccountError("Preencha pelo menos um campo.");
+      return;
+    }
+    accountModal.close();
+    showToast("Dados atualizados com sucesso.", "success");
   });
 
   childForm.addEventListener("submit", function (ev) {
@@ -1886,6 +2294,7 @@
     var type = document.getElementById("task-status").value;
     var fr = document.getElementById("task-frequency").value;
     var ic = (document.getElementById("task-icon").value || "task").trim();
+    var limit = Math.max(0, parseInt(document.getElementById("task-time-limit").value, 10) || 0);
     var num = 0;
 
     var isScheduled = document.getElementById("task-is-scheduled").checked;
@@ -1919,7 +2328,8 @@
       icon: ic || "task",
       isScheduled: isScheduled,
       scheduledDays: scheduledDays,
-      scheduledTime: scheduledTime
+      scheduledTime: scheduledTime,
+      timeLimitMinutes: limit
     });
     taskModal.close();
     showToast("Nova tarefa cadastrada com sucesso.", "success");
@@ -1934,6 +2344,7 @@
     var type = document.getElementById("task-edit-status").value;
     var fr = document.getElementById("task-edit-frequency").value;
     var ic = (document.getElementById("task-edit-icon").value || "task").trim();
+    var limit = Math.max(0, parseInt(document.getElementById("task-edit-time-limit").value, 10) || 0);
     var num = 0;
 
     var isScheduled = document.getElementById("task-edit-is-scheduled").checked;
@@ -1968,7 +2379,8 @@
       icon: ic || "task",
       isScheduled: isScheduled,
       scheduledDays: scheduledDays,
-      scheduledTime: scheduledTime
+      scheduledTime: scheduledTime,
+      timeLimitMinutes: limit
     });
     taskEditModal.close();
     showToast("Tarefa atualizada com sucesso.", "success");
@@ -2046,35 +2458,42 @@
       ev.preventDefault();
       var title = document.getElementById("quick-surprise-title").value.trim();
       var sisterId = qsSisterSelect.value;
+      var limit = Math.max(0, parseInt(document.getElementById("quick-surprise-limit").value, 10) || 0);
       if (!title || !sisterId) return;
       
-      CM.upsertCatalogRow({
+      var result = CM.reuseCatalogRow({
         sisterId: sisterId,
         title: title,
         subtitle: "Tarefa Surpresa",
         valueBRL: 1,
         frequency: "unica",
         rewardType: "extra",
-        icon: "stars"
+        icon: "stars",
+        timeLimitMinutes: limit
       });
       
       document.getElementById("quick-surprise-title").value = "";
-      showToast("Surpresa criada em rascunho! Clique em 'Publicar' na tabela para enviar ao board.", "success");
+      renderCatalog();
+      if (result && result.message) {
+        showToast(result.message, "success");
+      } else {
+        showToast(result && result.reused ? "Tarefa reaproveitada e enviada ao board." : "Tarefa criada e enviada ao board.", "success");
+      }
     });
   }
   var resetBoardBtn = document.getElementById("btn-reset-board");
   if (resetBoardBtn) {
     resetBoardBtn.addEventListener("click", function () {
-      if (!confirm("⚠️ REINICIAR TUDO?\n\nIsto vai apagar TODAS as crianças, tarefas, saldos e resgates, tanto localmente quanto no Supabase.\n\nEsta ação NÃO pode ser desfeita.")) {
+      if (!confirm("Reiniciar o board de tarefas?\n\nAs tarefas voltam para Disponiveis e os estados Fazendo, Check dos Pais e Concluidas sao limpos. Criancas, saldos e resgates serao preservados.")) {
         return;
       }
       var cm = getCM();
-      if (!cm || typeof cm.resetAll !== "function") {
-        console.error("CofrinhoMagico resetAll não disponível.");
+      if (!cm || typeof cm.resetBoard !== "function") {
+        console.error("CofrinhoMagico resetBoard nao disponivel.");
         showToast("Não foi possível reiniciar. Recarregue a página.", "error");
         return;
       }
-      var result = cm.resetAll();
+      var result = cm.resetBoard();
       if (!result || !result.ok) {
         showToast("Não foi possível reiniciar: erro desconhecido.", "error");
         return;
@@ -2082,18 +2501,18 @@
       try {
         renderAll();
       } catch (e) {
-        console.error("Render after resetAll failed:", e);
+        console.error("Render after resetBoard failed:", e);
       }
-      showToast("✅ Aplicação reiniciada. Cadastre as crianças novamente.", "success");
+      showToast("Board reiniciado. Saldos e resgates foram preservados.", "success");
     });
   }
 
   CM.onChange(renderAll);
   CM.initSync().then(function() {
-    renderAll();
+    ensureParentPinAccess(renderAll);
   }).catch(function(err) {
-    console.error("Erro na sincronização:", err);
-    renderAll();
+    console.error("Erro na sincronizacao:", err);
+    ensureParentPinAccess(renderAll);
   });
   }
 
