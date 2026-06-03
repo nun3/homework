@@ -377,10 +377,6 @@
       <p class="font-title-md text-title-md text-on-surface">Tarefas cadastradas</p>
       <p id="parent-catalog-summary" class="text-label-sm text-on-surface-variant normal-case">Carregando tarefas...</p>
     </div>
-    <button type="button" id="btn-nova-tarefa-inline" class="min-h-11 rounded-xl bg-primary text-on-primary px-4 py-2 font-label-bold text-label-bold flex items-center justify-center gap-2 sm:hidden">
-      <span class="material-symbols-outlined text-[20px]">add</span>
-      Nova tarefa
-    </button>
     <button type="button" id="btn-toggle-catalog-list" class="min-h-11 rounded-xl bg-surface-container text-on-surface-variant px-4 py-2 font-label-bold text-label-bold flex items-center justify-center gap-2">
       <span class="material-symbols-outlined text-[20px]">visibility</span>
       Ver tarefas
@@ -889,7 +885,7 @@
 <div id="app-toast" class="fixed top-5 right-5 z-[80] hidden px-4 py-3 rounded-xl shadow-lg font-label-bold text-label-bold"></div>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="supabase-client.js?v=2"></script>
-<script src="cofrinho-data.js?v=10"></script>
+<script src="cofrinho-data.js?v=11"></script>
 <script src="app-shell.js?v=2"></script>
 <script>
 (function () {
@@ -1020,6 +1016,7 @@
   }
 
   function freqLabel(f) {
+    if (f === "unica") return "Surpresa";
     return f === "semanal" ? "Semanal" : "Diário";
   }
 
@@ -1309,7 +1306,7 @@
   }
 
   function isCatalogDraft(state, c) {
-    return c.frequency === "unica" && !c.archived && !isCatalogOnBoard(state, c.id);
+    return !!c.isDraft || (c.frequency === "unica" && !c.archived && !isCatalogOnBoard(state, c.id));
   }
 
   function getCatalogFilters() {
@@ -1358,7 +1355,7 @@
     if (pub && isUnpublished) {
       pub.addEventListener("click", function () {
         CM.publishTask(c.id);
-        showToast("Tarefa surpresa enviada para o board da crianca!", "success");
+        showToast("Tarefa publicada no board da crianca.", "success");
       });
     }
     var edit = root.querySelector(".cat-edit, .cat-card-edit");
@@ -1418,8 +1415,8 @@
       var sis = sister(s, c.sisterId);
       var sisName = sis ? sis.name : c.sisterId;
       var isUnpublished = isCatalogDraft(s, c);
-      var statusText = c.archived ? "Arquivada" : recurrenceStatus(c.id);
-      var statusClass = c.archived ? "bg-surface-variant text-on-surface-variant" :
+      var statusText = c.archived ? "Arquivada" : (isUnpublished ? "Rascunho" : recurrenceStatus(c.id));
+      var statusClass = c.archived || isUnpublished ? "bg-surface-variant text-on-surface-variant" :
         (CM.isTaskBlockedByRecurrence(c.id) ? "bg-primary-container text-on-primary-container" : "bg-secondary-container text-on-secondary-container");
 
       var tr = document.createElement("tr");
@@ -2029,6 +2026,15 @@
       if (val) val.value = "1";
       var timeLimit = document.getElementById("task-time-limit");
       if (timeLimit) timeLimit.value = "";
+      var schedCb = document.getElementById("task-is-scheduled");
+      if (schedCb) schedCb.checked = false;
+      var schedWrap = document.getElementById("task-schedule-fields");
+      if (schedWrap) schedWrap.classList.add("hidden");
+      document.querySelectorAll("#task-schedule-days input[type='checkbox']").forEach(function(cb) {
+        cb.checked = false;
+      });
+      var schedTime = document.getElementById("task-schedule-time");
+      if (schedTime) schedTime.value = "";
       if (taskError) {
         taskError.classList.add("hidden");
         taskError.textContent = "";
@@ -2137,10 +2143,6 @@
   document.getElementById("account-cancel-bottom").addEventListener("click", function () {
     accountModal.close();
   });
-  var inlineTaskBtn = document.getElementById("btn-nova-tarefa-inline");
-  if (inlineTaskBtn) {
-    inlineTaskBtn.addEventListener("click", openTaskModal);
-  }
   var toggleCatalogBtn = document.getElementById("btn-toggle-catalog-list");
   if (toggleCatalogBtn) {
     toggleCatalogBtn.addEventListener("click", function() {
@@ -2304,6 +2306,14 @@
     });
     var scheduledTime = document.getElementById("task-schedule-time").value;
 
+    taskError.textContent = "";
+    taskError.classList.add("hidden");
+
+    if (!sid) {
+      taskError.textContent = "Escolha uma crianca para a tarefa.";
+      taskError.classList.remove("hidden");
+      return;
+    }
     if (!title) {
       taskError.textContent = "Escreva um nome para a tarefa.";
       taskError.classList.remove("hidden");
@@ -2318,7 +2328,7 @@
       }
     }
 
-    CM.upsertCatalogRow({
+    var taskPayload = {
       sisterId: sid,
       title: title,
       subtitle: sub,
@@ -2329,10 +2339,16 @@
       isScheduled: isScheduled,
       scheduledDays: scheduledDays,
       scheduledTime: scheduledTime,
-      timeLimitMinutes: limit
-    });
+      timeLimitMinutes: limit,
+      isDraft: true
+    };
+    CM.upsertCatalogRow(taskPayload);
     taskModal.close();
-    showToast("Nova tarefa cadastrada com sucesso.", "success");
+    var draftFilter = document.getElementById("catalog-filter-status");
+    if (draftFilter) draftFilter.value = "draft";
+    setCatalogListVisible(true);
+    renderAll();
+    showToast("Tarefa salva em rascunho. Revise, edite e publique quando estiver pronta.", "success");
   });
 
   taskEditForm.addEventListener("submit", function (ev) {
@@ -2354,6 +2370,14 @@
     });
     var scheduledTime = document.getElementById("task-edit-schedule-time").value;
 
+    taskEditError.textContent = "";
+    taskEditError.classList.add("hidden");
+
+    if (!sid) {
+      taskEditError.textContent = "Escolha uma crianca para a tarefa.";
+      taskEditError.classList.remove("hidden");
+      return;
+    }
     if (!title) {
       taskEditError.textContent = "Escreva um nome para a tarefa.";
       taskEditError.classList.remove("hidden");
@@ -2383,6 +2407,8 @@
       timeLimitMinutes: limit
     });
     taskEditModal.close();
+    setCatalogListVisible(true);
+    renderAll();
     showToast("Tarefa atualizada com sucesso.", "success");
   });
 

@@ -253,6 +253,7 @@
     var pool = [];
     for (var i = 0; i < state.catalog.length; i++) {
       if (state.catalog[i].archived) continue;
+      if (state.catalog[i].isDraft) continue;
       pool.push(makeInstance(state.catalog[i]));
     }
     return pool;
@@ -308,19 +309,20 @@
         if (state.catalog[i].rewardType === "obrigacao") state.catalog[i].rewardType = "diario";
         if (state.catalog[i].rewardType === "diario") state.catalog[i].valueBRL = 0;
         if (state.catalog[i].archived == null) state.catalog[i].archived = false;
+        state.catalog[i].isDraft = !!state.catalog[i].isDraft;
         state.catalog[i].timeLimitMinutes = Number(state.catalog[i].timeLimitMinutes) || 0;
       }
       state.available = state.available.filter(function (x) {
         var item = catalogById(state, x.catalogId);
-        return item && !item.archived;
+        return item && !item.archived && !item.isDraft;
       });
       state.doing = state.doing.filter(function (x) {
         var item = catalogById(state, x.catalogId);
-        return item && !item.archived;
+        return item && !item.archived && !item.isDraft;
       });
       state.pending = state.pending.filter(function (x) {
         var item = catalogById(state, x.catalogId);
-        return item && !item.archived;
+        return item && !item.archived && !item.isDraft;
       });
       var timerChanged = false;
       for (var ai = 0; ai < state.available.length; ai++) {
@@ -650,6 +652,7 @@
             if (!state.catalog[i].rewardType) state.catalog[i].rewardType = "extra";
             if (state.catalog[i].rewardType === "obrigacao") state.catalog[i].rewardType = "diario";
             if (state.catalog[i].rewardType === "diario") state.catalog[i].valueBRL = 0;
+            state.catalog[i].isDraft = !!state.catalog[i].isDraft;
             state.catalog[i].timeLimitMinutes = Number(state.catalog[i].timeLimitMinutes) || 0;
             persist(state);
             return row.id;
@@ -672,6 +675,7 @@
         reusable.scheduledTime = row.scheduledTime || reusable.scheduledTime || "";
         reusable.timeLimitMinutes = Number(row.timeLimitMinutes) || 0;
         reusable.archived = false;
+        if (row.isDraft != null) reusable.isDraft = !!row.isDraft;
         persist(state);
         return reusable.id;
       }
@@ -690,6 +694,7 @@
         scheduledTime: row.scheduledTime || "",
         timeLimitMinutes: Number(row.timeLimitMinutes) || 0,
         archived: !!row.archived,
+        isDraft: !!row.isDraft,
       });
       if (state.catalog[state.catalog.length - 1].rewardType === "obrigacao") {
         state.catalog[state.catalog.length - 1].rewardType = "diario";
@@ -697,7 +702,7 @@
       if (state.catalog[state.catalog.length - 1].rewardType === "diario") {
         state.catalog[state.catalog.length - 1].valueBRL = 0;
       }
-      if (row.frequency !== "unica") {
+      if (!state.catalog[state.catalog.length - 1].isDraft && row.frequency !== "unica") {
         state.available.push(makeInstance(state.catalog[state.catalog.length - 1]));
       }
       persist(state);
@@ -738,7 +743,7 @@
       state.pending = state.pending.filter(function (x) {
         return x.catalogId !== catalogId;
       });
-      if (!item.archived && item.frequency !== "unica") {
+      if (!item.archived && !item.isDraft && item.frequency !== "unica") {
         state.available.push(makeInstance(item));
       }
       persist(state);
@@ -749,6 +754,7 @@
       var state = ensureState();
       var item = catalogById(state, catalogId);
       if (!item || item.archived) return;
+      item.isDraft = false;
       if (item.frequency === "unica") {
         state.available = state.available.filter(function(x) { return x.catalogId !== catalogId; });
         if (state.completedAtByCatalog) delete state.completedAtByCatalog[catalogId];
@@ -768,6 +774,7 @@
       if (!item) return { ok: false, message: "Tarefa nao encontrada." };
 
       item.archived = false;
+      item.isDraft = false;
       if (row.subtitle != null) item.subtitle = row.subtitle;
       if (row.valueBRL != null) item.valueBRL = Number(row.valueBRL) || 0;
       if (row.rewardType) item.rewardType = row.rewardType;
