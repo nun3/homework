@@ -398,6 +398,10 @@
     </select>
     <select id="catalog-filter-status" class="min-h-12 bg-surface-container border-none rounded-xl px-3 text-base text-on-surface focus:ring-2 focus:ring-primary">
       <option value="active">Ativas</option>
+      <option value="available">Disponiveis</option>
+      <option value="doing">Em andamento</option>
+      <option value="pending">Aguardando aprovacao</option>
+      <option value="completed">Finalizadas</option>
       <option value="draft">Rascunhos</option>
       <option value="archived">Arquivadas</option>
       <option value="all">Todas</option>
@@ -885,7 +889,7 @@
 <div id="app-toast" class="fixed top-5 right-5 z-[80] hidden px-4 py-3 rounded-xl shadow-lg font-label-bold text-label-bold"></div>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="supabase-client.js?v=2"></script>
-<script src="cofrinho-data.js?v=11"></script>
+<script src="cofrinho-data.js?v=12"></script>
 <script src="app-shell.js?v=2"></script>
 <script>
 (function () {
@@ -1309,6 +1313,47 @@
     return !!c.isDraft || (c.frequency === "unica" && !c.archived && !isCatalogOnBoard(state, c.id));
   }
 
+  function firstInstanceByCatalog(list, catalogId) {
+    for (var i = 0; i < list.length; i++) {
+      if (list[i].catalogId === catalogId) return list[i];
+    }
+    return null;
+  }
+
+  function catalogBoardStatus(state, c) {
+    if (c.archived) {
+      return { key: "archived", text: "Arquivada", className: "bg-surface-variant text-on-surface-variant", canComplete: false };
+    }
+    if (isCatalogDraft(state, c)) {
+      return { key: "draft", text: "Rascunho", className: "bg-surface-variant text-on-surface-variant", canComplete: false };
+    }
+
+    var pendingInst = firstInstanceByCatalog(state.pending, c.id);
+    if (pendingInst) {
+      return { key: "pending", text: "Aguardando aprovacao", className: "bg-amber-100 text-amber-800", canComplete: true, instanceId: pendingInst.id };
+    }
+
+    var doingInst = firstInstanceByCatalog(state.doing, c.id);
+    if (doingInst) {
+      return { key: "doing", text: "Em andamento", className: "bg-blue-100 text-blue-800", canComplete: true, instanceId: doingInst.id };
+    }
+
+    if (CM.isTaskCompletedInPeriod && CM.isTaskCompletedInPeriod(c.id)) {
+      return { key: "completed", text: "Finalizada", className: "bg-green-100 text-green-800", canComplete: false };
+    }
+
+    var availableInst = firstInstanceByCatalog(state.available, c.id);
+    if (availableInst) {
+      return { key: "available", text: "Disponivel", className: "bg-secondary-container text-on-secondary-container", canComplete: true, instanceId: availableInst.id };
+    }
+
+    if (CM.isTaskBlockedByRecurrence(c.id)) {
+      return { key: "blocked", text: "Aguardando horario / dia", className: "bg-primary-container text-on-primary-container", canComplete: false };
+    }
+
+    return { key: "available", text: "Disponivel", className: "bg-secondary-container text-on-secondary-container", canComplete: false };
+  }
+
   function getCatalogFilters() {
     var search = document.getElementById("catalog-search");
     var child = document.getElementById("catalog-filter-child");
@@ -1347,6 +1392,7 @@
     if (filters.status === "active" && (c.archived || isCatalogDraft(state, c))) return false;
     if (filters.status === "draft" && !isCatalogDraft(state, c)) return false;
     if (filters.status === "archived" && !c.archived) return false;
+    if (["available", "doing", "pending", "completed"].indexOf(filters.status) !== -1 && catalogBoardStatus(state, c).key !== filters.status) return false;
     return true;
   }
 
@@ -1371,6 +1417,18 @@
         if (result && result.ok) {
           showToast(c.archived ? "Tarefa restaurada." : "Tarefa arquivada.", "success");
         }
+      });
+    }
+    var complete = root.querySelector(".cat-complete, .cat-card-complete");
+    if (complete) {
+      complete.addEventListener("click", function () {
+        if (!window.confirm("Finalizar \"" + (c.title || "esta tarefa") + "\" agora?")) return;
+        var result = CM.completeCatalogTask(c.id);
+        if (!result || !result.ok) {
+          showToast(result && result.message ? result.message : "Nao foi possivel finalizar a tarefa.", "error");
+          return;
+        }
+        showToast("Tarefa finalizada com sucesso.", "success");
       });
     }
     var del = root.querySelector(".cat-del, .cat-card-del");
@@ -1415,9 +1473,9 @@
       var sis = sister(s, c.sisterId);
       var sisName = sis ? sis.name : c.sisterId;
       var isUnpublished = isCatalogDraft(s, c);
-      var statusText = c.archived ? "Arquivada" : (isUnpublished ? "Rascunho" : recurrenceStatus(c.id));
-      var statusClass = c.archived || isUnpublished ? "bg-surface-variant text-on-surface-variant" :
-        (CM.isTaskBlockedByRecurrence(c.id) ? "bg-primary-container text-on-primary-container" : "bg-secondary-container text-on-secondary-container");
+      var boardStatus = catalogBoardStatus(s, c);
+      var statusText = boardStatus.text;
+      var statusClass = boardStatus.className;
 
       var tr = document.createElement("tr");
       tr.className = "hover:bg-surface-container-low transition-colors group";
@@ -1426,7 +1484,7 @@
         "<td class=\"p-4 text-center\"><span class=\"bg-surface-variant text-on-surface-variant px-3 py-1 rounded-full font-label-sm cat-freq\">" + esc(freqLabel(c.frequency)) + "</span></td>" +
         "<td class=\"p-4 text-center\"><span class=\"px-3 py-1 rounded-full font-label-sm " + statusClass + "\">" + esc(statusText) + "</span></td>" +
         "<td class=\"p-4 text-center\"><span class=\"px-3 py-1 rounded-full font-label-sm " + (c.rewardType === "diario" ? "bg-secondary-container text-on-secondary-container" : "bg-primary-container text-on-primary-container") + "\">" + esc(rewardTypeLabel(c)) + "</span></td>" +
-        "<td class=\"p-4 text-right\"><div class=\"flex items-center justify-end gap-2\">" + (isUnpublished ? "<button type=\"button\" class=\"chunky-button bg-primary text-on-primary text-xs px-3 py-1.5 rounded-lg cat-pub\">Publicar</button>" : "") + "<span class=\"font-body-lg font-bold text-primary cat-val\">" + esc(rewardValueLabel(c)) + "</span><button type=\"button\" class=\"material-symbols-outlined text-outline hover:text-primary transition-colors text-lg cat-edit\" title=\"Editar\">edit</button></div></td>" +
+        "<td class=\"p-4 text-right\"><div class=\"flex items-center justify-end gap-2\">" + (isUnpublished ? "<button type=\"button\" class=\"chunky-button bg-primary text-on-primary text-xs px-3 py-1.5 rounded-lg cat-pub\">Publicar</button>" : "") + (boardStatus.canComplete ? "<button type=\"button\" class=\"chunky-button bg-secondary text-on-secondary text-xs px-3 py-1.5 rounded-lg cat-complete\">Finalizar</button>" : "") + "<span class=\"font-body-lg font-bold text-primary cat-val\">" + esc(rewardValueLabel(c)) + "</span><button type=\"button\" class=\"material-symbols-outlined text-outline hover:text-primary transition-colors text-lg cat-edit\" title=\"Editar\">edit</button></div></td>" +
         "<td class=\"p-4 text-right\"><div class=\"flex justify-end gap-2\"><button type=\"button\" class=\"material-symbols-outlined text-outline-variant hover:text-primary transition-colors cat-archive\" title=\"" + (c.archived ? "Restaurar" : "Arquivar") + "\">" + (c.archived ? "unarchive" : "archive") + "</button><button type=\"button\" class=\"material-symbols-outlined text-outline-variant hover:text-error transition-colors cat-del\" title=\"Excluir\">delete</button></div></td>";
       attachCatalogActions(tr, c, isUnpublished);
       tb.appendChild(tr);
@@ -1437,7 +1495,7 @@
         card.innerHTML =
           "<div class=\"flex items-start gap-3\"><div class=\"w-10 h-10 rounded-xl bg-primary-container flex items-center justify-center text-primary shrink-0\"><span class=\"material-symbols-outlined\">" + esc(c.icon || "task") + "</span></div><div class=\"min-w-0 flex-1\"><div class=\"flex items-start justify-between gap-2\"><div class=\"min-w-0\"><p class=\"font-title-md text-title-md text-on-surface leading-tight truncate\">" + esc(c.title) + "</p><p class=\"font-label-sm text-label-sm text-on-surface-variant normal-case truncate\">" + esc(sisName) + (c.subtitle ? " - " + esc(c.subtitle) : "") + "</p></div><span class=\"font-label-bold text-label-bold text-primary shrink-0\">" + esc(rewardValueLabel(c)) + "</span></div>" +
           "<div class=\"flex flex-wrap gap-1.5 mt-3\"><span class=\"px-2 py-1 rounded-full bg-surface-variant text-on-surface-variant text-label-sm font-label-bold\">" + esc(freqLabel(c.frequency)) + "</span><span class=\"px-2 py-1 rounded-full text-label-sm font-label-bold " + statusClass + "\">" + esc(statusText) + "</span><span class=\"px-2 py-1 rounded-full text-label-sm font-label-bold " + (c.rewardType === "diario" ? "bg-secondary-container text-on-secondary-container" : "bg-primary-container text-on-primary-container") + "\">" + esc(rewardTypeLabel(c)) + "</span></div>" +
-          "<div class=\"flex gap-2 mt-3\">" + (isUnpublished ? "<button type=\"button\" class=\"cat-card-pub min-h-11 flex-1 chunky-button bg-primary text-on-primary font-label-bold text-label-bold px-3 py-2 rounded-xl\">Publicar</button>" : "") + "<button type=\"button\" class=\"cat-card-edit min-h-11 flex-1 bg-secondary-container text-on-secondary-container font-label-bold text-label-bold px-3 py-2 rounded-xl flex items-center justify-center gap-1\"><span class=\"material-symbols-outlined text-[18px]\">edit</span>Editar</button><button type=\"button\" class=\"cat-card-archive min-h-11 bg-surface-container text-on-surface-variant font-label-bold text-label-bold px-3 py-2 rounded-xl flex items-center justify-center\" title=\"" + (c.archived ? "Restaurar" : "Arquivar") + "\"><span class=\"material-symbols-outlined text-[20px]\">" + (c.archived ? "unarchive" : "archive") + "</span></button><button type=\"button\" class=\"cat-card-del min-h-11 bg-error-container text-on-error-container font-label-bold text-label-bold px-3 py-2 rounded-xl flex items-center justify-center\" title=\"Excluir\"><span class=\"material-symbols-outlined text-[20px]\">delete</span></button></div></div></div>";
+          "<div class=\"flex gap-2 mt-3\">" + (isUnpublished ? "<button type=\"button\" class=\"cat-card-pub min-h-11 flex-1 chunky-button bg-primary text-on-primary font-label-bold text-label-bold px-3 py-2 rounded-xl\">Publicar</button>" : "") + (boardStatus.canComplete ? "<button type=\"button\" class=\"cat-card-complete min-h-11 flex-1 chunky-button bg-secondary text-on-secondary font-label-bold text-label-bold px-3 py-2 rounded-xl\">Finalizar</button>" : "") + "<button type=\"button\" class=\"cat-card-edit min-h-11 flex-1 bg-secondary-container text-on-secondary-container font-label-bold text-label-bold px-3 py-2 rounded-xl flex items-center justify-center gap-1\"><span class=\"material-symbols-outlined text-[18px]\">edit</span>Editar</button><button type=\"button\" class=\"cat-card-archive min-h-11 bg-surface-container text-on-surface-variant font-label-bold text-label-bold px-3 py-2 rounded-xl flex items-center justify-center\" title=\"" + (c.archived ? "Restaurar" : "Arquivar") + "\"><span class=\"material-symbols-outlined text-[20px]\">" + (c.archived ? "unarchive" : "archive") + "</span></button><button type=\"button\" class=\"cat-card-del min-h-11 bg-error-container text-on-error-container font-label-bold text-label-bold px-3 py-2 rounded-xl flex items-center justify-center\" title=\"Excluir\"><span class=\"material-symbols-outlined text-[20px]\">delete</span></button></div></div></div>";
         attachCatalogActions(card, c, isUnpublished);
         cards.appendChild(card);
       }

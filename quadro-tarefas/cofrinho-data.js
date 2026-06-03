@@ -553,6 +553,40 @@
       persist(state);
     },
 
+    completeCatalogTask: function (catalogId) {
+      var state = ensureState();
+      var cat = catalogById(state, catalogId);
+      if (!cat || cat.archived || cat.isDraft) {
+        return { ok: false, message: "Tarefa nao encontrada ou ainda nao publicada." };
+      }
+
+      var source = null;
+      var item = null;
+      var pools = [state.pending, state.doing, state.available];
+      for (var p = 0; p < pools.length && !item; p++) {
+        for (var i = 0; i < pools[p].length; i++) {
+          if (pools[p][i].catalogId === catalogId) {
+            item = pools[p].splice(i, 1)[0];
+            source = p === 0 ? "pending" : (p === 1 ? "doing" : "available");
+            break;
+          }
+        }
+      }
+
+      if (!item) {
+        return { ok: false, message: "Esta tarefa nao esta no board agora." };
+      }
+
+      var sis = sisterById(state, cat.sisterId);
+      if (sis && cat.rewardType === "extra") {
+        sis.balanceBRL = (Number(sis.balanceBRL) || 0) + Number(cat.valueBRL);
+      }
+      state.completedAtByCatalog[catalogId] = Date.now();
+      state.available.push({ id: uid(), catalogId: catalogId });
+      persist(state);
+      return { ok: true, source: source };
+    },
+
     /** Pais: rejeitar — volta ao menu sem pagar, com possível feedback */
     reject: function (instanceId, feedbackMsg) {
       var state = ensureState();
