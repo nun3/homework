@@ -249,9 +249,9 @@ document.addEventListener("DOMContentLoaded", function() {
           if(nav.hasAttribute('data-target')) {
             if(nav.getAttribute('data-target') === id) {
               nav.classList.remove('text-on-surface-variant', 'dark:text-outline');
-              nav.classList.add('bg-primary-container', 'dark:bg-on-primary-container', 'text-on-primary-container', 'dark:text-primary-fixed');
+              nav.classList.add('text-primary', 'dark:text-primary-fixed');
             } else {
-              nav.classList.remove('bg-primary-container', 'dark:bg-on-primary-container', 'text-on-primary-container', 'dark:text-primary-fixed');
+              nav.classList.remove('text-primary', 'dark:text-primary-fixed');
               nav.classList.add('text-on-surface-variant', 'dark:text-outline');
             }
           }
