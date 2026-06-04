@@ -224,7 +224,7 @@
 </section>
 </main>
 <!-- BottomNavBar -->
-<nav id="bottom-nav" class="w-full z-50 flex md:hidden justify-around items-center px-2 py-3 bg-surface dark:bg-surface-dim shadow-[0_-4px_14px_rgba(0,0,0,0.08)] rounded-t-2xl">
+<nav id="bottom-nav" class="w-full z-50 flex md:hidden justify-around items-center px-2 pt-3 pb-8 bg-surface dark:bg-surface-dim shadow-[0_-4px_14px_rgba(0,0,0,0.08)] rounded-t-2xl">
 <a class="nav-item flex flex-col items-center justify-center text-on-surface-variant dark:text-outline min-w-16 px-3 py-2 hover:bg-surface-container-high dark:hover:bg-surface-container-highest rounded-full transition-all active:scale-90 duration-150" href="./">
 <span class="material-symbols-outlined" data-icon="home">home</span>
 <span class="font-label-bold text-label-bold">Inicio</span>
@@ -322,12 +322,15 @@ document.addEventListener("DOMContentLoaded", function() {
     return String(s).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/"/g, "&quot;");
   }
 
+  var tracksExpanded = false;
+
   function renderProgressTracks(state) {
     var container = document.getElementById("kid-progress-tracks");
     if (!container) return;
     container.innerHTML = "";
     
     var hasTracks = false;
+    var tracksData = [];
     
     state.sisters.forEach(function(sis) {
       var countA = 0, countD = 0, countP = 0, countC = 0;
@@ -353,7 +356,25 @@ document.addEventListener("DOMContentLoaded", function() {
       var total = countA + countD + countP + countC;
       if (total === 0) return;
       
-      hasTracks = true;
+      tracksData.push({ sis: sis, countD: countD, countP: countP, countC: countC, total: total });
+    });
+
+    if (tracksData.length === 0) {
+      container.style.display = "none";
+      return;
+    }
+
+    container.style.display = "flex";
+    
+    var visibleTracks = tracksExpanded ? tracksData : [];
+
+    visibleTracks.forEach(function(data) {
+      var sis = data.sis;
+      var total = data.total;
+      var countD = data.countD;
+      var countP = data.countP;
+      var countC = data.countC;
+      
       var maxScore = total * 3;
       var score = (countD * 1) + (countP * 2) + (countC * 3);
       var pct = Math.round((score / maxScore) * 100);
@@ -376,11 +397,20 @@ document.addEventListener("DOMContentLoaded", function() {
         
       container.appendChild(trackDiv);
     });
-    
-    if (!hasTracks) {
-      container.style.display = "none";
-    } else {
-      container.style.display = "flex";
+
+    if (tracksData.length > 0) {
+      var toggleBtn = document.createElement("button");
+      toggleBtn.type = "button";
+      toggleBtn.className = "mt-2 self-center text-label-sm font-label-bold text-primary flex items-center gap-1 active:scale-95 transition-transform bg-surface-container hover:bg-surface-container-high px-3 py-1.5 rounded-full";
+      toggleBtn.innerHTML = tracksExpanded 
+        ? "Ocultar progresso <span class=\"material-symbols-outlined text-[16px]\">expand_less</span>" 
+        : "Ver progresso (" + tracksData.length + ") <span class=\"material-symbols-outlined text-[16px]\">expand_more</span>";
+      
+      toggleBtn.addEventListener("click", function() {
+        tracksExpanded = !tracksExpanded;
+        renderProgressTracks(state);
+      });
+      container.appendChild(toggleBtn);
     }
   }
 
