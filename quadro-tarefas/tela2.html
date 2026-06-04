@@ -115,8 +115,45 @@
         }
     </script>
 <style>
+    html,
     body {
       min-height: max(884px, 100dvh);
+      transform: none !important;
+    }
+    @media (max-width: 767px) {
+      html,
+      body {
+        height: 100dvh;
+        min-height: 100dvh;
+        overflow: hidden;
+      }
+      body {
+        display: flex;
+        flex-direction: column;
+        padding-bottom: 0 !important;
+      }
+      main {
+        flex: 1 1 auto;
+        min-height: 0;
+        overflow-y: auto;
+        padding-bottom: 16px !important;
+        -webkit-overflow-scrolling: touch;
+      }
+      #bottom-nav {
+        position: relative !important;
+        left: auto !important;
+        right: auto !important;
+        bottom: auto !important;
+        flex: 0 0 auto;
+        width: 100%;
+        z-index: 9999 !important;
+        padding-bottom: 12px !important;
+      }
+    }
+    @media (min-width: 768px) {
+      #bottom-nav {
+        display: none !important;
+      }
     }
     dialog#task-modal {
       border: none;
@@ -454,7 +491,7 @@
 </div>
 </nav>
 <!-- BottomNavBar (Mobile Only) -->
-<nav id="bottom-nav" class="fixed bottom-0 left-0 w-full z-50 grid grid-cols-3 gap-2 px-3 py-3 pb-safe md:hidden bg-surface rounded-t-xl shadow-lg">
+<nav id="bottom-nav" class="w-full z-50 grid grid-cols-3 gap-2 px-3 py-3 md:hidden bg-surface rounded-t-xl shadow-lg">
 <a href="./" class="flex flex-col items-center justify-center text-on-surface-variant px-3 py-2 no-underline rounded-full">
 <span class="material-symbols-outlined">home</span>
 <span class="font-label-bold text-label-bold">Inicio</span>
