@@ -211,7 +211,7 @@
             <div class="flex justify-center">
               <button onclick="window.location.href='./'" class="bg-primary hover:opacity-90 text-white font-label-bold px-8 py-3.5 rounded-full transition-all shadow hover:shadow-md flex items-center gap-2">
                 <span class="material-symbols-outlined text-lg">arrow_back</span>
-                Voltar ao Início
+                Voltar ao Inicio
               </button>
             </div>
           </div>
@@ -398,7 +398,6 @@
     </select>
     <select id="catalog-filter-status" class="min-h-12 bg-surface-container border-none rounded-xl px-3 text-base text-on-surface focus:ring-2 focus:ring-primary">
       <option value="active">Ativas</option>
-      <option value="available">Disponiveis</option>
       <option value="doing">Em andamento</option>
       <option value="pending">Aguardando aprovacao</option>
       <option value="completed">Finalizadas</option>
@@ -455,14 +454,18 @@
 </div>
 </nav>
 <!-- BottomNavBar (Mobile Only) -->
-<nav class="fixed bottom-0 left-0 w-full z-50 grid grid-cols-2 gap-2 px-4 py-3 pb-safe md:hidden bg-surface rounded-t-xl shadow-lg">
-<a href="tela1" class="flex flex-col items-center justify-center text-on-surface-variant px-5 py-2 no-underline rounded-full">
+<nav id="bottom-nav" class="fixed bottom-0 left-0 w-full z-50 grid grid-cols-3 gap-2 px-3 py-3 pb-safe md:hidden bg-surface rounded-t-xl shadow-lg">
+<a href="./" class="flex flex-col items-center justify-center text-on-surface-variant px-3 py-2 no-underline rounded-full">
 <span class="material-symbols-outlined">home</span>
-<span class="font-label-bold text-label-bold">Board</span>
+<span class="font-label-bold text-label-bold">Inicio</span>
 </a>
-<div class="flex flex-col items-center justify-center bg-primary-container text-on-primary-container rounded-full px-5 py-2">
+<a href="tela1" class="flex flex-col items-center justify-center text-on-surface-variant px-3 py-2 no-underline rounded-full">
+<span class="material-symbols-outlined">checklist</span>
+<span class="font-label-bold text-label-bold">Tarefas</span>
+</a>
+<div class="flex flex-col items-center justify-center bg-primary-container text-on-primary-container rounded-full px-3 py-2">
 <span class="material-symbols-outlined">admin_panel_settings</span>
-<span class="font-label-bold text-label-bold">Ajustes</span>
+<span class="font-label-bold text-label-bold">Pais</span>
 </div>
 </nav>
 <dialog id="child-modal" class="rounded-3xl shadow-2xl bg-surface border-none max-w-md w-full p-0 backdrop:bg-black/50 backdrop:backdrop-blur-sm transition-all">
@@ -799,7 +802,7 @@
     </div>
     <input type="hidden" id="task-delete-id"/>
     <p class="font-body-md">Tem certeza que deseja excluir a tarefa <strong id="task-delete-title"></strong>?</p>
-    <p class="rounded-xl bg-error-container/60 text-on-error-container text-label-sm p-3">Ela sera removida do cadastro e tambem saira de Disponiveis, Fazendo e Check dos Pais. Saldos e resgates ja registrados serao preservados.</p>
+    <p class="rounded-xl bg-error-container/60 text-on-error-container text-label-sm p-3">Ela sera removida do cadastro e tambem saira de Ativas, Fazendo e Check dos Pais. Saldos e resgates ja registrados serao preservados.</p>
     <div class="flex items-center justify-end gap-2 pt-2">
       <button type="button" id="task-delete-cancel-bottom" class="px-4 py-2 rounded-lg bg-surface-container-high text-on-surface-variant font-label-bold">Cancelar</button>
       <button type="submit" class="chunky-button bg-error text-on-error font-label-bold px-5 py-2.5 rounded-lg">Excluir tarefa</button>
@@ -889,7 +892,7 @@
 <div id="app-toast" class="fixed top-5 right-5 z-[80] hidden px-4 py-3 rounded-xl shadow-lg font-label-bold text-label-bold"></div>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="supabase-client.js?v=2"></script>
-<script src="cofrinho-data.js?v=12"></script>
+<script src="cofrinho-data.js?v=14"></script>
 <script src="app-shell.js?v=2"></script>
 <script>
 (function () {
@@ -1344,14 +1347,14 @@
 
     var availableInst = firstInstanceByCatalog(state.available, c.id);
     if (availableInst) {
-      return { key: "available", text: "Disponivel", className: "bg-secondary-container text-on-secondary-container", canComplete: true, instanceId: availableInst.id };
+      return { key: "active", text: "Ativa", className: "bg-secondary-container text-on-secondary-container", canComplete: true, instanceId: availableInst.id };
     }
 
     if (CM.isTaskBlockedByRecurrence(c.id)) {
       return { key: "blocked", text: "Aguardando horario / dia", className: "bg-primary-container text-on-primary-container", canComplete: false };
     }
 
-    return { key: "available", text: "Disponivel", className: "bg-secondary-container text-on-secondary-container", canComplete: false };
+    return { key: "active", text: "Ativa", className: "bg-secondary-container text-on-secondary-container", canComplete: false };
   }
 
   function getCatalogFilters() {
@@ -1389,10 +1392,10 @@
     if (filters.type === "extra" && c.rewardType !== "extra") return false;
     if (filters.type === "diario" && c.rewardType !== "diario") return false;
     if (filters.type === "unica" && c.frequency !== "unica") return false;
-    if (filters.status === "active" && (c.archived || isCatalogDraft(state, c))) return false;
+    if (filters.status === "active" && catalogBoardStatus(state, c).key !== "active") return false;
     if (filters.status === "draft" && !isCatalogDraft(state, c)) return false;
     if (filters.status === "archived" && !c.archived) return false;
-    if (["available", "doing", "pending", "completed"].indexOf(filters.status) !== -1 && catalogBoardStatus(state, c).key !== filters.status) return false;
+    if (["doing", "pending", "completed"].indexOf(filters.status) !== -1 && catalogBoardStatus(state, c).key !== filters.status) return false;
     return true;
   }
 
@@ -1446,7 +1449,7 @@
     var summary = document.getElementById("parent-catalog-summary");
     syncCatalogChildFilter(s);
     var filters = getCatalogFilters();
-    var totalActive = s.catalog.filter(function(c) { return !c.archived && !isCatalogDraft(s, c); }).length;
+    var totalActive = s.catalog.filter(function(c) { return catalogBoardStatus(s, c).key === "active"; }).length;
     var totalDraft = s.catalog.filter(function(c) { return isCatalogDraft(s, c); }).length;
     var totalArchived = s.catalog.filter(function(c) { return !!c.archived; }).length;
     var visible = s.catalog.filter(function(c) { return catalogMatchesFilters(s, c, filters); });
@@ -1621,7 +1624,7 @@
         "<div class=\"rounded-xl bg-green-50 border border-green-200 p-3\"><div class=\"flex items-center gap-1 text-label-sm text-green-700\"><span class=\"w-2 h-2 rounded-full bg-green-600\"></span>Concluídas</div><p class=\"font-title-md text-green-700\">" + st.completed + "</p></div>" +
         "<div class=\"rounded-xl bg-amber-50 border border-amber-200 p-3\"><div class=\"flex items-center gap-1 text-label-sm text-amber-700\"><span class=\"w-2 h-2 rounded-full bg-amber-500\"></span>Pendentes</div><p class=\"font-title-md text-amber-700\">" + st.pending + "</p></div>" +
         "<div class=\"rounded-xl bg-blue-50 border border-blue-200 p-3\"><div class=\"flex items-center gap-1 text-label-sm text-blue-700\"><span class=\"w-2 h-2 rounded-full bg-blue-600\"></span>Fazendo</div><p class=\"font-title-md text-blue-700\">" + st.doing + "</p></div>" +
-        "<div class=\"rounded-xl bg-slate-50 border border-slate-200 p-3\"><div class=\"flex items-center gap-1 text-label-sm text-slate-700\"><span class=\"w-2 h-2 rounded-full bg-slate-500\"></span>Disponíveis</div><p class=\"font-title-md text-slate-700\">" + st.available + "</p></div>" +
+        "<div class=\"rounded-xl bg-slate-50 border border-slate-200 p-3\"><div class=\"flex items-center gap-1 text-label-sm text-slate-700\"><span class=\"w-2 h-2 rounded-full bg-slate-500\"></span>Ativas</div><p class=\"font-title-md text-slate-700\">" + st.available + "</p></div>" +
         "</div>" +
         "</div>";
       
@@ -1635,7 +1638,7 @@
       chartInstances[sis.id] = new Chart(ctx, {
         type: 'doughnut',
         data: {
-          labels: ['Concluídas', 'Pendentes', 'Fazendo', 'Disponíveis'],
+          labels: ['Concluídas', 'Pendentes', 'Fazendo', 'Ativas'],
           datasets: [{
             data: [st.completed, st.pending, st.doing, st.available],
             backgroundColor: [
@@ -2568,7 +2571,7 @@
   var resetBoardBtn = document.getElementById("btn-reset-board");
   if (resetBoardBtn) {
     resetBoardBtn.addEventListener("click", function () {
-      if (!confirm("Reiniciar o board de tarefas?\n\nAs tarefas voltam para Disponiveis e os estados Fazendo, Check dos Pais e Concluidas sao limpos. Criancas, saldos e resgates serao preservados.")) {
+      if (!confirm("Reiniciar o board de tarefas?\n\nAs tarefas voltam para Ativas e os estados Fazendo, Check dos Pais e Concluidas sao limpos. Criancas, saldos e resgates serao preservados.")) {
         return;
       }
       var cm = getCM();

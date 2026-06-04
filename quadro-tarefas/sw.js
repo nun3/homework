@@ -4,7 +4,7 @@
  * Cache-first apenas para CDNs.
  */
 
-const CACHE_NAME = 'cofrinho-v5';
+const CACHE_NAME = 'cofrinho-v7';
 const ASSETS_TO_CACHE = [
   './',
   './index.html',
