@@ -159,7 +159,7 @@
 <header class="bg-surface dark:bg-surface-dim docked full-width top-0 border-b border-outline-variant dark:border-outline shadow-sm flex justify-between items-center w-full px-4 sm:px-6 lg:px-8 py-3 z-40 sticky">
 <div class="flex items-center gap-3">
 <div class="w-10 h-10 rounded-full bg-primary-container flex items-center justify-center overflow-hidden">
-<img alt="Foto do perfil da família" class="w-full h-full object-cover" data-alt="A warm and colorful illustration of a stylized happy family of four, rendered in a 3D clay-style animation aesthetic. The background is a soft pastel green, reflecting a gentle and nurturing environment. Each family member has a cheerful expression, emphasizing themes of domestic harmony and gentle productivity. The lighting is soft and diffused, creating a welcoming and modern light-mode feel." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDMuUg46xBeL0aczXSMuLNbyFF5p0-9F_p8mRYPqKYx5b9GMdpKaKrsigonh8aCaAHkM_L4s9TmBh0nVGrWVW2UU354LLJ8LDm0gN91gqvzoosvKy5BGu27jByYIsaacBEtRdGkyD5HNPbFu40ByAI61CB0oPaiJZXP3f99fqLVgMJnOXB_LfLagTH-h9C-aZXLt6yicx4wEkS4_pKBlULQ8nOnJvDqw-zNy3iOdqKqcRO-RvxVvqV54VZL-G1I_uTRYMH-HJeMFW40"/>
+<img id="family-profile-img" alt="Foto do perfil da família" class="w-full h-full object-cover" src="data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%232c6a48'%3E%3Cpath d='M16 11c1.66 0 2.99-1.34 2.99-3S17.66 5 16 5c-1.66 0-3 1.34-3 3s1.34 3 3 3zm-8 0c1.66 0 2.99-1.34 2.99-3S9.66 5 8 5C6.34 5 5 6.34 5 8s1.34 3 3 3zm0 2c-2.33 0-7 1.17-7 3.5V19h14v-2.5c0-2.33-4.67-3.5-7-3.5zm8 0c-.29 0-.62.02-.97.05 1.16.84 1.97 1.97 1.97 3.45V19h6v-2.5c0-2.33-4.67-3.5-7-3.5z'/%3E%3C/svg%3E"/>
 </div>
 <h1 class="font-headline-lg text-headline-lg-mobile font-bold text-primary dark:text-primary-fixed-dim">Minhas Tarefas</h1>
 </div>
@@ -685,6 +685,11 @@ document.addEventListener("DOMContentLoaded", function() {
     renderPending(state);
     renderCompleted(state);
     renderSavings(state);
+
+    var familyImg = document.getElementById("family-profile-img");
+    if (familyImg && state.family && state.family.parentAvatarUrl) {
+      familyImg.src = state.family.parentAvatarUrl;
+    }
   }
 
   console.log('[Tela1] Script iniciado');
